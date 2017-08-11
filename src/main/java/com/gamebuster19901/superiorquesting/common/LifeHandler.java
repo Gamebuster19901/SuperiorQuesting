@@ -5,15 +5,18 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 import java.util.LinkedHashSet;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.GameType;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 public class LifeHandler {
 	private static final String LIFE_KEY = MODID + ":lives"; 
@@ -69,7 +72,7 @@ public class LifeHandler {
 		if (amount < 1d || amount > getMaxLives()){
 			return false;
 		}
-		p.getEntityData().setDouble(LIFE_KEY, amount);
+		getPersistantTag(p).setDouble(LIFE_KEY, amount);
 		return true;
 	}
 	
@@ -80,7 +83,6 @@ public class LifeHandler {
 	 */
 	
 	public void resetLives(EntityPlayerMP p){
-		NBTTagCompound nbt = p.getEntityData();
 		if (getStartingLives() > getMaxLives()){
 			if (getMaxLives() < 1){
 				throw new AssertionError(new IllegalStateException(new IndexOutOfBoundsException("Starting life total and max life total < 1, nowhere to fall back to")));
@@ -96,7 +98,7 @@ public class LifeHandler {
 	}
 	
 	public double getLives(EntityPlayerMP p){
-		NBTTagCompound nbt = p.getEntityData();
+		NBTTagCompound nbt = getPersistantTag(p);
 		return Math.floor(nbt.getDouble(LIFE_KEY));
 	}
 	
@@ -120,7 +122,7 @@ public class LifeHandler {
 	 * @return true if the player has life NBT, false otherwise
 	 */
 	public boolean hasLifeNBT(EntityPlayerMP p){
-		return p.getEntityData().hasKey(LIFE_KEY);
+		return getPersistantTag(p).hasKey(LIFE_KEY);
 	}
 	
 	/**
@@ -165,23 +167,53 @@ public class LifeHandler {
 		}
 	}
 	
+	private NBTTagCompound getPersistantTag(EntityPlayerMP p){
+		NBTTagCompound entityData = p.getEntityData();
+		NBTTagCompound persist;
+		if (!hasPersistantTag(p)) {
+			throw new AssertionError("No persistent tag found for player " + p.getName());
+		} else {
+		   return persist = entityData.getCompoundTag(p.PERSISTED_NBT_TAG);
+		}
+	}
+	
+	private boolean hasPersistantTag(EntityPlayerMP p){
+		return p.getEntityData().hasKey(p.PERSISTED_NBT_TAG);
+	}
+	
 	@SubscribeEvent
 	public void playerLoggedInEvent(PlayerLoggedInEvent e){
-		NBTTagCompound nbt = e.player.getEntityData();
-		assertValidLives((EntityPlayerMP)e.player);
-		Double lives = getLives((EntityPlayerMP)e.player);
+		EntityPlayerMP p = (EntityPlayerMP)e.player;
+		if (!hasPersistantTag(p)){
+			p.getEntityData().setTag(p.PERSISTED_NBT_TAG, new NBTTagCompound());
+		}
+		NBTTagCompound nbt = getPersistantTag(p);
+		assertValidLives(p);
+		Double lives = getLives(p);
 		if (!lives.isInfinite()){
-			e.player.sendMessage(new TextComponentString("You have " + (int)getLives((EntityPlayerMP)e.player) + " lives remaining."));
+			p.sendMessage(new TextComponentString("You have " + (int)getLives(p) + " lives remaining."));
 		}
 		else{
-			e.player.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
+			p.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPlayerDeath(LivingDeathEvent e){
 		if (e.getEntity() instanceof EntityPlayer){
+			EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
+			if(!removeLife((EntityPlayerMP)e.getEntity())){
+				p.setGameType(GameType.SPECTATOR);
+				p.sendMessage(new TextComponentString("You have lost all of your lives!"));
+			}
+		
+			else if (!((Double)getLives(p)).isInfinite()){
+				p.sendMessage(new TextComponentString("You have " + (int)getLives(p) + " lives remaining"));
+			}
 			
+			else{
+				p.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
+			}
 		}
 	}
 	
