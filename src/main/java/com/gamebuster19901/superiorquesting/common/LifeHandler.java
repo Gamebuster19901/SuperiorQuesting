@@ -81,7 +81,6 @@ public class LifeHandler {
 	 * @param p the player's life to reset
 	 * @throws AssertionError if the default life count is less than 1 and the maximum life count is less than 1
 	 */
-	
 	public void resetLives(EntityPlayerMP p){
 		if (getStartingLives() > getMaxLives()){
 			if (getMaxLives() < 1){
@@ -97,6 +96,11 @@ public class LifeHandler {
 		}
 	}
 	
+	/**
+	 * Gets the remaining lives a player has, rounded to floor
+	 * @param p the player whose lives to get
+	 * @return remaining lives the player has, rounded to floor
+	 */
 	public double getLives(EntityPlayerMP p){
 		NBTTagCompound nbt = getPersistantTag(p);
 		return Math.floor(nbt.getDouble(LIFE_KEY));
@@ -129,7 +133,6 @@ public class LifeHandler {
 	 * If any player's life count is out of bounds, set it to the closest in-bounds number
 	 * @return a LinkedHashSet containing all player's whose life count was changed.
 	 */
-	
 	public LinkedHashSet<EntityPlayerMP> assertValidLives(){
 		LinkedHashSet<EntityPlayerMP> ret = new LinkedHashSet<EntityPlayerMP>();
 		if (FMLCommonHandler.instance().getMinecraftServerInstance() != null){
@@ -167,6 +170,12 @@ public class LifeHandler {
 		}
 	}
 	
+	/**
+	 * Gets the NBTTagCompound that persists with a player after death
+	 * @param p the player whose tag to retrieve
+	 * @return the NBTTagCompound that persists with a player after death
+	 * @throws AssertionError if the tag doesn't exist
+	 */
 	private NBTTagCompound getPersistantTag(EntityPlayerMP p){
 		NBTTagCompound entityData = p.getEntityData();
 		NBTTagCompound persist;
@@ -177,6 +186,11 @@ public class LifeHandler {
 		}
 	}
 	
+	/**
+	 * Checks if the NBTTagCompound that persists with a player after death exists
+	 * @param p the player to check
+	 * @return true if it exists, false otherwise
+	 */
 	private boolean hasPersistantTag(EntityPlayerMP p){
 		return p.getEntityData().hasKey(p.PERSISTED_NBT_TAG);
 	}
@@ -217,6 +231,9 @@ public class LifeHandler {
 		}
 	}
 	
+	/**
+	 * Used to make sure that lives are still within bounds after the config has changed
+	 */
 	static void onConfigFinishChanged() {
 		LifeHandler l = Main.proxy.getLifeHandler();
 		for(EntityPlayerMP p : l.assertValidLives()){
