@@ -22,26 +22,23 @@ public class ModConfig{
 	public static final QuestingRules RULES = new QuestingRules();
 	
 	public static class QuestingRules{
-		@Config.Name("Starting Lives")
+		@Config.Name((char)0xE000 + "Starting Lives")
 		@Config.RangeDouble(min = 1d, max = Double.POSITIVE_INFINITY)
 		@Config.Comment("Decimal numbers will be rounded down, use integers only. If larger than the maximum life counter, then the starting life count will be the maximum count. If less than 1, it will be 1.")
 		public double startingLives = Double.POSITIVE_INFINITY;
-		@Config.Name("Maximum Lives")
+		@Config.Name((char)0xE001 + "Maximum Lives")
 		@Config.RangeDouble(min = 1d, max = Double.POSITIVE_INFINITY)
 		@Config.Comment("Decimal numbers will be rounded down, use integers only")
 		public double maxLives = Double.POSITIVE_INFINITY;
-		@Config.Name("Start With Book")
+		@Config.Name((char)0xE002 + "Start With Book")
 		@Config.Comment("If the player starts the world with a quest book")
 		public boolean hasBook = true;
-		@Config.Name("Delete World On Death")
-		@Config.Comment("If true, the world is deleted on death or the player is banned, if false, the player is put into spectator mode")
-		public boolean delOnDeath = false;
 	}
 	
 	/*
 	 * Config end
 	 */
-	
+
 	@Mod.EventBusSubscriber(modid = MODID)
 	private static class EventHandler {
 		@SubscribeEvent
@@ -53,3 +50,4 @@ public class ModConfig{
 		}
 	}
 }
+
