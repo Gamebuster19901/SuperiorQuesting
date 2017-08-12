@@ -6,7 +6,6 @@ import com.gamebuster19901.superiorquesting.common.command.CommandLives;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 
 import net.minecraft.item.Item;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

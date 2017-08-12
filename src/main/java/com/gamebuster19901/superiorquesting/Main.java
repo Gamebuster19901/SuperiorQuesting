@@ -3,7 +3,6 @@ package com.gamebuster19901.superiorquesting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.proxy.Proxy;
 
 import net.minecraftforge.fml.common.Mod;
