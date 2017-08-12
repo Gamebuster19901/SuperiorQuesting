@@ -9,10 +9,16 @@ import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketCombatEvent;
+import net.minecraft.scoreboard.Team;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.GameType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -50,7 +56,8 @@ public class LifeHandler {
 	public boolean removeLife(EntityPlayerMP p){
 		double newLives = getLives(p) - 1;
 		double maxLives = getMaxLives();
-		if (newLives < 1){
+		if (newLives < 0){
+			setLives(p,0d);
 			return false;
 		}
 		if (newLives <= maxLives){
@@ -61,18 +68,26 @@ public class LifeHandler {
 		return true;
 	}
 	
+	public boolean addLives(EntityPlayerMP p, Double amount){
+		return setLives(p,getLives(p) + Math.floor(amount));
+	}
+	
 	/**
-	 * Sets the player's life counter, unless the count would be less than 1 or greater than the maximum life count
+	 * Sets the player's life counter, unless the count would be less than 0 or greater than the maximum life count
 	 * 
 	 * @param p the player's life count to set
 	 * @param amount the amount of lives the player will have
 	 * @return true if the life count was set, false otherwise
 	 */
 	public boolean setLives(EntityPlayerMP p, Double amount){
-		if (amount < 1d || amount > getMaxLives()){
+		if (amount < 0d || amount > getMaxLives()){
 			return false;
 		}
 		getPersistantTag(p).setDouble(LIFE_KEY, amount);
+		if (amount < 1d){
+			p.setGameType(GameType.SPECTATOR);
+		}
+		messageLives(p);
 		return true;
 	}
 	
@@ -83,13 +98,13 @@ public class LifeHandler {
 	 */
 	public void resetLives(EntityPlayerMP p){
 		if (getStartingLives() > getMaxLives()){
-			if (getMaxLives() < 1){
+			if (getMaxLives() < 1d){
 				throw new AssertionError(new IllegalStateException(new IndexOutOfBoundsException("Starting life total and max life total < 1, nowhere to fall back to")));
 			}
 			setLives(p, getMaxLives());
 		}
 		else{
-			if (getStartingLives() < 1){
+			if (getStartingLives() < 1d){
 				throw new AssertionError(new IllegalStateException(new IndexOutOfBoundsException("Starting life total and max life total < 1, nowhere to fall back to")));
 			}
 			setLives(p, getStartingLives());
@@ -153,7 +168,7 @@ public class LifeHandler {
 	public boolean assertValidLives(EntityPlayerMP p){
 		if(hasLifeNBT(p)){
 			double lives = getLives(p);
-			if(lives < 1d){
+			if(lives < 0d){
 				setLives(p, 1d);
 				return true;
 			}
@@ -167,6 +182,24 @@ public class LifeHandler {
 		else{
 			resetLives(p);
 			return true;
+		}
+	}
+	
+	/**
+	 * Messages a player their life total
+	 * 
+	 * @param p the player to message
+	 */
+	public void messageLives(EntityPlayerMP p){
+		Double lives = getLives(p);
+		if(lives < 1d){
+			p.sendMessage(new TextComponentString("You have lost all of your lives!"));
+		}
+		else if (!lives.isInfinite()){
+			p.sendMessage(new TextComponentString("You have " + (long)getLives(p) + " lives remaining."));
+		}
+		else{
+			p.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
 		}
 	}
 	
@@ -202,31 +235,44 @@ public class LifeHandler {
 			p.getEntityData().setTag(p.PERSISTED_NBT_TAG, new NBTTagCompound());
 		}
 		NBTTagCompound nbt = getPersistantTag(p);
-		assertValidLives(p);
-		Double lives = getLives(p);
-		if (!lives.isInfinite()){
-			p.sendMessage(new TextComponentString("You have " + (int)getLives(p) + " lives remaining."));
-		}
-		else{
-			p.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
+		if(!assertValidLives(p)){
+			messageLives(p);
 		}
 	}
 	
 	@SubscribeEvent
-	public void onPlayerDeath(LivingDeathEvent e){
+	public void onPlayerDeath(LivingHurtEvent e){
 		if (e.getEntity() instanceof EntityPlayer){
-			EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
-			if(!removeLife((EntityPlayerMP)e.getEntity())){
-				p.setGameType(GameType.SPECTATOR);
-				p.sendMessage(new TextComponentString("You have lost all of your lives!"));
-			}
-		
-			else if (!((Double)getLives(p)).isInfinite()){
-				p.sendMessage(new TextComponentString("You have " + (int)getLives(p) + " lives remaining"));
-			}
-			
-			else{
-				p.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
+			if((e.getEntityLiving().getHealth() - e.getAmount() <= 0)){
+				EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
+				if(!(p.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.TOTEM_OF_UNDYING) && !(p.getHeldItem(EnumHand.OFF_HAND).getItem() == Items.TOTEM_OF_UNDYING)){
+					if(removeLife(p) && p.isSpectator()){
+						e.setCanceled(true);
+				        boolean flag = e.getEntity().world.getGameRules().getBoolean("showDeathMessages");
+
+				        if (flag)
+				        {
+				            Team team = p.getTeam();
+
+				            if (team != null && team.getDeathMessageVisibility() != Team.EnumVisible.ALWAYS)
+				            {
+				                if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
+				                {
+				                    p.mcServer.getPlayerList().sendMessageToAllTeamMembers(p, p.getCombatTracker().getDeathMessage());
+				                }
+				                else if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OWN_TEAM)
+				                {
+				                    p.mcServer.getPlayerList().sendMessageToTeamOrAllPlayers(p, p.getCombatTracker().getDeathMessage());
+				                }
+				            }
+				            else
+				            {
+				                p.mcServer.getPlayerList().sendMessage(p.getCombatTracker().getDeathMessage());
+				            }
+				        }
+						MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(e.getEntityLiving(), e.getSource()));
+					}
+				}
 			}
 		}
 	}
@@ -236,13 +282,6 @@ public class LifeHandler {
 	 */
 	static void onConfigFinishChanged() {
 		LifeHandler l = Main.proxy.getLifeHandler();
-		for(EntityPlayerMP p : l.assertValidLives()){
-			if (!((Double)l.getLives(p)).isInfinite()){
-				p.sendMessage(new TextComponentString("You have " + (int)l.getLives(p) + " lives remaining"));
-			}
-			else{
-				p.sendMessage(new TextComponentString("You have " + (char)0x221E + " lives remaining."));
-			}
-		}
+		l.assertValidLives();
 	}
 }
