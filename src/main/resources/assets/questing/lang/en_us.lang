@@ -1,0 +1,10 @@
+questing.life.change.unnatural=Your life total was changed via commands
+questing.life.change.add=You gained a life!
+
+questing.commands.lives.outofbounds=Could not change life total, %s is smaller than 0 or larger than the maximum life count
+questing.commands.lives.success=Successfully changed player's life total
+questing.commands.lives.usage=lives <set|add|remove> <amount> <player>
+
+item.questing.questbook.name=Quest Book
+
+itemGroup.questing=Superior Questing
