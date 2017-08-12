@@ -17,7 +17,7 @@ public interface Debuggable {
 			if (x[2].getClassName().equals(Debuggable.class.getName())){
 				i++;
 			}
-			Main.LOGGER.debug("[" + x[i].getClassName().substring(x[i].getClassName().lastIndexOf('.') + 1) + " " + x[i].getLineNumber() + "]: " + o);
+			Main.LOGGER.info("[" + x[i].getClassName().substring(x[i].getClassName().lastIndexOf('.') + 1) + " " + x[i].getLineNumber() + "]: " + o);
 		}
 	}
 }
