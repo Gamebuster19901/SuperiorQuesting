@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "questing:hearts",
+    "ingredients": [
+            {
+                "item": "questing:heartcanister",
+                "data": 2
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            }
+    ],
+    "result": {
+        "item": "questing:heartcanister",
+        "data": 1
+    }
+}

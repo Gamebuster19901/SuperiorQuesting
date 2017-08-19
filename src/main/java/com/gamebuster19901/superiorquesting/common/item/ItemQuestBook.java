@@ -10,7 +10,7 @@ public class ItemQuestBook extends Item{
 	public static ItemQuestBook ITEM = new ItemQuestBook();
 	public ItemQuestBook(){
 		super();
-		this.setCreativeTab(CreativeTabQuesting.TAB);
+		this.setCreativeTab(CreativeTabQuesting.QUESTING_TAB);
 		this.setUnlocalizedName(Main.MODID + ".questbook");
 		this.setRegistryName(new ResourceLocation(Main.MODID + ":questbook"));
 	}

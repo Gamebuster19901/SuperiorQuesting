@@ -1,0 +1,10 @@
+{
+	"confirmed": {
+		"category": "music",
+		"sounds": [{
+			"name": "questing:confirmed",
+			"stream": true
+		}],
+		"subtitle": "questing.subtitle.confirmed"
+	}
+}

@@ -7,7 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
 public class CreativeTabQuesting extends CreativeTabs{
-	public static final CreativeTabQuesting TAB = new CreativeTabQuesting(Main.MODID);
+	public static final CreativeTabQuesting QUESTING_TAB = new CreativeTabQuesting(Main.MODID);
 	public CreativeTabQuesting(String label) {
 		super(label);
 	}
@@ -15,7 +15,7 @@ public class CreativeTabQuesting extends CreativeTabs{
 	@Override
 	public ItemStack getTabIconItem() {
 		// TODO Auto-generated method stub
-		return new ItemStack(new ItemQuestBook(),1);
+		return new ItemStack(ItemQuestBook.ITEM,1);
 	}
 	
 }

@@ -91,7 +91,7 @@ public class CommandLives extends CommandBase implements ICommand, Debuggable{
 							throw new NumberInvalidException(MODID + ".commands.lives.outofbounds", new Object[]{args[1]});
 						}
 						else if(args[0].equals("set")){
-							if(Main.proxy.getLifeHandler().setLives(p, lives)){
+							if(Main.proxy.getLifeHandler().setLives(p, lives, true)){
 								p.sendMessage(new TextComponentTranslation(MODID + ".life.change.unnatural"));
 								sender.sendMessage(new TextComponentTranslation(MODID + ".commands.lives.success"));
 								return;

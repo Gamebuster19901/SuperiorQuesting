@@ -1,10 +1,19 @@
 questing.life.change.unnatural=Your life total was changed via commands
-questing.life.change.add=You gained a life!
+questing.life.change.toomany=You already have the maximum life count of %s
+questing.life.change.infinity=You already have infinite lives!
+questing.life.change.add=You gained a life! You now have %s lives
 
 questing.commands.lives.outofbounds=Could not change life total, %s is smaller than 0 or larger than the maximum life count
 questing.commands.lives.success=Successfully changed player's life total
 questing.commands.lives.usage=lives <set|add|remove> <amount> <player>
 
+questing.subtitle.confirmed=Confirmed
+
 item.questing.questbook.name=Quest Book
+item.questing.heartcanisterfull.name=Extra Life
+item.questing.heartcanisterthreequarters.name=Three Quarters of a Life
+item.questing.heartcanisterhalf.name=Half Life
+item.questing.heartcanisterquarter.name=Quarter Life
+item.questing.heartcanisterempty.name=Empty Heart Canister
 
 itemGroup.questing=Superior Questing

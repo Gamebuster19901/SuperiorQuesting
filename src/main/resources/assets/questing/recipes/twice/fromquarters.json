@@ -1,0 +1,43 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "questing:hearts",
+    "ingredients": [
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            },
+            {
+                "item": "questing:heartcanister",
+                "data": 3
+            }
+    ],
+    "result": {
+        "item": "questing:heartcanister",
+        "count": 2,
+        "data": 0
+    }
+}
