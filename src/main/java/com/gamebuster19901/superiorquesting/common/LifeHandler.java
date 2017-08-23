@@ -198,6 +198,25 @@ public class LifeHandler extends MultiplayerHandler implements Assertable{
 		}
 	}
 	
+	/**
+	 * Messages a player another player's life total
+	 * 
+	 * @param req the player to message
+	 * @param p the player's life total to message
+	 */
+	public void messageLives(EntityPlayerMP req, EntityPlayerMP p){
+		Double lives = getLives(p);
+		if(lives < 1d){
+			req.sendMessage(new TextComponentString(p + " has lost all of their lives!"));
+		}
+		else if (!lives.isInfinite()){
+			req.sendMessage(new TextComponentString(p + " has " + (long)getLives(p) + " lives remaining."));
+		}
+		else{
+			req.sendMessage(new TextComponentString(p + " has " + (char)0x221E + " lives remaining."));
+		}
+	}
+	
 	@Override
 	public void playerLoggedIn(PlayerLoggedInEvent e){
 		EntityPlayerMP p = (EntityPlayerMP)e.player;

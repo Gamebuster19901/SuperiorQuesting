@@ -62,6 +62,19 @@ public class CommandLives extends CommandBase implements ICommand, Debuggable{
 				return;
 			}
 		}
+		if(!sender.canUseCommand(2, "give")){
+			throw new CommandException("commands.generic.permission");
+		}
+		if (args.length == 1){
+			if(sender instanceof EntityPlayerMP){
+				for(String s : server.getOnlinePlayerNames()){
+					if (s.equals(args[2]) || getPlayer(server, sender, s).getUniqueID().toString().equals(args[2])){
+						Main.proxy.getLifeHandler().messageLives((EntityPlayerMP)sender, getPlayer(server, sender, args[2]));
+						return;
+					}
+				}
+			}
+		}
 		if (args.length == 2){
 			args = new String[]{args[0], args[1], sender.getName()};
 		}
