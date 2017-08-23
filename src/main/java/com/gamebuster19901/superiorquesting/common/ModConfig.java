@@ -2,6 +2,8 @@ package com.gamebuster19901.superiorquesting.common;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
+import com.gamebuster19901.superiorquesting.Main;
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -33,21 +35,6 @@ public class ModConfig{
 		@Config.Name((char)0xE002 + "Start With Book")
 		@Config.Comment("If the player starts the world with a quest book")
 		public boolean hasBook = true;
-	}
-	
-	/*
-	 * Config end
-	 */
-
-	@Mod.EventBusSubscriber(modid = MODID)
-	private static class EventHandler {
-		@SubscribeEvent
-		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
-			if (event.getModID().equals(MODID)) {
-				ConfigManager.sync(MODID, Config.Type.INSTANCE);
-				LifeHandler.onConfigFinishChanged();
-			}
-		}
 	}
 }
 

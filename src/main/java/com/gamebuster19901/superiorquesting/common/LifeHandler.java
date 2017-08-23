@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public class LifeHandler implements Assertable{
+public class LifeHandler extends MultiplayerHandler implements Assertable{
 	private static final String LIFE_KEY = MODID + ":lives"; 
 	/**
 	 * Adds one life to the player, if the life total would be less than 1, it is set to 1 instead, it if is greater than the max life count, it is unchanged.
@@ -198,35 +198,9 @@ public class LifeHandler implements Assertable{
 		}
 	}
 	
-	/**
-	 * Gets the NBTTagCompound that persists with a player after death
-	 * @param p the player whose tag to retrieve
-	 * @return the NBTTagCompound that persists with a player after death
-	 * @throws AssertionError if the tag doesn't exist
-	 */
-	private NBTTagCompound getPersistantTag(EntityPlayerMP p){
-		NBTTagCompound entityData = p.getEntityData();
-		NBTTagCompound persist;
-		Assert(hasPersistantTag(p),("No persistent tag found for player " + p.getName()));
-		return persist = entityData.getCompoundTag(p.PERSISTED_NBT_TAG);
-	}
-	
-	/**
-	 * Checks if the NBTTagCompound that persists with a player after death exists
-	 * @param p the player to check
-	 * @return true if it exists, false otherwise
-	 */
-	private boolean hasPersistantTag(EntityPlayerMP p){
-		return p.getEntityData().hasKey(p.PERSISTED_NBT_TAG);
-	}
-	
-	@SubscribeEvent
-	public void playerLoggedInEvent(PlayerLoggedInEvent e){
+	@Override
+	public void playerLoggedIn(PlayerLoggedInEvent e){
 		EntityPlayerMP p = (EntityPlayerMP)e.player;
-		if (!hasPersistantTag(p)){
-			p.getEntityData().setTag(p.PERSISTED_NBT_TAG, new NBTTagCompound());
-		}
-		NBTTagCompound nbt = getPersistantTag(p);
 		if(!assertValidLives(p)){
 			messageLives(p);
 		}
@@ -272,7 +246,8 @@ public class LifeHandler implements Assertable{
 	/**
 	 * Used to make sure that lives are still within bounds after the config has changed
 	 */
-	static void onConfigFinishChanged() {
+	@Override
+	protected void onConfigFinishChanged() {
 		LifeHandler l = Main.proxy.getLifeHandler();
 		l.assertValidLives();
 	}
