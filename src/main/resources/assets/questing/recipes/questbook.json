@@ -1,12 +1,14 @@
 {
-    "type": "minecraft:crafting_shapeless",
+    "type": "forge:ore_shapeless",
     "group": "questing:",
     "ingredients": [
             {
-                "item": "minecraft:book"
+                "type": "forge:ore_dict",
+                "ore": "book"
             },
             {
-                "item": "minecraft:gold_nugget"
+                "type": "forge:ore_dict",
+                "ore": "nuggetGold"
             }
     ],
     "result": {
