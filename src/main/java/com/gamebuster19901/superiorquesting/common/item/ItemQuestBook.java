@@ -7,7 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 public class ItemQuestBook extends Item{
-	public static ItemQuestBook ITEM = new ItemQuestBook();
+	public static final ItemQuestBook ITEM = new ItemQuestBook();
 	public ItemQuestBook(){
 		super();
 		this.setCreativeTab(CreativeTabQuesting.QUESTING_TAB);
