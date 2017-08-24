@@ -19,6 +19,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -26,6 +28,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.oredict.OreDictionary;
 
 public final class Confirmed implements Debuggable{
 	private Minecraft mc = Minecraft.getMinecraft();
@@ -92,6 +95,20 @@ public final class Confirmed implements Debuggable{
 						p.world.playSound(p.posX, p.posY, p.posZ, ClientProxy.CONFIRMED, SoundCategory.MUSIC, 99999, 1, false);
 					}
 					return;
+				}
+			}
+			/*
+			 * Some debug things
+			 */
+			if(Debuggable.debug){
+				if (!p.getHeldItemMainhand().isEmpty()){
+					int[] ids = OreDictionary.getOreIDs(p.getHeldItemMainhand());
+					for(int id : ids){
+						debug(OreDictionary.getOreName(id));
+					}
+					if(ids.length == 0){
+						debug("none");
+					}
 				}
 			}
 		}
