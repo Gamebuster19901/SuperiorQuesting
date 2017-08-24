@@ -10,6 +10,7 @@ import com.gamebuster19901.superiorquesting.common.command.CommandLives;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class Proxy implements Debuggable{
 	private static final LifeHandler LIFE_HANDLER = new LifeHandler();
@@ -33,6 +35,7 @@ public abstract class Proxy implements Debuggable{
 	
 	public void init(FMLInitializationEvent e){
 		NetworkRegistry.INSTANCE.registerGuiHandler(Main.getInstance(), new GuiHandler());
+		OreDictionary.registerOre("book", Items.BOOK);
 	}
 	
 	public void postInit(FMLPostInitializationEvent e){
