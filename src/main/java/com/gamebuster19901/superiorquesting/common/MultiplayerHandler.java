@@ -2,8 +2,6 @@ package com.gamebuster19901.superiorquesting.common;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
-import com.gamebuster19901.superiorquesting.Main;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Config;

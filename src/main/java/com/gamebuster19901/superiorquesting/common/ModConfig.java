@@ -2,13 +2,7 @@ package com.gamebuster19901.superiorquesting.common;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
-import com.gamebuster19901.superiorquesting.Main;
-
 import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Config(modid = MODID)
 public class ModConfig{
