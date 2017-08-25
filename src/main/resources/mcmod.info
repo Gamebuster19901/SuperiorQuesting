@@ -2,7 +2,7 @@
 {
   "modid": "questing",
   "name": "Superior Questing",
-  "description": "Example placeholder mod.",
+  "description": "A superior questing mod",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
