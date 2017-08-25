@@ -20,6 +20,11 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 minecraft {
     version = "1.12.1-14.22.0.2460"
     runDir = "run"
@@ -55,6 +60,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
+    shade 'org.jcodec:jcodec-javase:0.1.9'
 }
 
 processResources {
