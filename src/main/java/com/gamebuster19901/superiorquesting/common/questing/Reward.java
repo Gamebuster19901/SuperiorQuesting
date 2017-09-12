@@ -1,18 +1,12 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import java.util.ArrayList;
-
 import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class Reward implements Rewardable{
 
