@@ -8,9 +8,14 @@ import com.gamebuster19901.superiorquesting.common.LoginHandler;
 import com.gamebuster19901.superiorquesting.common.command.CommandLives;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
+import com.gamebuster19901.superiorquesting.common.questing.ExperienceReward;
+import com.gamebuster19901.superiorquesting.common.questing.ItemReward;
+import com.gamebuster19901.superiorquesting.common.questing.RewardType;
 
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -37,7 +42,8 @@ public abstract class Proxy implements Debuggable{
 	}
 	
 	public void postInit(FMLPostInitializationEvent e){
-		
+		RewardType.registerRewardType(ItemReward.class, TextureMap.LOCATION_MISSING_TEXTURE, "Item Reward", "Rewards the player with some items");
+		RewardType.registerRewardType(ExperienceReward.class, new ResourceLocation("textures/entity/experience_orb.png"), "xP reward", "Rewards the player with some experience");
 	}
 	
 	public LifeHandler getLifeHandler(){
