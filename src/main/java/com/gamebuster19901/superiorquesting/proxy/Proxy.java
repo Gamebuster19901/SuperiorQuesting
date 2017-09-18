@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.proxy;
 
+import java.io.File;
+
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
@@ -27,6 +29,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class Proxy implements Debuggable{
+	private static File questDirectory;
+	
 	private static final LifeHandler LIFE_HANDLER = new LifeHandler();
 	private static final LoginHandler LOGIN_HANDLER = new LoginHandler();
 	
@@ -34,6 +38,7 @@ public abstract class Proxy implements Debuggable{
 		MinecraftForge.EVENT_BUS.register(LIFE_HANDLER);
 		MinecraftForge.EVENT_BUS.register(LOGIN_HANDLER);
 		MinecraftForge.EVENT_BUS.register(this);
+		questDirectory = new File(e.getModConfigurationDirectory().getAbsolutePath() + "/questdata");
 	}
 	
 	public void init(FMLInitializationEvent e){
@@ -58,5 +63,9 @@ public abstract class Proxy implements Debuggable{
 	
 	public void serverInit(FMLServerStartingEvent e){
 		e.registerServerCommand(new CommandLives());
+	}
+	
+	public final File getQuestDirectory() {
+		return questDirectory;
 	}
 }

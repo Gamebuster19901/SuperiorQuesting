@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.GameType;
@@ -230,7 +231,7 @@ public class LifeHandler extends MultiplayerHandler implements Assertable{
 		if (e.getEntity() instanceof EntityPlayer){
 			if((e.getEntityLiving().getHealth() - e.getAmount() <= 0)){
 				EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
-				if(!(p.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.TOTEM_OF_UNDYING) && !(p.getHeldItem(EnumHand.OFF_HAND).getItem() == Items.TOTEM_OF_UNDYING)){
+				if(!(p.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.TOTEM_OF_UNDYING && e.getSource() != DamageSource.OUT_OF_WORLD) && !(p.getHeldItem(EnumHand.OFF_HAND).getItem() == Items.TOTEM_OF_UNDYING)){
 					if(removeLife(p) && p.isSpectator()){
 						e.setCanceled(true);
 				        boolean flag = e.getEntity().world.getGameRules().getBoolean("showDeathMessages");

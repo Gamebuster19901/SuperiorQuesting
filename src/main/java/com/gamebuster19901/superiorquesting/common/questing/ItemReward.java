@@ -37,4 +37,11 @@ public class ItemReward extends Reward{
 			Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 		}
 	}
+	@Override
+	public boolean equals(Object o) {
+		if(o.getClass() == this.getClass()) {
+			return reward.equals(((ItemReward)o).reward);
+		}
+		return false;
+	}
 }
