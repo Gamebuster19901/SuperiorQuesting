@@ -13,8 +13,8 @@ public class ExperienceReward extends Reward{
 	private Integer amount;
 	private boolean isLevels;
 	
-	public ExperienceReward(int exp, boolean isLevels) {
-		super(true); //quests cannot have more than one experience reward
+	public ExperienceReward(Quest quest, int exp, boolean isLevels) {
+		super(quest, true); //quests cannot have more than one experience reward
 		amount = new Integer(exp);
 		this.isLevels = isLevels; 
 		orb = new EntityXPOrb(null, 0, 0, 0, 2477);

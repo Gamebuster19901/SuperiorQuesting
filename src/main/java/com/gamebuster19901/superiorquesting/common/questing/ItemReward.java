@@ -9,8 +9,8 @@ import net.minecraft.item.ItemStack;
 public class ItemReward extends Reward{
 	private ItemStack reward;
 	
-	public ItemReward(ItemStack i) {
-		super(false); //quests can have more than one item reward
+	public ItemReward(Quest quest, ItemStack i) {
+		super(quest, false); //quests can have more than one item reward
 		if(!i.isEmpty()) {
 			reward = i;
 			return;
