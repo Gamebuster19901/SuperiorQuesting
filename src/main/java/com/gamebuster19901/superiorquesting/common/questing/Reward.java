@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class Reward implements Rewardable, Comparable{
+public abstract class Reward implements Rewardable{
 	//used to check if a quest is allowed to have more than one of this reward type
 	private final boolean unique;
 	
