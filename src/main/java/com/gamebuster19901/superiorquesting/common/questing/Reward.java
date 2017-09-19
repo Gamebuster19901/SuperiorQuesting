@@ -40,10 +40,6 @@ public abstract class Reward implements Rewardable{
 		
 		Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 	}
-	
-	public final boolean hasRewarded(EntityPlayer p) {
-		return true;
-	}
 
 	@Override
 	public final int compareTo(Object o) {
@@ -54,8 +50,8 @@ public abstract class Reward implements Rewardable{
 	public abstract boolean equals(Object o);
 
 	@Override
-	public boolean hasCollected(EntityPlayer p) {
-		//TODO check if player has collected rewards from this quest
+	public final boolean hasCollected(EntityPlayer p) {
+		//TODO check if player has collected this reward
 	}
 	
 	public final boolean isUnique() {
