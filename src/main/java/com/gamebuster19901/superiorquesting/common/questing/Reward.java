@@ -10,10 +10,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class Reward implements Rewardable{
+	private final Quest parent;
+	
 	//used to check if a quest is allowed to have more than one of this reward type
 	private final boolean unique;
 	
-	public Reward(boolean isUnique) {
+	public Reward(Quest parent, boolean isUnique) {
+		this.parent = parent;
 		unique = isUnique;
 	}
 	
@@ -51,7 +54,7 @@ public abstract class Reward implements Rewardable{
 
 	@Override
 	public final boolean hasCollected(EntityPlayer p) {
-		//TODO check if player has collected this reward
+		return parent.hasCollected(p);
 	}
 	
 	public final boolean isUnique() {
