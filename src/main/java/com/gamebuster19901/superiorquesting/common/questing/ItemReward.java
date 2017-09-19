@@ -10,6 +10,7 @@ public class ItemReward extends Reward{
 	private ItemStack reward;
 	
 	public ItemReward(ItemStack i) {
+		super(false); //quests can have more than one item reward
 		if(!i.isEmpty()) {
 			reward = i;
 			return;
@@ -39,8 +40,9 @@ public class ItemReward extends Reward{
 	}
 	@Override
 	public boolean equals(Object o) {
-		if(o.getClass() == this.getClass()) {
-			return reward.equals(((ItemReward)o).reward);
+		if(o instanceof ItemReward) {
+			ItemReward r = (ItemReward)o;
+			return ItemStack.areItemStacksEqual(reward, r.reward);
 		}
 		return false;
 	}

@@ -14,6 +14,7 @@ public class ExperienceReward extends Reward{
 	private boolean isLevels;
 	
 	public ExperienceReward(int exp, boolean isLevels) {
+		super(true); //quests cannot have more than one experience reward
 		amount = new Integer(exp);
 		this.isLevels = isLevels; 
 		orb = new EntityXPOrb(null, 0, 0, 0, 2477);
@@ -39,5 +40,22 @@ public class ExperienceReward extends Reward{
         renderer.doRender(orb, x, y, 0, 0, 0f);
         String suffix = (isLevels) ? "L" : "xP";
         Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, new ItemStack(Items.AIR), x, y, amount + suffix);
+	}
+	
+	public int getAmount() {
+		return amount;
+	}
+	
+	public boolean isLevels() {
+		return isLevels;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof ExperienceReward) {
+			ExperienceReward r = (ExperienceReward)o;
+			return r.isLevels() == isLevels && r.getAmount() == getAmount();
+		}
+		return false;
 	}
 }

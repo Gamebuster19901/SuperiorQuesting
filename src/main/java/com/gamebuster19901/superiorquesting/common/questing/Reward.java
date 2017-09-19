@@ -10,6 +10,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class Reward implements Rewardable, Comparable{
+	//used to check if a quest is allowed to have more than one of this reward type
+	private final boolean unique;
+	
+	public Reward(boolean isUnique) {
+		unique = isUnique;
+	}
 	
 	/**
 	 * renders this reward onto the current GUI, at x,y
@@ -50,5 +56,9 @@ public abstract class Reward implements Rewardable, Comparable{
 	@Override
 	public boolean hasCollected(EntityPlayer p) {
 		//TODO check if player has collected rewards from this quest
+	}
+	
+	public final boolean isUnique() {
+		return unique;
 	}
 }
