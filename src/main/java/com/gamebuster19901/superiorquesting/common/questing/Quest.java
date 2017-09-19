@@ -69,6 +69,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	/**
 	 * if the player can collect rewards for this quest
 	 * 
+	 * @param p the player to check
+	 * 
 	 * @return false if they have already collected the reward or they have not finished the quest, true otherwise
 	 */
 	@Override
@@ -79,6 +81,11 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		return isFinished(p);
 	}
 
+	/**
+	 * Awards the player
+	 * 
+	 * @param p the player to award
+	 */
 	@Override
 	public void award(EntityPlayer p) {
 		for(Reward r : rewards) {
@@ -86,6 +93,11 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		}
 	}
 
+	/**
+	 * returns true if the player has completed all prerequisites, and this quest, false otherwise
+	 * 
+	 * @param p the player to check
+	 */
 	@Override
 	public boolean isFinished(EntityPlayer p) {
 		for(Assignment a : prerequisites) {
@@ -101,6 +113,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	
 	/**
 	 * causes a player to complete all prerequisites for this quest (including other quests), then completes this quest
+	 * 
+	 * @param p the player to complete this quest on
 	 */
 	@Override
 	public void finish(EntityPlayer p) {
@@ -110,20 +124,34 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		//mark this as finished
 	}
 	
+	/**
+	 * returns true if the player has collected the reward for this quest, false otherwise
+	 * @param p the player to check
+	 */
 	@Override
 	public boolean hasCollected(EntityPlayer p) {
 		
 	}
 	
-	private boolean hasBeenNotified(EntityPlayer p) {
+	/**
+	 * returns true if the player has been notified of this quest's completion, false otherwise
+	 * @param p the payer to check
+	 */
+	private boolean hasNotified(EntityPlayer p) {
 		
 	}
 	
+	/**
+	 * @return the title of this quest
+	 */
 	@Override
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * @return the description of this quest
+	 */
 	@Override
 	public String getDescription() {
 		return description;
@@ -148,38 +176,81 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		}
 	}
 	
+	/**
+	 * adds a prerequisite to this quest, a prerequisite by default is another Quest or a Task
+	 * @param a the assignment to add
+	 */
 	void addPrerequisite(Assignment a) {
 		prerequisites.add(a);
 	}
 	
+	/**
+	 * removes a prerequisite from this quest
+	 * @param a the assignment to remove
+	 */
+	void removePrerequisite(Assignment a) {
+		prerequisites.remove(a);
+	}
+	
+	/**
+	 * adds a reward to this quest
+	 * @param r the reward to add
+	 */
 	void addReward(Reward r) {
 		rewards.add(r);
 	}
 	
-	void addPrerequisites(Collection<Assignment> assignments) {
-		for(Assignment a : assignments) {
-			addPrerequisite(a);
-		}
-	}
-	
-	void removePrerequisites(Collection<Assignment> assignments) {
-		for(Assignment a : assignments) {
-			addPrerequisite(a);
-		}
-	}
-	
+	/**
+	 * adds all of the rewards in the passed collection to this quest
+	 * @param rewards the rewards to add
+	 */
 	void addRewards(Collection<Reward> rewards) {
 		for(Reward r : rewards) {
 			addReward(r);
 		}
 	}
 	
+	/**
+	 * removes a reward from this quest
+	 * @param r the reward to remove
+	 */
+	void removeReward(Reward r) {
+		rewards.remove(r);
+	}
+	
+	/**
+	 * removes all rewards in the passed collection from this quest
+	 * @param rewards the rewards to remove
+	 */
 	void removeRewards(Collection<Reward> rewards) {
 		for(Reward r : rewards) {
 			addReward(r);
 		}
 	}
+	
+	/**
+	 * adds all of the prerequisites in the passed collection to this quest
+	 * @param assignments the prerequisites to add
+	 */
+	void addPrerequisites(Collection<Assignment> assignments) {
+		for(Assignment a : assignments) {
+			addPrerequisite(a);
+		}
+	}
+	
+	/**
+	 * removes all of the prerequisites in the passed collection to this quest
+	 * @param assignments the prerequisites to remove
+	 */
+	void removePrerequisites(Collection<Assignment> assignments) {
+		for(Assignment a : assignments) {
+			removePrerequisite(a);
+		}
+	}
 
+	/**
+	 * @see Assignment.compareTo
+	 */
 	@Override
 	public final int compareTo(Object o) {
 		if(o instanceof Quest) {
