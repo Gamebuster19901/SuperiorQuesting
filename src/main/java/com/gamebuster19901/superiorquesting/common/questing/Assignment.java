@@ -15,28 +15,38 @@ interface Assignment extends Comparable{
 	 * @param p the player to check
 	 * @return true if the player has completed this assignment, false otherwise.
 	 */
-	public abstract boolean isFinished(EntityPlayer p);
+	public boolean isFinished(EntityPlayer p);
 	
 	/**
 	 * Checks if the player has been notified that this Assignment has been completed.
 	 * @param p the player to check
 	 * @return true if the player has been notified, false otherwise.
 	 */
-	public abstract boolean hasNotified(EntityPlayer p);
+	public boolean hasNotified(EntityPlayer p);
 	
 	/**
 	 * Completes this assignment for the player. This should complete any prerequisites, if applicable.
 	 * @param p the player to complete
 	 */
-	public abstract void finish(EntityPlayer p);
+	public void finish(EntityPlayer p);
 	
 	/**
 	 * @return the title of this assignment
 	 */
-	public abstract String getTitle();
+	public String getTitle();
 	
 	/**
 	 * @return the description of this assignment
 	 */
-	public abstract String getDescription();
+	public String getDescription();
+	
+	/**
+	 * Used to order different types of assignments.
+	 * 
+	 * Quests should always be less than everything else, so they come first in lists. Then Tasks come second.
+	 * 
+	 * @see Comparable.compareTo
+	 */
+	@Override
+	public int compareTo(Object o);
 }
