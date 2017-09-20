@@ -58,4 +58,12 @@ public class ExperienceReward extends Reward{
 		}
 		return false;
 	}
+
+	@Override
+	public ExperienceReward constructFromArray(String... parameters) {
+		if(parameters.length != 2) {
+			throw new IndexOutOfBoundsException(parameters.length + " != 3");
+		}
+		return new ExperienceReward(Quest.fromString(parameters[0]), Integer.parseInt(parameters[1]), Boolean.parseBoolean(parameters[2]));
+	}
 }

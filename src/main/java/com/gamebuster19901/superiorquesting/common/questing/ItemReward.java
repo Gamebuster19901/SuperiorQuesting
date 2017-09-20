@@ -46,4 +46,10 @@ public class ItemReward extends Reward{
 		}
 		return false;
 	}
+	
+	@Override
+	public ItemReward constructFromArray(String... parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

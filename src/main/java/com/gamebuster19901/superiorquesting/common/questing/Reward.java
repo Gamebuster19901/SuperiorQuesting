@@ -57,6 +57,8 @@ public abstract class Reward implements Rewardable{
 		return parent.hasCollected(p);
 	}
 	
+	public abstract Reward constructFromArray(String... parameters);
+	
 	public final boolean isUnique() {
 		return unique;
 	}

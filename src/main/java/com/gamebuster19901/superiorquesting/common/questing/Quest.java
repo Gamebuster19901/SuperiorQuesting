@@ -267,4 +267,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		}
 		return 0;
 	}
+
+	public static Quest fromString(String title) {
+		return QuestHandler.getQuest(title);
+	}
 }
