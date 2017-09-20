@@ -144,7 +144,7 @@ public final class QuestHandler extends MultiplayerHandler{
 	@Override
 	protected void playerLoggedIn(PlayerLoggedInEvent e) {
 		if(hasQuestNBT((EntityPlayerMP)e.player)) {
-			e.player.nbt
+			
 		}
 	}
 }
