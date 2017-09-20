@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import static com.gamebuster19901.superiorquesting.Main.MODID;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,23 +15,29 @@ import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
-public class QuestHandler{
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+
+public final class QuestHandler extends MultiplayerHandler{
+	private static final String QUEST_KEY = MODID + ":quests"; 
 	private static final HashMap<String,Quest> QUESTS = new HashMap<String, Quest>();
 	
 	private static final int VERSION = 0;
 	private static final File QUEST_DATA_FILE = new File(Main.proxy.getQuestDirectory().getAbsolutePath() + "/quests.config");
-	static {
+	{
 		if (!QUEST_DATA_FILE.exists()) {
 			QUEST_DATA_FILE.getParentFile().mkdirs();
 		}
 	}
 	
-	private static final void convertConfig(int prevVersion, int nextVersion) {
+	private  final void convertConfig(int prevVersion, int nextVersion) {
 		try {
 			if(nextVersion > VERSION) {
 				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
@@ -56,21 +64,21 @@ public class QuestHandler{
 		}
 	}
 	
-	private static final void add(String title, Quest quest) {
+	private  final void add(String title, Quest quest) {
 		if(QUESTS.containsKey(title)) {
 			throw new DuplicateKeyException(title);
 		}
 		QUESTS.put(title, quest);
 	}
 	
-	private static final void remove(String title) {
+	private  final void remove(String title) {
 		if(!QUESTS.containsKey(title)) {
 			throw new NonExistantKeyException(title);
 		}
 		QUESTS.remove(title);
 	}
 	
-	private static final boolean ChangeTitle(String prevTitle, String newTitle, Quest quest) {
+	private  final boolean ChangeTitle(String prevTitle, String newTitle, Quest quest) {
 		if(QUESTS.containsKey(prevTitle) && !QUESTS.containsKey(newTitle)) {
 			Quest q = QUESTS.remove(prevTitle);
 			QUESTS.put(newTitle, q);
@@ -79,7 +87,7 @@ public class QuestHandler{
 		return false;
 	}
 	
-	private static final int getConfigFileVersion() {
+	private  final int getConfigFileVersion() {
 		int x = -1;
 		Stream<String> lines = null;
 		try{
@@ -95,7 +103,7 @@ public class QuestHandler{
 		return x;
 	}
 	
-	private static final void saveOverConfigFile() {
+	private  final void saveOverConfigFile() {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(new FileWriter(QUEST_DATA_FILE.toURI().toString()));
@@ -111,7 +119,32 @@ public class QuestHandler{
 		}
 	}
 	
-	private static final void saveOverHashMap() {
+	private  final void saveOverHashMap() {
 		
+	}
+	
+	final boolean hasNotified(Quest q, EntityPlayer p) {
+		
+	}
+	
+	final boolean hasCollected(Quest q, EntityPlayer p) {
+		
+	}
+	final Quest getQuest(String title) {
+		return QUESTS.get(title);
+	}
+	
+	public boolean hasQuestNBT(EntityPlayerMP p){
+		return getPersistantTag(p).hasKey(QUEST_KEY);
+	}
+
+	@Override
+	protected void onConfigFinishChanged() {}
+
+	@Override
+	protected void playerLoggedIn(PlayerLoggedInEvent e) {
+		if(hasQuestNBT((EntityPlayerMP)e.player)) {
+			e.player.nbt
+		}
 	}
 }
