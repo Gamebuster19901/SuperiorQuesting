@@ -231,7 +231,7 @@ public class LifeHandler extends MultiplayerHandler implements Assertable{
 		if (e.getEntity() instanceof EntityPlayer){
 			if((e.getEntityLiving().getHealth() - e.getAmount() <= 0)){
 				EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
-				if(!(p.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.TOTEM_OF_UNDYING && e.getSource() != DamageSource.OUT_OF_WORLD) && !(p.getHeldItem(EnumHand.OFF_HAND).getItem() == Items.TOTEM_OF_UNDYING)){
+				if(!(p.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.TOTEM_OF_UNDYING && !(p.getHeldItem(EnumHand.OFF_HAND).getItem() == Items.TOTEM_OF_UNDYING)) || e.getSource() == DamageSource.OUT_OF_WORLD){
 					if(removeLife(p) && p.isSpectator()){
 						e.setCanceled(true);
 				        boolean flag = e.getEntity().world.getGameRules().getBoolean("showDeathMessages");
