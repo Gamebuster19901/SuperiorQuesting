@@ -31,13 +31,13 @@ public final class QuestHandler extends MultiplayerHandler{
 	
 	private static final int VERSION = 0;
 	private static final File QUEST_DATA_FILE = new File(Main.proxy.getQuestDirectory().getAbsolutePath() + "/quests.config");
-	{
+	static {
 		if (!QUEST_DATA_FILE.exists()) {
 			QUEST_DATA_FILE.getParentFile().mkdirs();
 		}
 	}
 	
-	private  final void convertConfig(int prevVersion, int nextVersion) {
+	private final void convertConfig(int prevVersion, int nextVersion) {
 		try {
 			if(nextVersion > VERSION) {
 				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
@@ -64,21 +64,21 @@ public final class QuestHandler extends MultiplayerHandler{
 		}
 	}
 	
-	private  final void add(String title, Quest quest) {
+	private final void add(String title, Quest quest) {
 		if(QUESTS.containsKey(title)) {
 			throw new DuplicateKeyException(title);
 		}
 		QUESTS.put(title, quest);
 	}
 	
-	private  final void remove(String title) {
+	private final void remove(String title) {
 		if(!QUESTS.containsKey(title)) {
 			throw new NonExistantKeyException(title);
 		}
 		QUESTS.remove(title);
 	}
 	
-	private  final boolean ChangeTitle(String prevTitle, String newTitle, Quest quest) {
+	private final boolean ChangeTitle(String prevTitle, String newTitle, Quest quest) {
 		if(QUESTS.containsKey(prevTitle) && !QUESTS.containsKey(newTitle)) {
 			Quest q = QUESTS.remove(prevTitle);
 			QUESTS.put(newTitle, q);
@@ -87,7 +87,7 @@ public final class QuestHandler extends MultiplayerHandler{
 		return false;
 	}
 	
-	private  final int getConfigFileVersion() {
+	private final int getConfigFileVersion() {
 		int x = -1;
 		Stream<String> lines = null;
 		try{
@@ -103,7 +103,7 @@ public final class QuestHandler extends MultiplayerHandler{
 		return x;
 	}
 	
-	private  final void saveOverConfigFile() {
+	private final void saveOverConfigFile() {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(new FileWriter(QUEST_DATA_FILE.toURI().toString()));
@@ -119,7 +119,7 @@ public final class QuestHandler extends MultiplayerHandler{
 		}
 	}
 	
-	private  final void saveOverHashMap() {
+	private final void saveOverHashMap() {
 		
 	}
 	
