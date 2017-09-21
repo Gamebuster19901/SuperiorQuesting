@@ -247,6 +247,10 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 			removePrerequisite(a);
 		}
 	}
+	
+	TreeSet<Assignment> prerequisites(){
+		return prerequisites;
+	}
 
 	/**
 	 * @see Assignment.compareTo
@@ -266,6 +270,11 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 			return (((Comparable) o).compareTo(this)) * -1;
 		}
 		return 0;
+	}
+	
+	@Override
+	public String toString() {
+		return getTitle();
 	}
 
 	public static Quest fromString(String title) {

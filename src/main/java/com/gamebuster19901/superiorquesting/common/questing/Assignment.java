@@ -49,4 +49,7 @@ interface Assignment extends Comparable{
 	 */
 	@Override
 	public int compareTo(Object o);
+	
+	@Override
+	public String toString();
 }

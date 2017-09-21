@@ -108,7 +108,9 @@ public final class QuestHandler extends MultiplayerHandler{
 		try {
 			pw = new PrintWriter(new FileWriter(QUEST_DATA_FILE.toURI().toString()));
 			for(Quest q : QUESTS.values()) {
-				//write
+				String data = '|' + q.getTitle() + '|' + q.getDescription() + '|' + "prereqs" + '|';
+				for(Assignment a : q.)
+				pw.write('|' + q.getTitle() + '|' + q.getDescription() + '|' q.);
 			}
 		}
 		catch(IOException e) {
