@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public class LoginHandler extends MultiplayerHandler{
+public final class LoginHandler extends MultiplayerHandler{
 	private static final String LOGIN_KEY = MODID + ":loggedin"; 
 	
 	@Override

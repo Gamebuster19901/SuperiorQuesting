@@ -4,7 +4,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public class ServerProxy extends Proxy {
+public final class ServerProxy extends Proxy {
 	public void preInit(FMLPreInitializationEvent e){
 		super.preInit(e);
 	}

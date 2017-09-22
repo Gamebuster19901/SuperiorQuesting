@@ -6,7 +6,7 @@ import com.gamebuster19901.superiorquesting.Main;
 
 import net.minecraft.util.ResourceLocation;
 
-public class TaskType {
+public final class TaskType {
 	public Class<? extends Task> task;
 	public ResourceLocation image;
 	public String name;

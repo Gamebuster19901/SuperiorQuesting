@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemHeartCanister extends Item{
+public final class ItemHeartCanister extends Item{
 	public static final ItemHeartCanister ITEM = new ItemHeartCanister();
 	private static final LifeHandler LIFE_HANDLER = Main.proxy.getLifeHandler();
 	

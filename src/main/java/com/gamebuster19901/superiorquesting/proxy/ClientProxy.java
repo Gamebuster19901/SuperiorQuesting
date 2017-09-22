@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 @Mod.EventBusSubscriber()
-public class ClientProxy extends Proxy {
+public final class ClientProxy extends Proxy {
 	public void preInit(FMLPreInitializationEvent e){
 		super.preInit(e);
 		MinecraftForge.EVENT_BUS.register(this); //so forge knows about your modelRegistryEvent that is in this class

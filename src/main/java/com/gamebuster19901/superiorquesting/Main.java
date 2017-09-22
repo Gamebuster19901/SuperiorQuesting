@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Main.MODID, name = Main.MODNAME, version = Main.VERSION)
-public class Main implements Assertable
+public final class Main implements Assertable
 {
 	private static Main instance;
 	

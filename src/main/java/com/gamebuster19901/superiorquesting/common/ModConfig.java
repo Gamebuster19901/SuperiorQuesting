@@ -5,7 +5,7 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 import net.minecraftforge.common.config.Config;
 
 @Config(modid = MODID)
-public class ModConfig{
+public final class ModConfig{
 	public static interface NonConfigFields{
 		public int VERSION = 1;
 	}

@@ -24,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-public class CommandLives extends CommandBase implements ICommand, Debuggable{
+public final class CommandLives extends CommandBase implements ICommand, Debuggable{
 
 	@Override
 	public int getRequiredPermissionLevel(){

@@ -6,7 +6,7 @@ import com.gamebuster19901.superiorquesting.client.CreativeTabQuesting;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
-public class ItemQuestBook extends Item{
+public final class ItemQuestBook extends Item{
 	public static final ItemQuestBook ITEM = new ItemQuestBook();
 	public ItemQuestBook(){
 		super();

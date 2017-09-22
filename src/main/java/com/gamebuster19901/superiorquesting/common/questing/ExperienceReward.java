@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-public class ExperienceReward extends Reward{
+public final class ExperienceReward extends Reward{
 	private transient RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
 	private transient EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
 	private int amount;

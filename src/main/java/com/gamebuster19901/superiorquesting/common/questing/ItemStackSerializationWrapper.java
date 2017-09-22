@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-public class ItemStackSerializationWrapper implements Serializable{
+public final class ItemStackSerializationWrapper implements Serializable{
 	private static final Method writeMethod = ReflectionHelper.findMethod(NBTTagCompound.class, "write", "func_74734_a", DataOutput.class);
 	private static final Method readMethod = ReflectionHelper.findMethod(NBTTagCompound.class, "read", "func_152446_a", DataInput.class, int.class, NBTSizeTracker.class);
 	private transient ItemStack stack;

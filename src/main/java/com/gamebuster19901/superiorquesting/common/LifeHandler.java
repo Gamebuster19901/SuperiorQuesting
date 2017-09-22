@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public class LifeHandler extends MultiplayerHandler implements Assertable{
+public final class LifeHandler extends MultiplayerHandler implements Assertable{
 	private static final String LIFE_KEY = MODID + ":lives"; 
 	/**
 	 * Adds one life to the player, if the life total would be less than 1, it is set to 1 instead, it if is greater than the max life count, it is unchanged.

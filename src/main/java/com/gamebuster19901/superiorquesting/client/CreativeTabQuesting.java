@@ -6,7 +6,7 @@ import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
-public class CreativeTabQuesting extends CreativeTabs{
+public final class CreativeTabQuesting extends CreativeTabs{
 	public static final CreativeTabQuesting QUESTING_TAB = new CreativeTabQuesting(Main.MODID);
 	public CreativeTabQuesting(String label) {
 		super(label);
