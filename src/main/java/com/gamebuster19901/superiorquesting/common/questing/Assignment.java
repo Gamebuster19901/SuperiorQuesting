@@ -1,6 +1,6 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import java.io.Serializable;
+import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -14,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * Currently, all Assignments are instances of Quest or Task, support may be added for
  * different types of assignments in future updates
  */
-interface Assignment extends Comparable, Serializable{
+interface Assignment extends Comparable, UpdatableSerializable{
 	/**
 	 * Checks if the player has completed this Assignment
 	 * @param p the player to check

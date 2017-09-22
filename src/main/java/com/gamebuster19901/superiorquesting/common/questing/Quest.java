@@ -1,12 +1,17 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import org.apache.logging.log4j.Level;
+
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
+import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,6 +20,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public final class Quest implements Rewardable, Assignment, Debuggable{
+	private final int VERSION = 0;
 	private String title;
 	private String description;
 	private int page;
@@ -290,5 +296,33 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 
 	public static Quest fromString(String title) {
 		return Main.proxy.getQuestHandler().getQuest(title);
+	}
+
+	@Override
+	public void convert(int prevVersion, int nextVersion, ObjectInputStream in) {
+		try {
+			if(nextVersion > VERSION) {
+				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
+			}
+			if(nextVersion == VERSION) {
+				throw new AssertionError(new IllegalArgumentException(prevVersion + " == " + nextVersion));
+			}
+			if(nextVersion > prevVersion + 1) {
+				convert(prevVersion, nextVersion - 1, in);
+				return;
+			}
+		
+
+			if(prevVersion == 0 && nextVersion == 1) {
+				Main.LOGGER.log(Level.INFO, "Converting quest from version " + prevVersion + " to version " + nextVersion);
+				return;
+			}
+			
+			throw new AssertionError("Tried to convert directly from version " + prevVersion + "to version " + nextVersion);
+			
+		}
+		catch(Exception | AssertionError e) {
+			throw new VersioningError(e);
+		}
 	}
 }

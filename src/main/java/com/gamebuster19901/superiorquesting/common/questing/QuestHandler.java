@@ -3,20 +3,18 @@ package com.gamebuster19901.superiorquesting.common.questing;
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.IOError;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
+import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
@@ -26,12 +24,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public final class QuestHandler extends MultiplayerHandler implements Serializable{
+public final class QuestHandler extends MultiplayerHandler implements UpdatableSerializable{
 	private static final String QUEST_KEY = MODID + ":quests"; 
-	private static final HashMap<String,Quest> QUESTS = new HashMap<String, Quest>();
 	private static final String DLMR = (char)0x00A7 + "";
-	
-	private static final int VERSION = 0;
 	private static final File QUEST_DATA_FILE = new File(Main.proxy.getQuestDirectory().getAbsolutePath() + "/quests.config");
 	static {
 		if (!QUEST_DATA_FILE.exists()) {
@@ -39,7 +34,11 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 		}
 	}
 	
-	private final void convertConfig(int prevVersion, int nextVersion) {
+	
+	private final int VERSION = 0;
+	private final HashMap<String,Quest> QUESTS = new HashMap<String, Quest>();
+	
+	public final void convert(int prevVersion, int nextVersion, ObjectInputStream in) {
 		try {
 			if(nextVersion > VERSION) {
 				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
@@ -48,13 +47,13 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 				throw new AssertionError(new IllegalArgumentException(prevVersion + " == " + nextVersion));
 			}
 			if(nextVersion > prevVersion + 1) {
-				convertConfig(prevVersion, nextVersion - 1);
+				convert(prevVersion, nextVersion - 1, in);
 				return;
 			}
 		
 
 			if(prevVersion == 0 && nextVersion == 1) {
-				Main.LOGGER.log(Level.INFO, "Converting quests from version " + prevVersion + " to version " + nextVersion);
+				Main.LOGGER.log(Level.INFO, "Converting questhandler from version " + prevVersion + " to version " + nextVersion);
 				return;
 			}
 			
@@ -89,39 +88,38 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 		return false;
 	}
 	
-	private final int getConfigFileVersion() {
-		int x = -1;
-		Stream<String> lines = null;
-		try{
-			lines = Files.lines(Paths.get(QUEST_DATA_FILE.toURI()));
-			x = Integer.parseInt(lines.skip(0).findFirst().get());
-		} catch (IOException e) {
-			throw new VersioningError(e);
-		}
-		finally {
-			lines.close();
-			Debuggable.debug(x, null);
-		}
-		return x;
-	}
-	
 	private final void saveOverConfigFile() {
-		PrintWriter pw = null;
+		ObjectOutputStream oos = null;
 		try {
-			pw = new PrintWriter(new FileWriter(QUEST_DATA_FILE.toURI().toString()));
-			for(Quest q : QUESTS.values()) {
-				String data = DLMR + q.getTitle() + DLMR + q.getDescription() + DLMR + "prereqs" + DLMR;
-				for(Assignment a : q.prerequisites()) {
-					data = data + a.getClass().getName() + DLMR + a.toString() + DLMR;
-				}
-				pw.write(DLMR + q.getTitle() + DLMR + q.getDescription() + DLMR + data);
-			}
+			oos = new ObjectOutputStream(new FileOutputStream(QUEST_DATA_FILE));
+			this.writeObject(oos);
 		}
 		catch(IOException e) {
-			
+			throw new RuntimeException(e);
 		}
 		finally {
-			pw.close();
+			try {
+				oos.close();
+			} catch (IOException e) { //if it cannot close then this is unrecoverable
+				throw new IOError(e);
+			}
+		}
+	}
+	
+	@Override
+	public void writeObject(ObjectOutputStream out) throws IOException{
+		out.defaultWriteObject();
+	}
+	
+	@Override
+	public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+		in.mark(4);
+		int inVersion = in.readInt();
+		if(inVersion == VERSION) {
+			in.defaultReadObject();
+		}
+		else {
+			in.reset();
 		}
 	}
 	

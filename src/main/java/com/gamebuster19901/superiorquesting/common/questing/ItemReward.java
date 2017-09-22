@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.ObjectInputStream;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItem;
@@ -7,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public final class ItemReward extends Reward{
+	private final int VERSION = 0;
 	private ItemStackSerializationWrapper reward;
 	
 	public ItemReward(Quest quest, ItemStack i) {

@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.ObjectInputStream;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderXPOrb;
 import net.minecraft.entity.item.EntityXPOrb;
@@ -10,6 +12,7 @@ import net.minecraft.item.ItemStack;
 public final class ExperienceReward extends Reward{
 	private transient RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
 	private transient EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
+	private final int VERSION = 0;
 	private int amount;
 	private boolean isLevels;
 	
