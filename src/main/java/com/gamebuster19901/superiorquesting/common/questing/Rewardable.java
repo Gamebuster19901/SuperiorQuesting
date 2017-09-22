@@ -1,12 +1,14 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.Serializable;
+
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * A Rewardable is anything that can give a reward.
  */
 
-interface Rewardable extends Comparable{
+interface Rewardable extends Comparable, Serializable{
 	/**
 	 * If the reward can be given. Should check that all prerequisites are complete
 	 * and that the reward has not been given out yet. May also need to check if

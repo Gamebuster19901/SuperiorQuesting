@@ -7,12 +7,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public class ItemReward extends Reward{
-	private ItemStack reward;
+	private ItemStackSerializationWrapper reward;
 	
 	public ItemReward(Quest quest, ItemStack i) {
 		super(quest, false); //quests can have more than one item reward
 		if(!i.isEmpty()) {
-			reward = i;
+			reward = new ItemStackSerializationWrapper(i);
 			return;
 		}
 		throw new IllegalArgumentException("Cannot have an item reward be an empty itemstack");
@@ -24,14 +24,14 @@ public class ItemReward extends Reward{
 
 	@Override
 	public void award(EntityPlayer p) {
-		new EntityItem(p.getEntityWorld(), p.posX, p.posY, p.posZ, reward);
+		new EntityItem(p.getEntityWorld(), p.posX, p.posY, p.posZ, reward.asItem());
 	}
 	
 	@Override
 	public void render(int x, int y) {
-		if(!reward.isEmpty()) {
-			Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(reward, x, y);
-			Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, reward, x, y, "" + reward.getCount());
+		if(!reward.asItem().isEmpty()) {
+			Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(reward.asItem(), x, y);
+			Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, reward.asItem(), x, y, "" + reward.asItem().getCount());
 		}
 		else {
 			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_MISSING_TEXTURE);
@@ -42,14 +42,8 @@ public class ItemReward extends Reward{
 	public boolean equals(Object o) {
 		if(o instanceof ItemReward) {
 			ItemReward r = (ItemReward)o;
-			return ItemStack.areItemStacksEqual(reward, r.reward);
+			return ItemStack.areItemStacksEqual(reward.asItem(), r.reward.asItem());
 		}
 		return false;
-	}
-	
-	@Override
-	public ItemReward constructFromArray(String... parameters) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

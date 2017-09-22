@@ -8,16 +8,15 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class ExperienceReward extends Reward{
-	private RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
-	private EntityXPOrb orb;
-	private Integer amount;
+	private transient RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
+	private transient EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
+	private int amount;
 	private boolean isLevels;
 	
 	public ExperienceReward(Quest quest, int exp, boolean isLevels) {
 		super(quest, true); //quests cannot have more than one experience reward
-		amount = new Integer(exp);
+		amount = exp;
 		this.isLevels = isLevels; 
-		orb = new EntityXPOrb(null, 0, 0, 0, 2477);
 	}
 	
 	@Override
@@ -57,13 +56,5 @@ public class ExperienceReward extends Reward{
 			return r.isLevels() == isLevels && r.getAmount() == getAmount();
 		}
 		return false;
-	}
-
-	@Override
-	public ExperienceReward constructFromArray(String... parameters) {
-		if(parameters.length != 2) {
-			throw new IndexOutOfBoundsException(parameters.length + " != 3");
-		}
-		return new ExperienceReward(Quest.fromString(parameters[0]), Integer.parseInt(parameters[1]), Boolean.parseBoolean(parameters[2]));
 	}
 }

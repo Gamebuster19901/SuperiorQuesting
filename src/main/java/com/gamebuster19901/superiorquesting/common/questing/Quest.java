@@ -1,8 +1,11 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeSet;
+import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,8 +21,9 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	private int x;
 	private int y;
 	private byte important = 1;
-	private TreeSet<Reward> rewards = new TreeSet<Reward>();
-	private TreeSet<Assignment> prerequisites = new TreeSet<Assignment>();
+	private ArrayList<Reward> rewards = new ArrayList<Reward>();
+	private ArrayList<Quest> prerequisites = new ArrayList<Quest>();
+	private ArrayList<Task> tasks = new ArrayList<Task>();
 	
 	/**
 	 * @param title the title of the quest
@@ -100,11 +104,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	 */
 	@Override
 	public boolean isFinished(EntityPlayer p) {
-		for(Assignment a : prerequisites) {
-			if(a instanceof Quest) { //these should be in the order of quest first, then tasks
-				
-			}
-			if(!a.isFinished(p)) {
+		for(Quest q : prerequisites) {
+			if(!q.isFinished(p)) {
 				return false;
 			}
 		}
@@ -130,14 +131,14 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	 */
 	@Override
 	public boolean hasCollected(EntityPlayer p) {
-		
+
 	}
 	
 	/**
 	 * returns true if the player has been notified of this quest's completion, false otherwise
 	 * @param p the payer to check
 	 */
-	private boolean hasNotified(EntityPlayer p) {
+	public boolean hasNotified(EntityPlayer p) {
 		
 	}
 	
@@ -177,11 +178,16 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	}
 	
 	/**
-	 * adds a prerequisite to this quest, a prerequisite by default is another Quest or a Task
+	 * adds a prerequisite to this quest, a prerequisite is another Quest or a Task
 	 * @param a the assignment to add
 	 */
 	void addPrerequisite(Assignment a) {
-		prerequisites.add(a);
+		if(a instanceof Quest) {
+			prerequisites.add((Quest)a);
+		}
+		else {
+			tasks.add((Task) a);
+		}
 	}
 	
 	/**
@@ -189,7 +195,12 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	 * @param a the assignment to remove
 	 */
 	void removePrerequisite(Assignment a) {
-		prerequisites.remove(a);
+		if(a instanceof Quest) {
+			prerequisites.remove((Quest)a);
+		}
+		else {
+			tasks.remove((Task)a);
+		}
 	}
 	
 	/**
@@ -248,12 +259,18 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		}
 	}
 	
-	TreeSet<Assignment> prerequisites(){
+	ArrayList<Quest> prerequisites(){
 		return prerequisites;
+	}
+	
+	ArrayList<Task> tasks(){
+		return tasks;
 	}
 
 	/**
 	 * @see Assignment.compareTo
+	 * 
+	 * @throws ClassCastException if o i!instanceof Assignment
 	 */
 	@Override
 	public final int compareTo(Object o) {
@@ -263,13 +280,9 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		if(o instanceof Task) {
 			return -1;
 		}
-		if(o instanceof Assignment) {
+		else {
 			return(((Assignment) o).compareTo(this)) * -1;
 		}
-		if(o instanceof Comparable) {
-			return (((Comparable) o).compareTo(this)) * -1;
-		}
-		return 0;
 	}
 	
 	@Override
@@ -278,6 +291,6 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	}
 
 	public static Quest fromString(String title) {
-		return QuestHandler.getQuest(title);
+		return Main.proxy.getQuestHandler().getQuest(title);
 	}
 }

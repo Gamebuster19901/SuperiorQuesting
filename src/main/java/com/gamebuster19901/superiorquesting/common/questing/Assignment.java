@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.Serializable;
+
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -9,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * 
  * Quests come first, then Tasks.
  */
-interface Assignment extends Comparable{
+interface Assignment extends Comparable, Serializable{
 	/**
 	 * Checks if the player has completed this Assignment
 	 * @param p the player to check

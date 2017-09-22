@@ -27,6 +27,11 @@ public abstract class Task implements Assignment{
 		return description;
 	}
 
+	/**
+	 * @see Assignment.compareTo
+	 * 
+	 * @throws ClassCastException if o !instanceof Assignment
+	 */
 	@Override
 	public final int compareTo(Object o) {
 		if(o instanceof Task) {
@@ -35,13 +40,9 @@ public abstract class Task implements Assignment{
 		if(o instanceof Quest) {
 			return 1;
 		}
-		if(o instanceof Assignment) {
+		else{
 			return(((Assignment) o).compareTo(this)) * -1;
 		}
-		if(o instanceof Comparable) {
-			return(((Assignment) o).compareTo(this)) * -1;
-		}
-		return 0;
 	}
 	
 }
