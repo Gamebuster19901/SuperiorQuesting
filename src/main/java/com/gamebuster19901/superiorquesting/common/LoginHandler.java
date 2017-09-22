@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class LoginHandler extends MultiplayerHandler{
 	private static final String LOGIN_KEY = MODID + ":loggedin"; 
+	
 	@Override
 	protected void onConfigFinishChanged() {}
 
@@ -18,7 +19,7 @@ public class LoginHandler extends MultiplayerHandler{
 	protected void playerLoggedIn(PlayerLoggedInEvent e) {
 		if(!getPersistantTag((EntityPlayerMP)e.player).hasKey(LOGIN_KEY)){
 			giveBook(e.player);
-			e.player.getEntityData().setBoolean(LOGIN_KEY, true);
+			getPersistantTag((EntityPlayerMP)e.player).setBoolean(LOGIN_KEY, true);
 		}
 	}
 	

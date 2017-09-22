@@ -12,6 +12,7 @@ import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.ExperienceReward;
 import com.gamebuster19901.superiorquesting.common.questing.ItemReward;
+import com.gamebuster19901.superiorquesting.common.questing.QuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.RewardType;
 
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -33,6 +34,7 @@ public abstract class Proxy implements Debuggable{
 	
 	private static final LifeHandler LIFE_HANDLER = new LifeHandler();
 	private static final LoginHandler LOGIN_HANDLER = new LoginHandler();
+	private static final QuestHandler QUEST_HANDLER = new QuestHandler();
 	
 	public void preInit(FMLPreInitializationEvent e){
 		MinecraftForge.EVENT_BUS.register(LIFE_HANDLER);
@@ -53,6 +55,14 @@ public abstract class Proxy implements Debuggable{
 	
 	public LifeHandler getLifeHandler(){
 		return LIFE_HANDLER;
+	}
+	
+	public LoginHandler getLoginHandler() {
+		return LOGIN_HANDLER;
+	}
+	
+	public QuestHandler getQuestHandler() {
+		return QUEST_HANDLER;
 	}
 	
 	@SubscribeEvent

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,11 +24,13 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public final class QuestHandler extends MultiplayerHandler{
+public final class QuestHandler extends MultiplayerHandler implements Serializable{
 	private static final String QUEST_KEY = MODID + ":quests"; 
 	private static final HashMap<String,Quest> QUESTS = new HashMap<String, Quest>();
+	private static final String DLMR = (char)0x00A7 + "";
 	
 	private static final int VERSION = 0;
 	private static final File QUEST_DATA_FILE = new File(Main.proxy.getQuestDirectory().getAbsolutePath() + "/quests.config");
@@ -108,9 +111,11 @@ public final class QuestHandler extends MultiplayerHandler{
 		try {
 			pw = new PrintWriter(new FileWriter(QUEST_DATA_FILE.toURI().toString()));
 			for(Quest q : QUESTS.values()) {
-				String data = '|' + q.getTitle() + '|' + q.getDescription() + '|' + "prereqs" + '|';
-				for(Assignment a : q.)
-				pw.write('|' + q.getTitle() + '|' + q.getDescription() + '|' q.);
+				String data = DLMR + q.getTitle() + DLMR + q.getDescription() + DLMR + "prereqs" + DLMR;
+				for(Assignment a : q.prerequisites()) {
+					data = data + a.getClass().getName() + DLMR + a.toString() + DLMR;
+				}
+				pw.write(DLMR + q.getTitle() + DLMR + q.getDescription() + DLMR + data);
 			}
 		}
 		catch(IOException e) {
@@ -125,19 +130,55 @@ public final class QuestHandler extends MultiplayerHandler{
 		
 	}
 	
-	final boolean hasNotified(Quest q, EntityPlayer p) {
-		
-	}
-	
-	final boolean hasCollected(Quest q, EntityPlayer p) {
-		
-	}
 	final Quest getQuest(String title) {
 		return QUESTS.get(title);
 	}
 	
+	NBTTagCompound getQuestNBT(String quest, EntityPlayerMP p) {
+		return getPersistantTag(p).getCompoundTag(quest);
+	}
+	
 	public boolean hasQuestNBT(EntityPlayerMP p){
 		return getPersistantTag(p).hasKey(QUEST_KEY);
+	}
+	
+	public boolean hasQuestNBT(String quest, EntityPlayerMP p) {
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest);
+	}
+	
+	/**
+	 * If the player's quest NBT is not up to date, update the player's quest nbt
+	 * @param p The player to check
+	 * @return true if the player's life count changed
+	 */
+	public void assertValidNBT(EntityPlayerMP p) {
+		if(hasQuestNBT(p)){
+			for(String key : QUESTS.keySet()) {
+				Quest q = QUESTS.get(key);
+				NBTTagCompound tag = getPersistantTag(p).getCompoundTag(key);
+				
+				
+			}
+		}
+		else{
+			resetQuests(p);
+		}
+	}
+	
+	/**
+	 * resets a players quest NBT, 
+	 * @param p
+	 */
+	public void resetQuests(EntityPlayerMP p) {
+		for(String key : QUESTS.keySet()) { //key is the quest title
+			Quest q = QUESTS.get(key);
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setBoolean("UNLOCKED", false);
+			nbt.setBoolean("COMPLETED", false);
+			nbt.setBoolean("NOTIFIED", false);
+			nbt.setBoolean("COLLECTED", false);
+			getPersistantTag(p).setTag(key, nbt);
+		}
 	}
 
 	@Override

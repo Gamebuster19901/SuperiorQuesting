@@ -15,7 +15,6 @@ public abstract class MultiplayerHandler implements Assertable{
 	 * Gets the NBTTagCompound that persists with a player after death
 	 * @param p the player whose tag to retrieve
 	 * @return the NBTTagCompound that persists with a player after death
-	 * @throws AssertionError if the tag doesn't exist
 	 */
 	protected final NBTTagCompound getPersistantTag(EntityPlayerMP p){
 		NBTTagCompound entityData = p.getEntityData();
