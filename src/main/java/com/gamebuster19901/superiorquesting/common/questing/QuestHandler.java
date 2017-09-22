@@ -23,7 +23,6 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistan
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -134,15 +133,15 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 		return QUESTS.get(title);
 	}
 	
-	NBTTagCompound getQuestNBT(String quest, EntityPlayerMP p) {
+	NBTTagCompound getQuestNBT(String quest, EntityPlayer p) {
 		return getPersistantTag(p).getCompoundTag(quest);
 	}
 	
-	public boolean hasQuestNBT(EntityPlayerMP p){
+	public boolean hasQuestNBT(EntityPlayer p){
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
 	
-	public boolean hasQuestNBT(String quest, EntityPlayerMP p) {
+	public boolean hasQuestNBT(String quest, EntityPlayer p) {
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest);
 	}
 	
@@ -151,7 +150,7 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 	 * @param p The player to check
 	 * @return true if the player's life count changed
 	 */
-	public void assertValidNBT(EntityPlayerMP p) {
+	public void assertValidNBT(EntityPlayer p) {
 		if(hasQuestNBT(p)){
 			for(String key : QUESTS.keySet()) {
 				Quest q = QUESTS.get(key);
@@ -169,7 +168,7 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 	 * resets a players quest NBT, 
 	 * @param p
 	 */
-	public void resetQuests(EntityPlayerMP p) {
+	public void resetQuests(EntityPlayer p) {
 		for(String key : QUESTS.keySet()) { //key is the quest title
 			Quest q = QUESTS.get(key);
 			NBTTagCompound nbt = new NBTTagCompound();
@@ -186,7 +185,7 @@ public final class QuestHandler extends MultiplayerHandler implements Serializab
 
 	@Override
 	protected void playerLoggedIn(PlayerLoggedInEvent e) {
-		if(hasQuestNBT((EntityPlayerMP)e.player)) {
+		if(hasQuestNBT(e.player)) {
 			
 		}
 	}

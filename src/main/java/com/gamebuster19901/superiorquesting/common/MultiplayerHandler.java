@@ -2,6 +2,7 @@ package com.gamebuster19901.superiorquesting.common;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Config;
@@ -16,7 +17,7 @@ public abstract class MultiplayerHandler implements Assertable{
 	 * @param p the player whose tag to retrieve
 	 * @return the NBTTagCompound that persists with a player after death
 	 */
-	protected final NBTTagCompound getPersistantTag(EntityPlayerMP p){
+	protected final NBTTagCompound getPersistantTag(EntityPlayer p){
 		NBTTagCompound entityData = p.getEntityData();
 		NBTTagCompound persist;
 		Assert(hasPersistantTag(p),("No persistent tag found for player " + p.getName()));
@@ -28,7 +29,7 @@ public abstract class MultiplayerHandler implements Assertable{
 	 * @param p the player to check
 	 * @return true if it exists, false otherwise
 	 */
-	protected final boolean hasPersistantTag(EntityPlayerMP p){
+	protected final boolean hasPersistantTag(EntityPlayer p){
 		return p.getEntityData().hasKey(p.PERSISTED_NBT_TAG);
 	}
 	

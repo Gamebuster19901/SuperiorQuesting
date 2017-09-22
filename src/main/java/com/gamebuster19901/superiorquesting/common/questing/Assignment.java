@@ -10,6 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
  * Some assignments may need to be ordered a specific way, so all assignments are Comparables.
  * 
  * Quests come first, then Tasks.
+ * 
+ * Currently, all Assignments are instances of Quest or Task, support may be added for
+ * different types of assignments in future updates
  */
 interface Assignment extends Comparable, Serializable{
 	/**
@@ -17,7 +20,7 @@ interface Assignment extends Comparable, Serializable{
 	 * @param p the player to check
 	 * @return true if the player has completed this assignment, false otherwise.
 	 */
-	public boolean isFinished(EntityPlayer p);
+	public boolean hasFinished(EntityPlayer p);
 	
 	/**
 	 * Checks if the player has been notified that this Assignment has been completed.

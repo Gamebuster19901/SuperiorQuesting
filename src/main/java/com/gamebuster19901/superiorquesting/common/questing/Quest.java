@@ -82,7 +82,7 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		if(hasCollected(p)) {
 			return false;
 		}
-		return isFinished(p);
+		return hasFinished(p);
 	}
 
 	/**
@@ -103,9 +103,9 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	 * @param p the player to check
 	 */
 	@Override
-	public boolean isFinished(EntityPlayer p) {
+	public boolean hasFinished(EntityPlayer p) {
 		for(Quest q : prerequisites) {
-			if(!q.isFinished(p)) {
+			if(!q.hasFinished(p)) {
 				return false;
 			}
 		}
@@ -131,7 +131,7 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	 */
 	@Override
 	public boolean hasCollected(EntityPlayer p) {
-
+		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean("COLLECTED");
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	 * @param p the payer to check
 	 */
 	public boolean hasNotified(EntityPlayer p) {
-		
+		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean("NOTIFIED");
 	}
 	
 	/**
@@ -163,10 +163,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		if(e.phase.equals(Phase.END)) {
 			if(e.world.isRemote) {
 				for(EntityPlayerMP p : e.world.getPlayers(EntityPlayerMP.class, null)) {
-					for(Assignment a : prerequisites) { //these should be in order as quests first, then tasks
-						if(a instanceof Quest) {
-							
-						}
+					for(Quest q : prerequisites) { //these should be in order as quests first, then tasks
+						
 					}
 					
 					if(canAward(p)) {
