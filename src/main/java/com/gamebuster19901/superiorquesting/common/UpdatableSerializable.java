@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public interface UpdatableSerializable extends Serializable{
-	public void convert(int prevVersion, int nextVersion, ObjectInputStream in);
+	public void convert(long prevVersion, long nextVersion, ObjectInputStream in);
 	
 	public void writeObject(ObjectOutputStream out) throws IOException;
 	
