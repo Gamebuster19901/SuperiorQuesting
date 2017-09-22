@@ -32,15 +32,18 @@ import net.minecraftforge.oredict.OreDictionary;
 public abstract class Proxy implements Debuggable{
 	private static File questDirectory;
 	
-	private static final LifeHandler LIFE_HANDLER = new LifeHandler();
-	private static final LoginHandler LOGIN_HANDLER = new LoginHandler();
-	private static final QuestHandler QUEST_HANDLER = new QuestHandler();
+	private static LifeHandler LIFE_HANDLER;
+	private static LoginHandler LOGIN_HANDLER;
+	private static QuestHandler QUEST_HANDLER;
 	
 	public void preInit(FMLPreInitializationEvent e){
+		questDirectory = new File(e.getModConfigurationDirectory().getAbsolutePath() + "/questdata");
+		LIFE_HANDLER = new LifeHandler();
+		LOGIN_HANDLER = new LoginHandler();
+		QUEST_HANDLER = new QuestHandler();
 		MinecraftForge.EVENT_BUS.register(LIFE_HANDLER);
 		MinecraftForge.EVENT_BUS.register(LOGIN_HANDLER);
 		MinecraftForge.EVENT_BUS.register(this);
-		questDirectory = new File(e.getModConfigurationDirectory().getAbsolutePath() + "/questdata");
 	}
 	
 	public void init(FMLInitializationEvent e){
