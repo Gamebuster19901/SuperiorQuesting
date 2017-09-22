@@ -1,10 +1,10 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeSet;
-import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
@@ -20,7 +20,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public final class Quest implements Rewardable, Assignment, Debuggable{
-	private final int VERSION = 0;
+	private static final long serialVersionUID = 0L;
+	private long VERSION = serialVersionUID;
 	private String title;
 	private String description;
 	private int page;
@@ -299,7 +300,7 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 	}
 
 	@Override
-	public void convert(int prevVersion, int nextVersion, ObjectInputStream in) {
+	public void convert(long prevVersion, long nextVersion, ObjectInputStream in) {
 		try {
 			if(nextVersion > VERSION) {
 				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
@@ -307,15 +308,15 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 			if(nextVersion == VERSION) {
 				throw new AssertionError(new IllegalArgumentException(prevVersion + " == " + nextVersion));
 			}
-			if(nextVersion > prevVersion + 1) {
-				convert(prevVersion, nextVersion - 1, in);
+			if(nextVersion > prevVersion + 1L) {
+				convert(prevVersion, nextVersion - 1L, in);
 				return;
 			}
 		
 
-			if(prevVersion == 0 && nextVersion == 1) {
+			if(prevVersion == 0L && nextVersion == 1L) {
 				Main.LOGGER.log(Level.INFO, "Converting quest from version " + prevVersion + " to version " + nextVersion);
-				return;
+				throw new FutureVersionError("1 is a future version, currently on version 0");
 			}
 			
 			throw new AssertionError("Tried to convert directly from version " + prevVersion + "to version " + nextVersion);
@@ -323,6 +324,24 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		}
 		catch(Exception | AssertionError e) {
 			throw new VersioningError(e);
+		}
+	}
+
+	@Override
+	public void writeObject(ObjectOutputStream out) throws IOException{
+		out.defaultWriteObject();
+	}
+	
+	@Override
+	public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+		in.mark(8);
+		long inVersion = in.readLong();
+		if(inVersion == serialVersionUID) {
+			in.reset();
+			in.defaultReadObject();
+		}
+		else {
+			convert(serialVersionUID, inVersion, in);
 		}
 	}
 }

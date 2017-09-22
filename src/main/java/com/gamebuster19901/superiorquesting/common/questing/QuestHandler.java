@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public final class QuestHandler extends MultiplayerHandler implements UpdatableSerializable{
+	private static final long serialVersionUID = 0L;
 	private static final String QUEST_KEY = MODID + ":quests"; 
 	private static final String DLMR = (char)0x00A7 + "";
 	private static final File QUEST_DATA_FILE = new File(Main.proxy.getQuestDirectory().getAbsolutePath() + "/quests.config");
@@ -35,10 +36,11 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 	}
 	
 	
-	private final int VERSION = 0;
+	private long VERSION = serialVersionUID;
 	private final HashMap<String,Quest> QUESTS = new HashMap<String, Quest>();
 	
-	public final void convert(int prevVersion, int nextVersion, ObjectInputStream in) {
+	@Override
+	public void convert(long prevVersion, long nextVersion, ObjectInputStream in) {
 		try {
 			if(nextVersion > VERSION) {
 				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
@@ -46,15 +48,15 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 			if(nextVersion == VERSION) {
 				throw new AssertionError(new IllegalArgumentException(prevVersion + " == " + nextVersion));
 			}
-			if(nextVersion > prevVersion + 1) {
-				convert(prevVersion, nextVersion - 1, in);
+			if(nextVersion > prevVersion + 1L) {
+				convert(prevVersion, nextVersion - 1L, in);
 				return;
 			}
 		
 
-			if(prevVersion == 0 && nextVersion == 1) {
-				Main.LOGGER.log(Level.INFO, "Converting questhandler from version " + prevVersion + " to version " + nextVersion);
-				return;
+			if(prevVersion == 0L && nextVersion == 1L) {
+				Main.LOGGER.log(Level.INFO, "Converting quest from version " + prevVersion + " to version " + nextVersion);
+				throw new FutureVersionError("1 is a future version, currently on version 0");
 			}
 			
 			throw new AssertionError("Tried to convert directly from version " + prevVersion + "to version " + nextVersion);
@@ -113,13 +115,14 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 	
 	@Override
 	public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-		in.mark(4);
-		int inVersion = in.readInt();
-		if(inVersion == VERSION) {
+		in.mark(8);
+		long inVersion = in.readLong();
+		if(inVersion == serialVersionUID) {
+			in.reset();
 			in.defaultReadObject();
 		}
 		else {
-			in.reset();
+			convert(serialVersionUID, inVersion, in);
 		}
 	}
 	
