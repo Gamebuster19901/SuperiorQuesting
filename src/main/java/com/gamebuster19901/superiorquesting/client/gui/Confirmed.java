@@ -104,9 +104,6 @@ public final class Confirmed implements Debuggable{
 					for(int id : ids){
 						debug(OreDictionary.getOreName(id));
 					}
-					if(ids.length == 0){
-						debug("none");
-					}
 				}
 			}
 		}

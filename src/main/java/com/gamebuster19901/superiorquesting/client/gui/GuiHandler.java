@@ -5,10 +5,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public final class GuiHandler implements IGuiHandler {
-
+	private static final int QUEST_BOOK = 0;
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		// TODO Auto-generated method stub
+		if(ID == QUEST_BOOK) {
+			return new GuiQuestBook(player);
+		}
 		return null;
 	}
 
