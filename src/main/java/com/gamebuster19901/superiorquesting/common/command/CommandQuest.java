@@ -10,8 +10,12 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 
@@ -53,7 +57,21 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		// TODO Auto-generated method stub
+		if (sender instanceof EntityPlayer){
+			debug(((EntityPlayer)sender).getName());
+			for(String s : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayerNames()){
+				if (((EntityPlayer)sender).getName().equals(s)){
+					return true;
+				}
+			}
+			debug(FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner());
+			if (FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equals(((EntityPlayer)sender).getName())){
+				return true;
+			}
+		}
+		else if (sender instanceof CommandBlockBaseLogic || sender instanceof MinecraftServer || sender instanceof RConConsoleSource){
+			return true;
+		}
 		return false;
 	}
 
