@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.util.UUID;
+
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,4 +35,6 @@ interface Rewardable extends Comparable, UpdatableSerializable{
 	 * @return true if the player has collected this reward, false otherwise
 	 */
 	public boolean hasCollected(EntityPlayer p);
+	
+	public boolean hasCollected(UUID p);
 }

@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.util.UUID;
+
 import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
@@ -54,6 +56,11 @@ public abstract class Reward implements Rewardable{
 
 	@Override
 	public final boolean hasCollected(EntityPlayer p) {
+		return parent.hasCollected(p);
+	}
+	
+	@Override
+	public final boolean hasCollected(UUID p) {
 		return parent.hasCollected(p);
 	}
 	

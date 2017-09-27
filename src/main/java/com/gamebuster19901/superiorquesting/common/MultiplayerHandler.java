@@ -1,13 +1,19 @@
 package com.gamebuster19901.superiorquesting.common;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
+import static net.minecraft.entity.player.EntityPlayer.PERSISTED_NBT_TAG;
+
+import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -19,9 +25,22 @@ public abstract class MultiplayerHandler implements Assertable{
 	 */
 	protected final NBTTagCompound getPersistantTag(EntityPlayer p){
 		NBTTagCompound entityData = p.getEntityData();
-		NBTTagCompound persist;
 		Assert(hasPersistantTag(p),("No persistent tag found for player " + p.getName()));
-		return persist = entityData.getCompoundTag(p.PERSISTED_NBT_TAG);
+		return entityData.getCompoundTag(PERSISTED_NBT_TAG);
+	}
+	
+	/**
+	 * Gets the NBTTagCompound that persists with a player after death
+	 * @param uuid the uuid of the player whose tag to retrieve
+	 * @return the NBTTagCompound that persists with a player after death
+	 * @return null if the player doesn't have the tag (which is most likely because the player hasn't joined the game before)
+	 */
+	protected final NBTTagCompound getPersistantTag(UUID uuid) {
+		NBTTagCompound nbt = getNbtOfPlayerUsingUUID(uuid);
+		if(!hasPersistantTag(nbt)) {
+			return null;
+		}
+		return nbt.getCompoundTag(PERSISTED_NBT_TAG);
 	}
 	
 	/**
@@ -30,7 +49,47 @@ public abstract class MultiplayerHandler implements Assertable{
 	 * @return true if it exists, false otherwise
 	 */
 	protected final boolean hasPersistantTag(EntityPlayer p){
-		return p.getEntityData().hasKey(p.PERSISTED_NBT_TAG);
+		return p.getEntityData().hasKey(PERSISTED_NBT_TAG);
+	}
+	
+	/**
+	 * Checks if the NBTTagCompound that persists with a player after death exists
+	 * @param p the player to check
+	 * @return true if it exists, false otherwise
+	 */
+	protected final boolean hasPersistantTag(NBTTagCompound nbt){
+		return nbt.hasKey(PERSISTED_NBT_TAG);
+	}
+	
+	public final NBTTagCompound getNbtOfPlayerUsingUUID(UUID uuid) {
+		EntityPlayerMP player = (EntityPlayerMP) getPlayerEntityFromUUID(uuid);
+		if(player == null) {
+			return null;
+		}
+		SaveHandler saveHandler = (SaveHandler)player.world.getSaveHandler();
+		return saveHandler.getPlayerNBT(player);
+	}
+	
+	public final EntityPlayer getPlayerEntityFromUUID(UUID uuid) {
+		EntityPlayer player = null;
+		for(World w : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
+			player = w.getPlayerEntityByUUID(uuid);
+			if(player != null) {
+				return player;
+			}
+		}
+		return player;
+	}
+	
+	public final EntityPlayer getPlayerFromUsername(String username) {
+		EntityPlayer player = null;
+		for(World w : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
+			player = w.getPlayerEntityByName(username);
+			if(player != null) {
+				return player;
+			}
+		}
+		return player;
 	}
 	
 	/**
@@ -49,7 +108,7 @@ public abstract class MultiplayerHandler implements Assertable{
 	final void playerLoggedInEvent(PlayerLoggedInEvent e){
 		EntityPlayerMP p = (EntityPlayerMP)e.player;
 		if (!hasPersistantTag(p)){
-			p.getEntityData().setTag(p.PERSISTED_NBT_TAG, new NBTTagCompound());
+			p.getEntityData().setTag(PERSISTED_NBT_TAG, new NBTTagCompound());
 		}
 		NBTTagCompound nbt = getPersistantTag(p);
 		playerLoggedIn(e);

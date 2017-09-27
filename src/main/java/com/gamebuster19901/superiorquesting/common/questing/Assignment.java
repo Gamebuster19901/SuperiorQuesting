@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.util.UUID;
+
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +24,7 @@ interface Assignment extends Comparable, UpdatableSerializable{
 	 */
 	public boolean hasFinished(EntityPlayer p);
 	
+	public boolean hasFinished(UUID p);
 	/**
 	 * Checks if the player has been notified that this Assignment has been completed.
 	 * @param p the player to check
@@ -29,11 +32,15 @@ interface Assignment extends Comparable, UpdatableSerializable{
 	 */
 	public boolean hasNotified(EntityPlayer p);
 	
+	public boolean hasNotified(UUID p);
+	
 	/**
 	 * Completes this assignment for the player. This should complete any prerequisites, if applicable.
 	 * @param p the player to complete
 	 */
 	public void finish(EntityPlayer p);
+	
+	public void finish(UUID p);
 	
 	/**
 	 * @return the title of this assignment
