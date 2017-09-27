@@ -42,4 +42,38 @@ interface Rewardable extends UpdatableSerializable{
 	 * @return true if the player has collected this reward, false otherwise
 	 */
 	public boolean hasCollected(UUID p);
+	
+	/**
+	 * Marks this rewardable as collected for the player
+	 * @param p the player to mark this rewardable as collected for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markCollected(EntityPlayer p);
+	
+	/**
+	 * Marks this rewardable as collected for the player
+	 * @param p the uuid of the player to mark this rewardable as collected for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markCollected(UUID p);
+	
+	/**
+	 * Marks this rewardable as uncollected for the player
+	 * @param p the player to mark this rewardable as uncollected for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markUncollected(EntityPlayer p);
+	
+	/**
+	 * Marks this rewardable as uncollected for the player
+	 * @param p the uuid of the player to mark this rewardable as uncollected for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markUncollected(UUID p);
+	
+	
 }

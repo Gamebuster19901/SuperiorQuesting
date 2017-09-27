@@ -5,6 +5,8 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 /**
  * An assignment is anything that can be completed, it has a title and description.
@@ -19,35 +21,77 @@ import net.minecraft.entity.player.EntityPlayer;
 interface Assignment extends UpdatableSerializable{
 	public String UNLOCKED = "UNLOCKED";
 	public String COMPLETED = "COMPLETED";
+	public String HIDDEN = "HIDDEN";
 	public String NOTIFIED = "NOTIFIED";
 	
-	/**
-	 * Checks if the Assignment is unlocked for the player
-	 * @param p the player to check
-	 * @return true if the assignment is unlocked, false otherwise
+	/*
+	 * 
+	 * 
+	 * Finishing
+	 * 
+	 * 
 	 */
-	public boolean isUnlocked(EntityPlayer p);
 	
 	/**
-	 * Checks if the Assignment is unlocked for the player
-	 * @param p the uuid of the player to check
-	 * @return true if the assignment is unlocked, false otherwise
+	 * Checks if this assignment is finished by checking if it's prerequisites are finished and 
+	 * if it's own conditions are complete, then marks it as such every tick.
+	 * 
+	 * @param e World Tick Event
 	 */
-	public boolean isUnlocked(UUID p);
+	@SubscribeEvent
+	public void updateStatus(WorldTickEvent e);
+	
+	public boolean areConditionsSatisfied(EntityPlayer p);
 	
 	/**
-	 * Checks if the player has completed this Assignment
+	 * Checks if this assignment is marked as completed for the player
 	 * @param p the player to check
 	 * @return true if the player has completed this assignment, false otherwise.
 	 */
-	public boolean hasFinished(EntityPlayer p);
+	public boolean isFinished(EntityPlayer p);
 	
 	/**
-	 * Checks if the player has completed this Assignment
+	 * Checks if this assignment is marked as completed for the player
 	 * @param p the uuid of the player to check
 	 * @return true if the player has completed this assignment, false otherwise.
 	 */
-	public boolean hasFinished(UUID p);
+	public boolean isFinished(UUID p);
+	
+	/**
+	 * Completes this assignment for the player. This should complete any prerequisites, if applicable.
+	 * @param p the player to complete
+	 */
+	public void finish(EntityPlayer p);
+	
+	/**
+	 * Completes this assignment for the player. This should complete any prerequisites, if applicable.
+	 * @param p uuid of the player to complete
+	 */
+	public void finish(UUID p);
+	
+	/**
+	 * Marks this assignment as finished for the player, does not complete any prerequisites
+	 * @param p the player to mark this assignment as complete for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markFinished(EntityPlayer p);
+	
+	/**
+	 * Marks this assignment as finished for the player, does not complete any prerequisites
+	 * @param p the UUID of the player to mark this assignment as complete for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markFinished(UUID p);
+	
+	/*
+	 * 
+	 * 
+	 * Notifications
+	 * 
+	 * 
+	 */
 	
 	/**
 	 * Checks if the player has been notified that this Assignment has been completed.
@@ -64,16 +108,81 @@ interface Assignment extends UpdatableSerializable{
 	public boolean hasNotified(UUID p);
 	
 	/**
-	 * Completes this assignment for the player. This should complete any prerequisites, if applicable.
-	 * @param p the player to complete
+	 * Notifies the player that this assignment has been completed
+	 * @param p the player to notify
 	 */
-	public void finish(EntityPlayer p);
+	public void notify(EntityPlayer p);
 	
 	/**
-	 * Completes this assignment for the player. This should complete any prerequisites, if applicable.
-	 * @param p uuid of the player to complete
+	 * Marks this assignment as notified for the player
+	 * @param p the player to mark this assignment as notified for
 	 */
-	public void finish(UUID p);
+	public void markNotified(EntityPlayer p);
+	
+	/**
+	 * Marks this assignment as notified for the player
+	 * @param p the uuid of the player to mark this assignment as notified for
+	 */
+	public void markNotified(UUID p);
+	
+	/*
+	 * 
+	 * 
+	 * Hiding
+	 * 
+	 * 
+	 */
+	
+	/**
+	 * Checks if the assignment is marked as hidden for the player
+	 * @param p the player to check
+	 * @return true if this assignment is hidden for the player, false otherwise
+	 */
+	public boolean isHidden(EntityPlayer p);
+	
+	/**
+	 * Checks if the assignment is marked as hidden for the player
+	 * @param p the uuid of the player to check
+	 * @return true if this assignment is hidden for the player, false otherwise
+	 */
+	public boolean isHidden(UUID p);
+	
+	/**
+	 * Hides this assignment from the player.
+	 * @param p the player to hide this assignment from
+	 */
+	public void hide(EntityPlayer p);
+	
+	/**
+	 * Hides this assignment from the player.
+	 * @param p the uuid of the player to hide this assignment from
+	 */
+	public void hide(UUID p);
+	
+	/**
+	 * Unides this assignment from the player.
+	 * @param p the player to hide this assignment from
+	 */
+	public void unhide(EntityPlayer p);
+	
+	/**
+	 * Unides this assignment from the player.
+	 * @param p the uuid of the player to hide this assignment from
+	 */
+	public void unhide(UUID p);
+	
+	/**
+	 * @return true if this assignment is hidden by default, false otherwise
+	 */
+	public boolean isHiddenByDefault();
+	
+	/*
+	 * 
+	 * 
+	 * Locking
+	 * 
+	 * 
+	 */
 	
 	/**
 	 * Locks this assignment for the player. The assignment will immediately unlock next tick if all
@@ -102,38 +211,31 @@ interface Assignment extends UpdatableSerializable{
 	public void unlock(UUID p);
 	
 	/**
-	 * Hides this assignment from the player.
-	 * @param p the player to hide this assignment from
+	 * Checks if the Assignment is marked as unlocked for the player
+	 * @param p the player to check
+	 * @return true if the assignment is unlocked, false otherwise
 	 */
-	public void hide(EntityPlayer p);
+	public boolean isUnlocked(EntityPlayer p);
 	
 	/**
-	 * Hides this assignment from the player.
-	 * @param p the uuid of the player to hide this assignment from
+	 * Checks if the Assignment is marked as unlocked for the player
+	 * @param p the uuid of the player to check
+	 * @return true if the assignment is unlocked, false otherwise
 	 */
-	public void hide(UUID p);
-	
-	/**
-	 * Unides this assignment from the player.
-	 * @param p the player to hide this assignment from
-	 */
-	public void unhide(EntityPlayer p);
-	
-	/**
-	 * Unides this assignment from the player.
-	 * @param p the uuid of the player to hide this assignment from
-	 */
-	public void unhide(UUID p);
+	public boolean isUnlocked(UUID p);
 	
 	/**
 	 * @return true if this assignment is locked by default, false otherwise
 	 */
 	public boolean isLockedByDefault();
 	
-	/**
-	 * @return true if this assignment is hidden by default, false otherwise
+	/*
+	 *
+	 * 
+	 * Data
+	 * 
+	 * 
 	 */
-	public boolean isHiddenByDefault();
 	
 	/**
 	 * @return the title of this assignment

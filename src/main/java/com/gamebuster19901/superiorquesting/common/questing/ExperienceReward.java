@@ -64,15 +64,6 @@ public final class ExperienceReward extends Reward{
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if(o instanceof ExperienceReward) {
-			ExperienceReward r = (ExperienceReward)o;
-			return r.isLevels() == isLevels && r.getAmount() == getAmount();
-		}
-		return false;
-	}
-
-	@Override
 	public void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
 	}

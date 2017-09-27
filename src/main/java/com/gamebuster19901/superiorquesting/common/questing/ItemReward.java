@@ -50,14 +50,6 @@ public final class ItemReward extends Reward{
 			Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 		}
 	}
-	@Override
-	public boolean equals(Object o) {
-		if(o instanceof ItemReward) {
-			ItemReward r = (ItemReward)o;
-			return ItemStack.areItemStacksEqual(reward.asItem(), r.reward.asItem());
-		}
-		return false;
-	}
 
 	@Override
 	public void writeObject(ObjectOutputStream out) throws IOException {

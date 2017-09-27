@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
@@ -16,12 +17,6 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVers
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.storage.SaveHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public final class Quest implements Rewardable, Assignment, Debuggable, Assertable{
@@ -38,7 +33,7 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	private boolean hiddenByDefault = false; //a quest that is hidden is not visible and is locked unless all prerequisite quests are completed.
 	private ArrayList<Reward> rewards = new ArrayList<Reward>();
 	private ArrayList<Quest> prerequisites = new ArrayList<Quest>();
-	private ArrayList<Task> tasks = new ArrayList<Task>();
+	private TreeSet<Task> tasks = new TreeSet<Task>();
 	
 	/**
 	 * @param title the title of the quest
@@ -84,57 +79,56 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 		}
 		throw new IndexOutOfBoundsException(important + " < " + 1);
 	}
-
-	/**
-	 * if the player can collect rewards for this quest
+	
+	/*
 	 * 
-	 * @param p the player to check
 	 * 
-	 * @return false if they have already collected the reward or they have not finished the quest, true otherwise
+	 * Finishing
+	 * 
+	 * 
 	 */
 	@Override
-	public boolean canCollect(EntityPlayer p) {
-		if(hasCollected(p)) {
-			return false;
-		}
-		return hasFinished(p);
-	}
-
-	/**
-	 * Awards the player
-	 * 
-	 * @param p the player to Award
-	 */
-	@Override
-	public void collect(EntityPlayer p) {
-		for(Reward r : rewards) {
-			r.collect(p);
-		}
-	}
-
-	/**
-	 * returns true if the player has completed all prerequisites, and this quest, false otherwise
-	 * 
-	 * @param p the player to check
-	 */
-	@Override
-	public boolean hasFinished(EntityPlayer p) {
-		for(Quest q : prerequisites) {
-			if(!q.hasFinished(p)) {
-				return false;
+	public void updateStatus(WorldTickEvent e) {
+		for(EntityPlayer p : e.world.playerEntities) {
+			if(!isFinished(p)) {
+				if(isUnlocked(p)) {
+					if(areConditionsSatisfied(p)) {
+						markFinished(p);
+						if(this.rewards.size() == 0) {
+							this.markCollected(p);
+						}
+					}
+				}
 			}
 		}
-		return true;
 	}
-	
+
 	@Override
-	public boolean hasFinished(UUID p) {
-		if(Main.proxy.getQuestHandler().getNbtOfPlayerUsingUUID(p) != null) {
+	public boolean areConditionsSatisfied(EntityPlayer p) {
+		if(this.isUnlocked(p)) {
 			for(Quest q : prerequisites) {
-				if(!q.hasFinished(p)) {
+				if(!q.isFinished(p)) {
 					return false;
 				}
 			}
+			for(Task t : tasks) {
+				if(!t.isFinished(p)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isFinished(EntityPlayer p) {
+		return Main.proxy.getQuestHandler().getQuestNBT(getTitle(), p).getBoolean(COMPLETED);
+	}
+	
+	@Override
+	public boolean isFinished(UUID p) {
+		if(Main.proxy.getQuestHandler().getNbtOfPlayerUsingUUID(p) != null) {
 			return Main.proxy.getQuestHandler().getQuestNBT(getTitle(), p).getBoolean(COMPLETED);
 		}
 		return false;
@@ -153,7 +147,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 		for(Task t : tasks) {
 			t.finish(p);
 		}
-		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(COMPLETED, true);
+		unlock(p);
+		markFinished(p);
 	}
 	
 	/**
@@ -169,8 +164,31 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 		for(Task t : tasks) {
 			t.finish(p);
 		}
-		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(COMPLETED, true);
+		unlock(p);
+		markFinished(p);
 	}
+
+	@Override
+	@Deprecated
+	public void markFinished(EntityPlayer p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	@Deprecated
+	public void markFinished(UUID p) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/*
+	 * 
+	 * 
+	 * Collecting
+	 * 
+	 * 
+	 */
 	
 	/**
 	 * returns true if the player has collected the reward for this quest, false otherwise
@@ -185,11 +203,67 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	public boolean hasCollected(UUID p) {
 		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean(COLLECTED);
 	}
-	
+
 	/**
-	 * returns true if the player has been notified of this quest's completion, false otherwise
-	 * @param p the payer to check
+	 * if the player can collect rewards for this quest
+	 * 
+	 * @param p the player to check
+	 * 
+	 * @return false if they have already collected the reward or they have not finished the quest, true otherwise
 	 */
+	@Override
+	public boolean canCollect(EntityPlayer p) {
+		if(hasCollected(p)) {
+			return false;
+		}
+		return isFinished(p);
+	}
+
+	/**
+	 * Awards the player
+	 * 
+	 * @param p the player to Award
+	 */
+	@Override
+	public void collect(EntityPlayer p) {
+		for(Reward r : rewards) {
+			r.collect(p);
+		}
+		markCollected(p);
+	}
+	
+	@Override
+	@Deprecated
+	public void markCollected(EntityPlayer p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(COLLECTED, true);
+	}
+
+	@Override
+	@Deprecated
+	public void markCollected(UUID p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(COLLECTED, true);
+	}
+	
+	@Override
+	@Deprecated
+	public void markUncollected(EntityPlayer p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(COLLECTED, false);
+	}
+
+	@Override
+	@Deprecated
+	public void markUncollected(UUID p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(COLLECTED, false);
+	}
+	
+	/*
+	 *
+	 * 
+	 * Notifications
+	 * 
+	 * 
+	 */
+	
 	@Override
 	public boolean hasNotified(EntityPlayer p) {
 		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean(NOTIFIED);
@@ -199,6 +273,31 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	public boolean hasNotified(UUID p) {
 		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean(NOTIFIED);
 	}
+	
+	@Override
+	public void notify(EntityPlayer p) {
+		Assert(false, "Not yet implemented");
+	}
+
+	@Override
+	public void markNotified(EntityPlayer p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void markNotified(UUID p) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/*
+	 * 
+	 * 
+	 * Locking
+	 * 
+	 * 
+	 */
 	
 	@Override
 	public boolean isUnlocked(EntityPlayer p) {
@@ -212,23 +311,79 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	
 	@Override
 	public void lock(EntityPlayer p) {
-		Assert(false, "Not yet implemented");
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(UNLOCKED, false);
 	}
 
 	@Override
 	public void lock(UUID p) {
-		Assert(false, "Not yet implemented");
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(UNLOCKED, false);
 	}
 
 	@Override
 	public void unlock(EntityPlayer p) {
-		Assert(false, "Not yet implemented");
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(UNLOCKED, true);
 	}
 
 	@Override
 	public void unlock(UUID p) {
-		Assert(false, "Not yet implemented");
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(UNLOCKED, true);
 	}
+	
+	@Override
+	public boolean isLockedByDefault() {
+		return lockedByDefault;
+	}
+	
+	/*
+	 * 
+	 * 
+	 * Hiding
+	 * 
+	 * 
+	 */
+	
+	@Override
+	public boolean isHidden(EntityPlayer p) {
+		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean(HIDDEN);
+	}
+
+	@Override
+	public boolean isHidden(UUID p) {
+		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean(HIDDEN);
+	}
+	
+	@Override
+	public void hide(EntityPlayer p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(HIDDEN, true);
+	}
+
+	@Override
+	public void hide(UUID p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(HIDDEN, true);
+	}
+
+	@Override
+	public void unhide(EntityPlayer p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(HIDDEN, false);
+	}
+
+	@Override
+	public void unhide(UUID p) {
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean(HIDDEN, false);
+	}
+	
+	@Override
+	public boolean isHiddenByDefault() {
+		return hiddenByDefault;
+	}
+	
+	/*
+	 * 
+	 * 
+	 * Quest data
+	 * 
+	 * 
+	 */
 	
 	/**
 	 * @return the title of this quest
@@ -244,23 +399,6 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	@Override
 	public String getDescription() {
 		return description;
-	}
-	
-	@SubscribeEvent
-	public void worldTickEvent(WorldTickEvent e) {
-		if(e.phase.equals(Phase.END)) {
-			if(e.world.isRemote) {
-				for(EntityPlayerMP p : e.world.getPlayers(EntityPlayerMP.class, null)) {
-					for(Quest q : prerequisites) { //these should be in order as quests first, then tasks
-						
-					}
-					
-					if(canCollect(p)) {
-						collect(p);
-					}
-				}
-			}
-		}
 	}
 	
 	/**
@@ -349,7 +487,7 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 		return prerequisites;
 	}
 	
-	ArrayList<Task> tasks(){
+	TreeSet<Task> tasks(){
 		return tasks;
 	}
 	
@@ -406,44 +544,5 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 		else {
 			convert(serialVersionUID, inVersion, in);
 		}
-	}
-
-	@Override
-	public void hide(EntityPlayer p) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void hide(UUID p) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unhide(EntityPlayer p) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unhide(UUID p) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isLockedByDefault() {
-		// TODO Auto-generated method stub
-		return lockedByDefault;
-	}
-	
-	@Override
-	public boolean isHiddenByDefault() {
-		return hiddenByDefault;
-	}
-	
-	public boolean canCompleteTasksWhileLocked() {
-		return completeTasksWhileLocked;
 	}
 }
