@@ -77,7 +77,7 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 		final ArrayList<Quest> ret = new ArrayList<Quest>();
 		for(String s : QUESTS.keySet()) {
 			Quest q = getQuest(s);
-			if(q.hasFinished(p)) {
+			if(q.isFinished(p)) {
 				ret.add(q);
 			}
 		}
