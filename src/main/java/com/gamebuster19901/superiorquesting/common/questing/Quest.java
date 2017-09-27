@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
@@ -15,6 +16,9 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -119,6 +123,19 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		return true;
 	}
 	
+	@Override
+	public boolean hasFinished(UUID p) {
+		if(Main.proxy.getQuestHandler().getNbtOfPlayerUsingUUID(p) != null) {
+			for(Quest q : prerequisites) {
+				if(!q.hasFinished(p)) {
+					return false;
+				}
+			}
+			return Main.proxy.getQuestHandler().getQuestNBT(getTitle(), p).getBoolean("FINISHED");
+		}
+		return false;
+	}
+	
 	/**
 	 * causes a player to complete all prerequisites for this quest (including other quests), then completes this quest
 	 * 
@@ -129,7 +146,15 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		for(Assignment a : prerequisites) {
 			a.finish(p);
 		}
-		//mark this as finished
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean("FINISHED", true);
+	}
+	
+	@Override
+	public void finish(UUID p) {
+		for(Assignment a : prerequisites) {
+			a.finish(p);
+		}
+		Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).setBoolean("FINISHED", true);
 	}
 	
 	/**
@@ -141,11 +166,22 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean("COLLECTED");
 	}
 	
+	@Override
+	public boolean hasCollected(UUID p) {
+		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean("COLLECTED");
+	}
+	
 	/**
 	 * returns true if the player has been notified of this quest's completion, false otherwise
 	 * @param p the payer to check
 	 */
+	@Override
 	public boolean hasNotified(EntityPlayer p) {
+		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean("NOTIFIED");
+	}
+	
+	@Override
+	public boolean hasNotified(UUID p) {
 		return Main.proxy.getQuestHandler().getQuestNBT(this.getTitle(), p).getBoolean("NOTIFIED");
 	}
 	
@@ -344,4 +380,6 @@ public final class Quest implements Rewardable, Assignment, Debuggable{
 			convert(serialVersionUID, inVersion, in);
 		}
 	}
+	
+
 }

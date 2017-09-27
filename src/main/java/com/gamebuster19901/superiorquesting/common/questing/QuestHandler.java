@@ -8,7 +8,9 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
@@ -65,6 +67,25 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 		catch(Exception | AssertionError e) {
 			throw new VersioningError(e);
 		}
+	}
+	
+	public final ArrayList<Quest> getCompletedQuests(EntityPlayer p){
+		final ArrayList<Quest> ret = new ArrayList<Quest>();
+		for(String s : QUESTS.keySet()) {
+			Quest q = getQuest(s);
+			if(q.hasFinished(p)) {
+				ret.add(q);
+			}
+		}
+		return ret;
+	}
+	
+	public final ArrayList<Quest> getAllQuests(){
+		final ArrayList<Quest> ret = new ArrayList<Quest>();
+		for(String s : QUESTS.keySet()) {
+			ret.add(getQuest(s));
+		}
+		return ret;
 	}
 	
 	private final void add(String title, Quest quest) {
@@ -138,11 +159,23 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 		return getPersistantTag(p).getCompoundTag(quest);
 	}
 	
+	NBTTagCompound getQuestNBT(String quest, UUID p) {
+		return getPersistantTag(p).getCompoundTag(quest);
+	}
+	
 	public boolean hasQuestNBT(EntityPlayer p){
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
 	
+	public boolean hasQuestNBT(UUID p) {
+		return getPersistantTag(p).hasKey(QUEST_KEY);
+	}
+	
 	public boolean hasQuestNBT(String quest, EntityPlayer p) {
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest);
+	}
+	
+	public boolean hasQuestNBT(String quest, UUID p) {
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest);
 	}
 	
