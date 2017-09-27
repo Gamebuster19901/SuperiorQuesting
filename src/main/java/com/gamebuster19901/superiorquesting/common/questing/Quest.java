@@ -101,9 +101,9 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	}
 
 	/**
-	 * Collects the player
+	 * Awards the player
 	 * 
-	 * @param p the player to collect
+	 * @param p the player to Award
 	 */
 	@Override
 	public void collect(EntityPlayer p) {
