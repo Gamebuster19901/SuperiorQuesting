@@ -34,12 +34,12 @@ public final class ExperienceReward extends Reward{
 	}
 	
 	@Override
-	public boolean canAward(EntityPlayer p) {
+	public boolean canCollect(EntityPlayer p) {
 		return !p.isDead;
 	}
 
 	@Override
-	public void award(EntityPlayer p) {
+	public void collect(EntityPlayer p) {
 		if(isLevels) {
 			p.addExperienceLevel(amount);
 		}

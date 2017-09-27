@@ -45,11 +45,6 @@ public abstract class Reward implements Rewardable{
 		
 		Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 	}
-
-	@Override
-	public final int compareTo(Object o) {
-		return 0;
-	}
 	
 	@Override
 	public abstract boolean equals(Object o);

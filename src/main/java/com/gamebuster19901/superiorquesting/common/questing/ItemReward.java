@@ -30,12 +30,12 @@ public final class ItemReward extends Reward{
 		throw new IllegalArgumentException("Cannot have an item reward be an empty itemstack");
 	}
 	@Override
-	public boolean canAward(EntityPlayer p) {
+	public boolean canCollect(EntityPlayer p) {
 		return !p.isDead;
 	}
 
 	@Override
-	public void award(EntityPlayer p) {
+	public void collect(EntityPlayer p) {
 		new EntityItem(p.getEntityWorld(), p.posX, p.posY, p.posZ, reward.asItem());
 	}
 	

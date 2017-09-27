@@ -1,6 +1,10 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
+import static com.gamebuster19901.superiorquesting.common.questing.Assignment.UNLOCKED;
+import static com.gamebuster19901.superiorquesting.common.questing.Assignment.COMPLETED;
+import static com.gamebuster19901.superiorquesting.common.questing.Assignment.NOTIFIED;
+import static com.gamebuster19901.superiorquesting.common.questing.Rewardable.COLLECTED;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -206,13 +210,15 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 		for(String key : QUESTS.keySet()) { //key is the quest title
 			Quest q = QUESTS.get(key);
 			NBTTagCompound nbt = new NBTTagCompound();
-			nbt.setBoolean("UNLOCKED", false);
-			nbt.setBoolean("COMPLETED", false);
-			nbt.setBoolean("NOTIFIED", false);
-			nbt.setBoolean("COLLECTED", false);
+			nbt.setBoolean(UNLOCKED, false);
+			nbt.setBoolean(COMPLETED, false);
+			nbt.setBoolean(NOTIFIED, false);
+			nbt.setBoolean(COLLECTED, false);
 			getPersistantTag(p).setTag(key, nbt);
 		}
 	}
+	
+	
 
 	@Override
 	protected void onConfigFinishChanged() {}
