@@ -28,9 +28,8 @@ public final class Quest implements Rewardable, Assignment, Debuggable, Assertab
 	private int x;
 	private int y;
 	private byte important = 1;
-	private boolean completeTasksWhileLocked = false;
 	private boolean lockedByDefault = false;
-	private boolean hiddenByDefault = false; //a quest that is hidden is not visible and is locked unless all prerequisite quests are completed.
+	private boolean hiddenByDefault = false; //a quest that is hidden is not visible unless all prerequisite quests are completed.
 	private ArrayList<Reward> rewards = new ArrayList<Reward>();
 	private ArrayList<Quest> prerequisites = new ArrayList<Quest>();
 	private TreeSet<Task> tasks = new TreeSet<Task>();

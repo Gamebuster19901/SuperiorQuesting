@@ -1,5 +1,8 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
@@ -15,11 +18,12 @@ public abstract class Reward implements Rewardable{
 	private final Quest parent;
 	
 	//used to check if a quest is allowed to have more than one of this reward type
-	private final boolean unique;
+	private boolean collected;
+	private UUID id;
 	
-	public Reward(Quest parent, boolean isUnique) {
+	public Reward(Quest parent) {
 		this.parent = parent;
-		unique = isUnique;
+		this.id = UUID.randomUUID();
 	}
 	
 	/**
@@ -55,8 +59,28 @@ public abstract class Reward implements Rewardable{
 	public final boolean hasCollected(UUID p) {
 		return parent.hasCollected(p);
 	}
-	
-	public final boolean isUnique() {
-		return unique;
+
+	@Override
+	public final void markCollected(EntityPlayer p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public final void markCollected(UUID p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public final void markUncollected(EntityPlayer p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public final void markUncollected(UUID p) {
+		// TODO Auto-generated method stub
+		
 	}
 }
