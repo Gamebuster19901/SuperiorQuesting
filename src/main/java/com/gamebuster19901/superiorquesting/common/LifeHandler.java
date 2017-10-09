@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public final class LifeHandler extends MultiplayerHandler implements Assertable{
+public final class LifeHandler extends MultiplayerHandler implements Assertable, Debuggable{
 	private static final String LIFE_KEY = MODID + ":lives"; 
 	/**
 	 * Adds one life to the player, if the life total would be less than 1, it is set to 1 instead, it if is greater than the max life count, it is unchanged.
@@ -227,40 +227,15 @@ public final class LifeHandler extends MultiplayerHandler implements Assertable{
 	}
 	
 	@SubscribeEvent
-	public void onPlayerDeath(LivingHurtEvent e){
-		if (e.getEntity() instanceof EntityPlayer){
-			if((e.getEntityLiving().getHealth() - e.getAmount() <= 0)){
-				EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
-				if(!(p.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.TOTEM_OF_UNDYING && !(p.getHeldItem(EnumHand.OFF_HAND).getItem() == Items.TOTEM_OF_UNDYING)) || e.getSource() == DamageSource.OUT_OF_WORLD){
-					if(removeLife(p) && p.isSpectator()){
-						e.setCanceled(true);
-				        boolean flag = e.getEntity().world.getGameRules().getBoolean("showDeathMessages");
-
-				        if (flag)
-				        {
-				            Team team = p.getTeam();
-
-				            if (team != null && team.getDeathMessageVisibility() != Team.EnumVisible.ALWAYS)
-				            {
-				                if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
-				                {
-				                    p.mcServer.getPlayerList().sendMessageToAllTeamMembers(p, p.getCombatTracker().getDeathMessage());
-				                }
-				                else if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OWN_TEAM)
-				                {
-				                    p.mcServer.getPlayerList().sendMessageToTeamOrAllPlayers(p, p.getCombatTracker().getDeathMessage());
-				                }
-				            }
-				            else
-				            {
-				                p.mcServer.getPlayerList().sendMessage(p.getCombatTracker().getDeathMessage());
-				            }
-				        }
-						MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(e.getEntityLiving(), e.getSource()));
-					}
-				}
+	public void onPlayerDeath(LivingDeathEvent e){
+		if (e.getEntity() instanceof EntityPlayerMP){
+			EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
+			if(removeLife(p) && p.isSpectator() && p.posY >= 0){
+				p.setHealth(0.01f);
+				debug("test1");
 			}
 		}
+		debug("test2");
 	}
 	
 	/**
