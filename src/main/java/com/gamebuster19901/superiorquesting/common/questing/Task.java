@@ -1,15 +1,11 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.Assertable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public abstract class Task implements Assignment, Assertable{
 	

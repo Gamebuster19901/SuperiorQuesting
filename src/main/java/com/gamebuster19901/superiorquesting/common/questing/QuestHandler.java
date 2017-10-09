@@ -1,37 +1,22 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
-import static com.gamebuster19901.superiorquesting.common.questing.Assignment.UNLOCKED;
 import static com.gamebuster19901.superiorquesting.common.questing.Assignment.COMPLETED;
 import static com.gamebuster19901.superiorquesting.common.questing.Assignment.NOTIFIED;
+import static com.gamebuster19901.superiorquesting.common.questing.Assignment.UNLOCKED;
 import static com.gamebuster19901.superiorquesting.common.questing.Rewardable.COLLECTED;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOError;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.apache.logging.log4j.Level;
-
-import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
-import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
-import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
-import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public final class QuestHandler extends MultiplayerHandler {

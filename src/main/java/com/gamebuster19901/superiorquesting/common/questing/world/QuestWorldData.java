@@ -1,8 +1,6 @@
 package com.gamebuster19901.superiorquesting.common.questing.world;
 
-import java.io.ObjectInputStream;
 import java.util.Set;
-import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
@@ -13,15 +11,9 @@ import com.gamebuster19901.superiorquesting.common.questing.Task;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class QuestWorldData extends WorldSavedData implements UpdatableSerializable, Assertable{
 	public static final long VERSION = 1L;

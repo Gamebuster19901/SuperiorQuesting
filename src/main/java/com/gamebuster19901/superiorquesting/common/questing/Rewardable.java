@@ -7,8 +7,6 @@ import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * A Rewardable is anything that can give a reward.

@@ -1,23 +1,13 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeSet;
 import java.util.UUID;
 
-import org.apache.logging.log4j.Level;
-
-import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
-import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
-import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
