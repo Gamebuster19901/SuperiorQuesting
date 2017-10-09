@@ -3,6 +3,7 @@ package com.gamebuster19901.superiorquesting.common.questing;
 import java.util.ArrayList;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -31,7 +32,7 @@ public final class RewardType {
 	public static final void registerRewardType(Class<? extends Reward> reward, ResourceLocation image, String name, String description) {
 		for(RewardType r : rewardTypes) {
 			if(r.reward.equals(reward)) {
-				throw new IllegalStateException("Cannot register a reward type more than once: " + reward.getName());
+				throw new DuplicateKeyException("Cannot register a reward type more than once: " + reward.getName());
 			}
 			if(r.reward.equals(Reward.class)) {
 				throw new IllegalArgumentException("YOU'RE AN IDIOT, DON'T DO THAT");

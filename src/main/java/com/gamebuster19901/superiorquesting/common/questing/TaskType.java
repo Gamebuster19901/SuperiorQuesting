@@ -3,6 +3,7 @@ package com.gamebuster19901.superiorquesting.common.questing;
 import java.util.ArrayList;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -31,7 +32,7 @@ public final class TaskType {
 	public static final void registerTaskType(Class<? extends Task> task, ResourceLocation image, String name, String description) {
 		for(TaskType r : taskTypes) {
 			if(r.task.equals(task)) {
-				throw new IllegalStateException("Cannot register a task type more than once: " + task.getName());
+				throw new DuplicateKeyException("Cannot register a task type more than once: " + task.getName());
 			}
 			if(r.task.equals(Task.class)) {
 				throw new IllegalArgumentException("YOU'RE AN IDIOT, DON'T DO THAT");
