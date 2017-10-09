@@ -2,6 +2,8 @@ package com.gamebuster19901.superiorquesting.common.questing;
 
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,14 +13,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 /**
  * An assignment is anything that can be completed, it has a title and description.
  * 
- * Some assignments may need to be ordered a specific way, so all assignments are Comparables.
- * 
- * Quests come first, then Tasks.
- * 
  * Currently, all Assignments are instances of Quest or Task, support may be added for
  * different types of assignments in future updates
  */
-interface Assignment extends UpdatableSerializable{
+public interface Assignment extends UpdatableSerializable, Unique{
 	public String UNLOCKED = "UNLOCKED";
 	public String COMPLETED = "COMPLETED";
 	public String HIDDEN = "HIDDEN";
@@ -249,4 +247,10 @@ interface Assignment extends UpdatableSerializable{
 	
 	@Override
 	public String toString();
+	
+	public default QuestHandler getQuestHandler() {
+		return Main.proxy.getQuestHandler();
+	}
+	
+	public UUID getUUID();
 }

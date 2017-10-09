@@ -8,28 +8,33 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public abstract class Task implements Assignment, Assertable{
 	
-	private Quest parent;
+	private UUID id;
+	private UUID parent;
 	private String title;
 	private String description;
-	private int order;
 	private boolean lockedByDefault = true;
 	private boolean hiddenByDefault = false;
 	
 	Task(Quest parent, String title, String description, int order){
-		this.parent = parent;
+		this.id = UUID.randomUUID();
+		this.parent = parent.getUUID();
 		this.title = title;
 		this.description = description;
-		this.order = order;
 	}
 	
 	Task(Quest parent, String title, String description, int order, boolean lockedByDefault, boolean hiddenByDefault){
 		this(parent, title, description, order);
 		this.lockedByDefault = lockedByDefault;
 		this.hiddenByDefault = hiddenByDefault;
+	}
+	
+	Task(NBTTagCompound data){
+		this.deserializeNBT(data);
 	}
 
 	@Override
@@ -40,45 +45,6 @@ public abstract class Task implements Assignment, Assertable{
 	@Override
 	public final String getDescription() {
 		return description;
-	}
-
-	@Override
-	public void convert(long prevVersion, long nextVersion, ObjectInputStream in) {
-		Assert(false, "Not yet implemented");
-	}
-
-	@Override
-	public void writeObject(ObjectOutputStream out) throws IOException {
-		Assert(false, "Not yet implemented");
-	}
-
-	@Override
-	public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		Assert(false, "Not yet implemented");
-	}
-
-	@Override
-	public final void updateStatus(WorldTickEvent e) {
-		for(EntityPlayer p : e.world.playerEntities) {
-			if(!isFinished(p)) {
-				if(isUnlocked(p)) {
-					if(areConditionsSatisfied(p)) {
-						markFinished(p);
-					}
-				}
-				else {
-					for(Task t : parent.tasks()) {
-						if(t == this) {
-							unlock(p);
-							return;
-						}
-						else if (!t.isFinished(p)) {
-							return;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	@Override
@@ -208,5 +174,11 @@ public abstract class Task implements Assignment, Assertable{
 	public boolean isLockedByDefault() {
 		// TODO Auto-generated method stub
 		return lockedByDefault;
+	}
+
+	@Override
+	public final UUID getUUID() {
+		// TODO Auto-generated method stub
+		return id;
 	}
 }

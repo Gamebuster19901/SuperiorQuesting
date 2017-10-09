@@ -25,58 +25,28 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateK
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
+import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public final class QuestHandler extends MultiplayerHandler implements UpdatableSerializable{
-	private static final long serialVersionUID = 0L;
-	private static final String QUEST_KEY = MODID + ":quests"; 
-	private static final String DLMR = (char)0x00A7 + "";
-	private static final File QUEST_DATA_FILE = new File(Main.proxy.getQuestDirectory().getAbsolutePath() + "/quests.config");
-	static {
-		if (!QUEST_DATA_FILE.exists()) {
-			QUEST_DATA_FILE.getParentFile().mkdirs();
-		}
-	}
+public final class QuestHandler extends MultiplayerHandler {
+	private static final String QUEST_KEY = MODID + ":quests";
+	private static final String REWARD_KEY = MODID + ":rewards";
+	private static final String TASK_KEY = MODID + ":tasks";
 	
-	
-	private long VERSION = serialVersionUID;
-	private final HashMap<String,Quest> QUESTS = new HashMap<String, Quest>();
-	
-	@Override
-	public void convert(long prevVersion, long nextVersion, ObjectInputStream in) {
-		try {
-			if(nextVersion > VERSION) {
-				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
-			}
-			if(nextVersion == VERSION) {
-				throw new AssertionError(new IllegalArgumentException(prevVersion + " == " + nextVersion));
-			}
-			if(nextVersion > prevVersion + 1L) {
-				convert(prevVersion, nextVersion - 1L, in);
-				return;
-			}
-		
-
-			if(prevVersion == 0L && nextVersion == 1L) {
-				Main.LOGGER.log(Level.INFO, "Converting quest from version " + prevVersion + " to version " + nextVersion);
-				throw new FutureVersionError("1 is a future version, currently on version 0");
-			}
-			
-			throw new AssertionError("Tried to convert directly from version " + prevVersion + "to version " + nextVersion);
-			
-		}
-		catch(Exception | AssertionError e) {
-			throw new VersioningError(e);
-		}
-	}
+	private final HashMap<UUID, Quest> QUESTS = new HashMap<UUID, Quest>();
+	private final HashMap<UUID, Task> TASKS = new HashMap<UUID, Task>();
+	private final HashMap<UUID, Reward> REWARDS = new HashMap<UUID, Reward>();
 	
 	public final ArrayList<Quest> getCompletedQuests(EntityPlayer p){
 		final ArrayList<Quest> ret = new ArrayList<Quest>();
-		for(String s : QUESTS.keySet()) {
-			Quest q = getQuest(s);
+		for(UUID u : QUESTS.keySet()) {
+			Quest q = getQuest(u);
 			if(q.isFinished(p)) {
 				ret.add(q);
 			}
@@ -86,101 +56,214 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 	
 	public final ArrayList<Quest> getAllQuests(){
 		final ArrayList<Quest> ret = new ArrayList<Quest>();
-		for(String s : QUESTS.keySet()) {
+		for(UUID s : QUESTS.keySet()) {
 			ret.add(getQuest(s));
 		}
 		return ret;
 	}
 	
-	private final void add(String title, Quest quest) {
-		if(QUESTS.containsKey(title)) {
-			throw new DuplicateKeyException(title);
+	public final ArrayList<Task> getAllTasks(){
+		final ArrayList<Task> ret = new ArrayList<Task>();
+		for(UUID s : TASKS.keySet()) {
+			ret.add(getTask(s));
 		}
-		QUESTS.put(title, quest);
+		return ret;
 	}
 	
-	private final void remove(String title) {
-		if(!QUESTS.containsKey(title)) {
-			throw new NonExistantKeyException(title);
+	public final ArrayList<Reward> getAllRewards(){
+		final ArrayList<Reward> ret = new ArrayList<Reward>();
+		for(UUID u : REWARDS.keySet()) {
+			ret.add(getReward(u));
 		}
-		QUESTS.remove(title);
+		return ret;
 	}
 	
-	private final boolean ChangeTitle(String prevTitle, String newTitle, Quest quest) {
-		if(QUESTS.containsKey(prevTitle) && !QUESTS.containsKey(newTitle)) {
-			Quest q = QUESTS.remove(prevTitle);
-			QUESTS.put(newTitle, q);
-			return true;
+	public final void add(Quest quest) {
+		if(QUESTS.containsKey(quest.getUUID())) {
+			throw new DuplicateKeyException("Quest " + quest.getUUID().toString());
 		}
-		return false;
+		QUESTS.put(quest.getUUID(), quest);
+		markDirty();
 	}
 	
-	private final void saveOverConfigFile() {
-		ObjectOutputStream oos = null;
-		try {
-			oos = new ObjectOutputStream(new FileOutputStream(QUEST_DATA_FILE));
-			this.writeObject(oos);
+	public final void add(Task task) {
+		if(TASKS.containsKey(task.getUUID())) {
+			throw new DuplicateKeyException("Task " + task.getUUID().toString());
 		}
-		catch(IOException e) {
-			throw new RuntimeException(e);
+		TASKS.put(task.getUUID(), task);
+		markDirty();
+	}
+	
+	public void add(Reward reward) {
+		if(REWARDS.containsKey(reward.getUUID())) {
+			throw new DuplicateKeyException("Reward " + reward.getUUID());
 		}
-		finally {
+		REWARDS.put(reward.getUUID(), reward);
+		markDirty();
+	}
+	
+	private final void removeQuest(UUID uuid) {
+		if(!QUESTS.containsKey(uuid)) {
+			throw new NonExistantKeyException("Quest " + uuid);
+		}
+		QUESTS.remove(uuid);
+		markDirty();
+	}
+	
+	private final void removeTask(UUID uuid) {
+		if(!TASKS.containsKey(uuid)) {
+			throw new NonExistantKeyException("Task " + uuid);
+		}
+		TASKS.remove(uuid);
+		markDirty();
+	}
+	
+	private final void removeReward(UUID uuid) {
+		if(!REWARDS.containsKey(uuid)) {
+			throw new NonExistantKeyException("Reward " + uuid.toString());
+		}
+		REWARDS.remove(uuid);
+		markDirty();
+	}
+	
+	final Quest getQuest(UUID uuid) {
+		return QUESTS.get(uuid);
+	}
+	
+	final Task getTask(UUID uuid) {
+		return TASKS.get(uuid);
+	}
+	
+	final Reward getReward(UUID uuid) {
+		return REWARDS.get(uuid);
+	}
+	
+	private final void setQuests(NBTTagCompound nbt) {
+		QUESTS.clear();
+		for(String key : nbt.getKeySet()) {
+			QUESTS.put(UUID.fromString(key), new Quest(nbt.getCompoundTag(key)));
+		}
+		markDirty();
+	}
+	
+	private final void setTasks(NBTTagCompound nbt) {
+		TASKS.clear();
+		for(String key : nbt.getKeySet()) {
+			NBTTagCompound data = nbt.getCompoundTag(key);
+			Task t;
 			try {
-				oos.close();
-			} catch (IOException e) { //if it cannot close then this is unrecoverable
-				throw new IOError(e);
+				Class<? extends Task> tsk = (Class<? extends Task>) Class.forName(data.getString("CLASS"));
+				t = tsk.newInstance();
 			}
+			catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+			t.deserializeNBT(data);
+			TASKS.put(UUID.fromString(key), t);
 		}
+		markDirty();
 	}
 	
-	@Override
-	public void writeObject(ObjectOutputStream out) throws IOException{
-		out.defaultWriteObject();
-	}
-	
-	@Override
-	public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-		in.mark(8);
-		long inVersion = in.readLong();
-		if(inVersion == serialVersionUID) {
-			in.reset();
-			in.defaultReadObject();
+	private final void setRewards(NBTTagCompound nbt) {
+		REWARDS.clear();
+		for(String key : nbt.getKeySet()) {
+			NBTTagCompound data = nbt.getCompoundTag(key);
+			Reward r;
+			try {
+				Class<? extends Reward> rew = (Class<? extends Reward>) Class.forName(data.getString("CLASS"));
+				r = rew.newInstance();
+			}
+			catch(ClassNotFoundException | InstantiationException | IllegalAccessException e){
+				throw new RuntimeException(e);
+			}
+			r.deserializeNBT(data);
+			REWARDS.put(UUID.fromString(key), r);
 		}
-		else {
-			convert(serialVersionUID, inVersion, in);
-		}
+		markDirty();
 	}
 	
-	private final void saveOverHashMap() {
-		
+	NBTTagCompound getQuestNBT(UUID id, EntityPlayer p) {
+		Assert(hasQuestNBT(id, p), "quest " + id + " not found");
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY).getCompoundTag(id.toString());
 	}
 	
-	final Quest getQuest(String title) {
-		return QUESTS.get(title);
+	NBTTagCompound getQuestNBT(UUID id, UUID p) {
+		Assert(hasQuestNBT(id, p), "quest " + id + " not found");
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY).getCompoundTag(id.toString());
 	}
 	
-	NBTTagCompound getQuestNBT(String quest, EntityPlayer p) {
-		return getPersistantTag(p).getCompoundTag(quest);
-	}
-	
-	NBTTagCompound getQuestNBT(String quest, UUID p) {
-		return getPersistantTag(p).getCompoundTag(quest);
-	}
-	
-	public boolean hasQuestNBT(EntityPlayer p){
+	boolean hasQuestNBT(EntityPlayer p){
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
 	
-	public boolean hasQuestNBT(UUID p) {
+	boolean hasQuestNBT(UUID p) {
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
 	
-	public boolean hasQuestNBT(String quest, EntityPlayer p) {
-		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest);
+	boolean hasQuestNBT(UUID quest, EntityPlayer p) {
+		Assert(hasQuestNBT(p), "No quest nbt for player " + p);
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
 	}
 	
-	public boolean hasQuestNBT(String quest, UUID p) {
-		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest);
+	boolean hasQuestNBT(UUID quest, UUID p) {
+		Assert(hasQuestNBT(p), "No quest nbt for player " + p);
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
+	}
+	
+	NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
+		Assert(hasRewardNBT(id, p), "reward " + id + " not found");
+		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
+	}
+	
+	NBTTagCompound getRewardNBT(UUID id, UUID p) {
+		Assert(hasRewardNBT(id, p), "reward " + id + " not found");
+		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
+	}
+	
+	boolean hasRewardNBT(EntityPlayer p) {
+		return getPersistantTag(p).hasKey(REWARD_KEY);
+	}
+	
+	boolean hasRewardNBT(UUID p) {
+		return getPersistantTag(p).hasKey(REWARD_KEY);
+	}
+	
+	boolean hasRewardNBT(UUID reward, EntityPlayer p) {
+		Assert(hasRewardNBT(p), "No reward nbt for player " + p);
+		return getPersistantTag(p).getCompoundTag(REWARD_KEY).hasKey(reward.toString());
+	}
+	
+	boolean hasRewardNBT(UUID reward, UUID p) {
+		Assert(hasRewardNBT(p), "No reward nbt for player " + p);
+		return getPersistantTag(p).getCompoundTag(REWARD_KEY).hasKey(reward.toString());
+	}
+	
+	NBTTagCompound getTaskNBT(UUID task, EntityPlayer p) {
+		Assert(hasTaskNBT(task, p), "task " + task + " not found");
+		return getPersistantTag(p).getCompoundTag(TASK_KEY).getCompoundTag(task.toString());
+	}
+	
+	NBTTagCompound getTaskNBT(UUID task, UUID p) {
+		Assert(hasTaskNBT(task, p), "task " + task + " not found");
+		return getPersistantTag(p).getCompoundTag(TASK_KEY).getCompoundTag(task.toString());
+	}
+	
+	boolean hasTaskNBT(EntityPlayer p) {
+		return getPersistantTag(p).hasKey(TASK_KEY);
+	}
+	
+	boolean hasTaskNBT(UUID p) {
+		return getPersistantTag(p).hasKey(TASK_KEY);
+	}
+	
+	boolean hasTaskNBT(UUID task, EntityPlayer p) {
+		Assert(hasTaskNBT(p), "No task nbt for player " + p);
+		return getPersistantTag(p).getCompoundTag(TASK_KEY).hasKey(task.toString());
+	}
+	
+	boolean hasTaskNBT(UUID task, UUID p) {
+		Assert(hasTaskNBT(p), "No task nbt for player " + p);
+		return getPersistantTag(p).getCompoundTag(TASK_KEY).hasKey(task.toString());
 	}
 	
 	/**
@@ -190,9 +273,9 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 	 */
 	public void assertValidNBT(EntityPlayer p) {
 		if(hasQuestNBT(p)){
-			for(String key : QUESTS.keySet()) {
+			for(UUID key : QUESTS.keySet()) {
 				Quest q = QUESTS.get(key);
-				NBTTagCompound tag = getPersistantTag(p).getCompoundTag(key);
+				NBTTagCompound tag = getPersistantTag(p).getCompoundTag(key.toString());
 				
 				
 			}
@@ -207,14 +290,14 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 	 * @param p
 	 */
 	public void resetQuests(EntityPlayer p) {
-		for(String key : QUESTS.keySet()) { //key is the quest title
+		for(UUID key : QUESTS.keySet()) { //key is the quest title
 			Quest q = QUESTS.get(key);
 			NBTTagCompound nbt = new NBTTagCompound();
 			nbt.setBoolean(UNLOCKED, false);
 			nbt.setBoolean(COMPLETED, false);
 			nbt.setBoolean(NOTIFIED, false);
 			nbt.setBoolean(COLLECTED, false);
-			getPersistantTag(p).setTag(key, nbt);
+			getPersistantTag(p).setTag(key.toString(), nbt);
 		}
 	}
 	
@@ -228,5 +311,10 @@ public final class QuestHandler extends MultiplayerHandler implements UpdatableS
 		if(hasQuestNBT(e.player)) {
 			
 		}
+	}
+	
+	private final void markDirty() {
+		Assert(QuestWorldData.instance != null);
+		QuestWorldData.instance.markDirty();
 	}
 }

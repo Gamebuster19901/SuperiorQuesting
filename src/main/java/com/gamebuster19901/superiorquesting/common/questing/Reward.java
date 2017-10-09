@@ -8,22 +8,25 @@ import java.util.UUID;
 import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.Assertable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class Reward implements Rewardable{
-	private final Quest parent;
-	
-	//used to check if a quest is allowed to have more than one of this reward type
-	private boolean collected;
+public abstract class Reward implements Rewardable, Assertable{
+	private static final String REWARD_KEY = "rewards";
+	private static final String COLLECTED_KEY = "collected-";
 	private UUID id;
 	
-	public Reward(Quest parent) {
-		this.parent = parent;
-		this.id = UUID.randomUUID();
+	public Reward(Quest q) {
+		getQuestHandler().add(this);
+	}
+	
+	public Reward(NBTTagCompound nbt) {
+		convert(nbt.getLong("VERSION"), this.getVersion(), nbt);
 	}
 	
 	/**
@@ -49,38 +52,56 @@ public abstract class Reward implements Rewardable{
 		
 		Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 	}
+	
+	private final NBTTagCompound getRewardTag(EntityPlayer p) {
+		return getQuestHandler().getRewardNBT(id, p);
+	}
+	
+	private final NBTTagCompound getRewardTag(UUID p) {
+		return getQuestHandler().getRewardNBT(id, p);
+	}
 
 	@Override
 	public final boolean hasCollected(EntityPlayer p) {
-		return parent.hasCollected(p);
+		return getRewardTag(p).getBoolean(COLLECTED_KEY + id);
 	}
 	
 	@Override
 	public final boolean hasCollected(UUID p) {
-		return parent.hasCollected(p);
+		return getRewardTag(p).getBoolean(COLLECTED_KEY + id);
 	}
 
 	@Override
 	public final void markCollected(EntityPlayer p) {
-		// TODO Auto-generated method stub
-		
+		getRewardTag(p).setBoolean(COLLECTED_KEY + id, true);
 	}
 
 	@Override
 	public final void markCollected(UUID p) {
-		// TODO Auto-generated method stub
-		
+		getRewardTag(p).setBoolean(COLLECTED_KEY + id, true);
 	}
 
 	@Override
 	public final void markUncollected(EntityPlayer p) {
-		// TODO Auto-generated method stub
-		
+		getRewardTag(p).setBoolean(COLLECTED_KEY + id, false);
 	}
 
 	@Override
 	public final void markUncollected(UUID p) {
-		// TODO Auto-generated method stub
-		
+		getRewardTag(p).setBoolean(COLLECTED_KEY + id, false);
+	}
+	
+	public final void setUUID(String ID) {
+		Assert(id == null);
+		id = UUID.fromString(ID);
+	}
+	
+	public final void setUUID(UUID ID) {
+		Assert(id == null);
+		id = ID;
+	}
+	
+	public final UUID getUUID() {
+		return id;
 	}
 }

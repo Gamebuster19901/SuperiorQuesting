@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
+import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.QuestHandler;
 
 import net.minecraft.command.CommandBase;
@@ -79,6 +80,10 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 					p.addItemStackToInventory(new ItemStack(ItemQuestBook.ITEM, 1, 1));
 					return;
 				}
+			}
+			if(args[0].equals("add")) {
+				new Quest("Test", "test", 0, 0, 0, (byte)0);
+				return;
 			}
 		}
 		

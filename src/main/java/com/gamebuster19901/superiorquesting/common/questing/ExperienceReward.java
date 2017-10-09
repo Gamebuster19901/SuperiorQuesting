@@ -3,6 +3,7 @@ package com.gamebuster19901.superiorquesting.common.questing;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
@@ -16,21 +17,24 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public final class ExperienceReward extends Reward{
-	private static final long serialVersionUID = 0L;
-	
-	private long VERSION = serialVersionUID;
+	private static final long VERSION = 0L;
 	private int amount;
 	private boolean isLevels;
 	
-	private transient RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
-	private transient EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
+	private RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
+	private EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
 	
 	public ExperienceReward(Quest quest, int exp, boolean isLevels) {
-		super(quest, true); //quests cannot have more than one experience reward
+		super(quest);
 		amount = exp;
 		this.isLevels = isLevels; 
+	}
+	
+	public ExperienceReward(NBTTagCompound nbt) {
+		super(nbt);
 	}
 	
 	@Override
@@ -64,48 +68,61 @@ public final class ExperienceReward extends Reward{
 	}
 
 	@Override
-	public void writeObject(ObjectOutputStream out) throws IOException {
-		out.defaultWriteObject();
-	}
-
-	@Override
-	public void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-		in.mark(8);
-		long inVersion = in.readLong();
-		if(inVersion == serialVersionUID) {
-			in.reset();
-			in.defaultReadObject();
-		}
-		else {
-			convert(serialVersionUID, inVersion, in);
-		}
-	}
-	
-	@Override
-	public void convert(long prevVersion, long nextVersion, ObjectInputStream in) {
+	public void convert(long prevVersion, long nextVersion, NBTTagCompound nbtIn) {
 		try {
 			if(nextVersion > VERSION) {
 				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
 			}
-			if(nextVersion == VERSION) {
-				throw new AssertionError(new IllegalArgumentException(prevVersion + " == " + nextVersion));
-			}
+			
+			Assert(nextVersion != prevVersion, "Cannot convert to a version if it is the same version, this should never happen! (" + nextVersion + ")");
+			
 			if(nextVersion > prevVersion + 1L) {
-				convert(prevVersion, nextVersion - 1L, in);
-				return;
-			}
-		
-
-			if(prevVersion == 0L && nextVersion == 1L) {
-				Main.LOGGER.log(Level.INFO, "Converting quest from version " + prevVersion + " to version " + nextVersion);
-				throw new FutureVersionError("1 is a future version, currently on version 0");
+				convert(prevVersion, nextVersion - 1L, nbtIn);
 			}
 			
-			throw new AssertionError("Tried to convert directly from version " + prevVersion + "to version " + nextVersion);
+			if(prevVersion == 0L && nextVersion == 1L) {
+				throw new AssertionError("Tried to convert from nonexistant version 0 to version 1");
+			}
+			
+			if(prevVersion == 1L && nextVersion == 2L) {
+				//Future: convert from version 1 to version 2
+			}
+			
+			throw new AssertionError("Tried to convert directly from version " + prevVersion + " to version " + nextVersion);
 			
 		}
 		catch(Exception | AssertionError e) {
-			throw new VersioningError(e);
+			throw new VersioningError("There was an issue converting from version " + prevVersion + " to version " + nextVersion, e);
 		}
+	}
+
+	@Override
+	public NBTTagCompound serializeNBT() {
+		NBTTagCompound data = new NBTTagCompound();
+		data.setLong("VERSION", VERSION);
+		data.setString("CLASS", getClass().getCanonicalName());
+		data.setString("UUID", getUUID().toString());
+		data.setInteger("AMOUNT", amount);
+		data.setBoolean("ISLEVELS", isLevels);
+		return data;
+	}
+
+	@Override
+	public void deserializeNBT(NBTTagCompound nbt) {
+		long ver = nbt.getLong("VERSION");
+		if(ver != VERSION) {
+			convert(ver, VERSION, nbt);
+		}
+		else {
+			setUUID(nbt.getString("UUID"));
+			amount = nbt.getInteger("AMOUNT");
+			isLevels = nbt.getBoolean("ISLEVELS");
+		}
+	}
+
+	@Override
+	public long getVersion() {
+		// TODO Auto-generated method stub
+		return VERSION;
 	}
 }

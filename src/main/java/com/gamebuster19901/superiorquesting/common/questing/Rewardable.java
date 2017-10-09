@@ -2,15 +2,19 @@ package com.gamebuster19901.superiorquesting.common.questing;
 
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * A Rewardable is anything that can give a reward.
  */
 
-interface Rewardable extends UpdatableSerializable{
+interface Rewardable extends UpdatableSerializable, Unique{
 	public String COLLECTED = "COLLECTED";
 	
 	/**
@@ -75,5 +79,9 @@ interface Rewardable extends UpdatableSerializable{
 	@Deprecated
 	public void markUncollected(UUID p);
 	
+	public UUID getUUID();
 	
+	public default QuestHandler getQuestHandler() {
+		return Main.proxy.getQuestHandler();
+	}
 }

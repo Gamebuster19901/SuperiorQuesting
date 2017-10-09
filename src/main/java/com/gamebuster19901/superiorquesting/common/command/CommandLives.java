@@ -68,8 +68,8 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 		if (args.length == 1){
 			if(sender instanceof EntityPlayerMP){
 				for(String s : server.getOnlinePlayerNames()){
-					if (s.equals(args[2]) || getPlayer(server, sender, s).getUniqueID().toString().equals(args[2])){
-						Main.proxy.getLifeHandler().messageLives((EntityPlayerMP)sender, getPlayer(server, sender, args[2]));
+					if (s.equals(args[0]) || getPlayer(server, sender, s).getUniqueID().toString().equals(args[0])){
+						Main.proxy.getLifeHandler().messageLives((EntityPlayerMP)sender, getPlayer(server, sender, args[0]));
 						return;
 					}
 				}

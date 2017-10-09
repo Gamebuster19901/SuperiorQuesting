@@ -8,6 +8,7 @@ import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.LifeHandler;
 import com.gamebuster19901.superiorquesting.common.LoginHandler;
 import com.gamebuster19901.superiorquesting.common.command.CommandLives;
+import com.gamebuster19901.superiorquesting.common.command.CommandQuest;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.ExperienceReward;
@@ -32,9 +33,9 @@ import net.minecraftforge.oredict.OreDictionary;
 public abstract class Proxy implements Debuggable{
 	private static File questDirectory;
 	
-	private static LifeHandler LIFE_HANDLER;
-	private static LoginHandler LOGIN_HANDLER;
-	private static QuestHandler QUEST_HANDLER;
+	public static LifeHandler LIFE_HANDLER;
+	public static LoginHandler LOGIN_HANDLER;
+	public static QuestHandler QUEST_HANDLER;
 	
 	public void preInit(FMLPreInitializationEvent e){
 		questDirectory = new File(e.getModConfigurationDirectory().getAbsolutePath() + "/questdata");
@@ -76,6 +77,7 @@ public abstract class Proxy implements Debuggable{
 	
 	public void serverInit(FMLServerStartingEvent e){
 		e.registerServerCommand(new CommandLives());
+		e.registerServerCommand(new CommandQuest());
 	}
 	
 	public final File getQuestDirectory() {
