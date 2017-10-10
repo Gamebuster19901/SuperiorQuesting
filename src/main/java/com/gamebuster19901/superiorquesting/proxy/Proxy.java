@@ -44,6 +44,7 @@ public abstract class Proxy implements Debuggable{
 		QUEST_HANDLER = new QuestHandler();
 		MinecraftForge.EVENT_BUS.register(LIFE_HANDLER);
 		MinecraftForge.EVENT_BUS.register(LOGIN_HANDLER);
+		MinecraftForge.EVENT_BUS.register(QUEST_HANDLER);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	

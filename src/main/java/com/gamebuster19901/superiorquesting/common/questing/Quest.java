@@ -619,4 +619,16 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 		// TODO Auto-generated method stub
 		return VERSION;
 	}
+	
+	ArrayList<UUID> getRewards(){
+		return rewards;
+	}
+	
+	ArrayList<UUID> getPrerequisites(){
+		return prerequisites;
+	}
+	
+	ArrayList<UUID> getTasks(){
+		return tasks;
+	}
 }

@@ -177,4 +177,8 @@ public abstract class Task implements Assignment, Assertable{
 		// TODO Auto-generated method stub
 		return id;
 	}
+	
+	public final UUID getParent() {
+		return parent;
+	}
 }

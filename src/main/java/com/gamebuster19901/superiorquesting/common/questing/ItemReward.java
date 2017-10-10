@@ -76,9 +76,12 @@ public final class ItemReward extends Reward{
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound data = new NBTTagCompound();
 		data.setLong("VERSION", VERSION);
+		data.setString("CLASS", getClass().getCanonicalName());
+		data.setString("UUID", getUUID().toString());
 		data.setTag("ITEMSTACK", reward.serializeNBT());
 		return data;
 	}
+	
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
 		long ver = nbt.getLong("VERSION");

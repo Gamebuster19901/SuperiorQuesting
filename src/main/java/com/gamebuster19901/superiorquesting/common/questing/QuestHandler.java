@@ -15,14 +15,15 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateK
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public final class QuestHandler extends MultiplayerHandler {
-	private static final String QUEST_KEY = MODID + ":quests";
-	private static final String REWARD_KEY = MODID + ":rewards";
-	private static final String TASK_KEY = MODID + ":tasks";
+	public static final String QUEST_KEY = MODID + ":quests";
+	public static final String REWARD_KEY = MODID + ":rewards";
+	public static final String TASK_KEY = MODID + ":tasks";
 	
 	private final HashMap<UUID, Quest> QUESTS = new HashMap<UUID, Quest>();
 	private final HashMap<UUID, Task> TASKS = new HashMap<UUID, Task>();
@@ -177,6 +178,11 @@ public final class QuestHandler extends MultiplayerHandler {
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).getCompoundTag(id.toString());
 	}
 	
+	NBTTagCompound getQuestNBT(EntityPlayer p) {
+		Assert(hasQuestNBT(p));
+		return getPersistantTag(p).getCompoundTag(QUEST_KEY);
+	}
+	
 	boolean hasQuestNBT(EntityPlayer p){
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
@@ -203,6 +209,11 @@ public final class QuestHandler extends MultiplayerHandler {
 	NBTTagCompound getRewardNBT(UUID id, UUID p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found");
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
+	}
+	
+	NBTTagCompound getRewardNBT(EntityPlayer p) {
+		Assert(hasRewardNBT(p));
+		return getPersistantTag(p).getCompoundTag(REWARD_KEY);
 	}
 	
 	boolean hasRewardNBT(EntityPlayer p) {
@@ -233,6 +244,11 @@ public final class QuestHandler extends MultiplayerHandler {
 		return getPersistantTag(p).getCompoundTag(TASK_KEY).getCompoundTag(task.toString());
 	}
 	
+	NBTTagCompound getTaskNBT(EntityPlayer p) {
+		Assert(hasTaskNBT(p));
+		return getPersistantTag(p).getCompoundTag(TASK_KEY);
+	}
+	
 	boolean hasTaskNBT(EntityPlayer p) {
 		return getPersistantTag(p).hasKey(TASK_KEY);
 	}
@@ -251,22 +267,67 @@ public final class QuestHandler extends MultiplayerHandler {
 		return getPersistantTag(p).getCompoundTag(TASK_KEY).hasKey(task.toString());
 	}
 	
+	
+	
+	
+	void resetQuest(Quest q, EntityPlayer p) {
+		NBTTagCompound nbt = getQuestNBT(q.getUUID(), p);
+		nbt.setLong("VERSION", q.getVersion());
+		nbt.setString("UUID", q.getUUID().toString());
+		nbt.setBoolean("FINISHED", false);
+		nbt.setBoolean("NOTIFIED", false);
+		nbt.setBoolean("HIDDEN", q.isHiddenByDefault());
+		nbt.setBoolean("LOCKED", q.isLockedByDefault());
+		nbt.setBoolean("COLLECTED", false);
+		//No need to reset prerequisites since resetQuests will do that anyway
+		for(UUID task : q.getTasks()) {
+			resetTask(TASKS.get(task), p);
+		}
+		for(UUID reward : q.getRewards()) {
+			resetReward(REWARDS.get(reward), p);
+		}
+	}
+	
+	void resetTask(Task t, EntityPlayer p) {
+		NBTTagCompound nbt = getTaskNBT(p);
+		nbt.setLong("VERSION", t.getVersion());
+		nbt.setString("UUID", t.getUUID().toString());
+		nbt.setString("PARENT", t.getParent().toString());
+		nbt.setBoolean("FINISHED", false);
+		nbt.setBoolean("NOTIFIED", false);
+		nbt.setBoolean("HIDDEN", t.isHiddenByDefault());
+		nbt.setBoolean("LOCKED", t.isLockedByDefault());
+	}
+	
+	void resetReward(Reward r, EntityPlayer p) {
+		NBTTagCompound nbt = getRewardNBT(p);
+		nbt.setLong("VERSION", r.getVersion());
+		nbt.setString("UUID", r.getUUID().toString());
+		nbt.setBoolean("COLLECTED", false);
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * If the player's quest NBT is not up to date, update the player's quest nbt
 	 * @param p The player to check
 	 * @return true if the player's life count changed
 	 */
 	public void assertValidNBT(EntityPlayer p) {
-		if(hasQuestNBT(p)){
+		if(hasQuestNBT(p) && hasTaskNBT(p) && hasRewardNBT(p)){
+			removeRemovedNBT(p);
 			for(UUID key : QUESTS.keySet()) {
 				Quest q = QUESTS.get(key);
-				NBTTagCompound tag = getPersistantTag(p).getCompoundTag(key.toString());
-				
-				
+				if (!hasQuestNBT(key, p)) {
+					
+				}
 			}
 		}
 		else{
-			resetQuests(p);
+			resetAllNBT(p);
 		}
 	}
 	
@@ -274,7 +335,10 @@ public final class QuestHandler extends MultiplayerHandler {
 	 * resets a players quest NBT, 
 	 * @param p
 	 */
-	public void resetQuests(EntityPlayer p) {
+	void resetAllNBT(EntityPlayer p) {
+		getPersistantTag(p).setTag(QUEST_KEY, new NBTTagCompound());
+		getPersistantTag(p).setTag(TASK_KEY, new NBTTagCompound());
+		getPersistantTag(p).setTag(REWARD_KEY, new NBTTagCompound());
 		for(UUID key : QUESTS.keySet()) { //key is the quest title
 			Quest q = QUESTS.get(key);
 			NBTTagCompound nbt = new NBTTagCompound();
@@ -286,6 +350,26 @@ public final class QuestHandler extends MultiplayerHandler {
 		}
 	}
 	
+	void removeRemovedNBT(EntityPlayer p) {
+		NBTTagCompound quests = getQuestNBT(p);
+		NBTTagCompound tasks = getTaskNBT(p);
+		NBTTagCompound rewards = getRewardNBT(p);
+		for(String q : quests.getKeySet()) {
+			if(!QUESTS.containsKey(UUID.fromString(q))) {
+				quests.removeTag(q);
+			}
+		}
+		for(String t : tasks.getKeySet()) {
+			if(!TASKS.containsKey(UUID.fromString(t))) {
+				tasks.removeTag(t);
+			}
+		}
+		for(String r : rewards.getKeySet()) {
+			if(!REWARDS.containsKey(UUID.fromString(r))) {
+				rewards.removeTag(r);
+			}
+		}
+	}
 	
 
 	@Override
@@ -293,13 +377,13 @@ public final class QuestHandler extends MultiplayerHandler {
 
 	@Override
 	protected void playerLoggedIn(PlayerLoggedInEvent e) {
-		if(hasQuestNBT(e.player)) {
-			
-		}
+		assertValidNBT(e.player);
 	}
 	
 	private final void markDirty() {
-		Assert(QuestWorldData.instance != null);
+		if(QuestWorldData.instance == null) {
+			QuestWorldData.get(Minecraft.getMinecraft().world);
+		}
 		QuestWorldData.instance.markDirty();
 	}
 }

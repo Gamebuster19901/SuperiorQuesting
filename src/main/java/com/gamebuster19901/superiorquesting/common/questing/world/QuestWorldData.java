@@ -1,6 +1,11 @@
 package com.gamebuster19901.superiorquesting.common.questing.world;
 
-import java.util.Set;
+import static com.gamebuster19901.superiorquesting.common.questing.QuestHandler.QUEST_KEY;
+import static com.gamebuster19901.superiorquesting.common.questing.QuestHandler.REWARD_KEY;
+import static com.gamebuster19901.superiorquesting.common.questing.QuestHandler.TASK_KEY;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
@@ -13,14 +18,16 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 
 public class QuestWorldData extends WorldSavedData implements UpdatableSerializable, Assertable{
-	public static final long VERSION = 1L;
-	public static QuestWorldData instance = null;
 	public QuestWorldData(String name) {
 		super(name);
 	}
+
+	public static final long VERSION = 1L;
+	public static QuestWorldData instance = null;
 
 	/**
 	 * Converts the quest data in nbtIn to the specified version recursively.
@@ -65,10 +72,76 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 	public void readFromNBT(NBTTagCompound nbt) {
 		int ver = nbt.getInteger("VERSION");
 		if(ver == VERSION) {
-		
-			Set<String> keyset = nbt.getKeySet();
-			for(String key : keyset) {
+			NBTTagCompound quests = nbt.getCompoundTag(QUEST_KEY);
+			for(String key : quests.getKeySet()) {
 				Main.proxy.getQuestHandler().add(new Quest(nbt.getCompoundTag(key)));
+			}
+			NBTTagCompound rewards = nbt.getCompoundTag(REWARD_KEY);
+			Class<? extends Reward> reward = Reward.class;
+			for(String key : rewards.getKeySet()) {
+				try {
+					reward = (Class<? extends Reward>) Class.forName(rewards.getString("CLASS"));
+					Constructor<? extends Reward> constructor = reward.getConstructor(NBTTagCompound.class);
+					constructor.newInstance(nbt.getCompoundTag(key));
+				} catch (ClassNotFoundException ex) {
+					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee");
+					er.initCause(ex);
+					throw er;
+				} catch (NoSuchMethodException ex1) {
+					LinkageError er1 = new LinkageError();
+					er1.initCause(new VersioningError("Missing NBTTagCompound Constructor in " + reward.getCanonicalName(), ex1));
+					throw er1;
+				} catch (InstantiationException ex2) {
+					InstantiationError er2 = new InstantiationError();
+					er2.initCause(er2);
+					throw er2;
+				} catch (IllegalAccessException ex3) {
+					IllegalAccessError er3 = new IllegalAccessError();
+					er3.initCause(ex3);
+					throw er3;
+				} catch (IllegalArgumentException ex4) {
+					LinkageError er4 = new LinkageError();
+					er4.initCause(ex4);
+					throw er4;
+				} catch (InvocationTargetException ex5) {
+					LinkageError er5 = new LinkageError();
+					er5.initCause(ex5);
+					throw er5;
+				}
+			}
+			
+			NBTTagCompound tasks = nbt.getCompoundTag(TASK_KEY);
+			Class<? extends Task> task = Task.class;
+			for(String key : tasks.getKeySet()) {
+				try {
+					task = (Class<? extends Task>) Class.forName(tasks.getString("CLASS"));
+					Constructor<? extends Task> constructor = task.getConstructor(NBTTagCompound.class);
+					constructor.newInstance(nbt.getCompoundTag(key));
+				} catch (ClassNotFoundException ex) {
+					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee");
+					er.initCause(ex);
+					throw er;
+				} catch (NoSuchMethodException ex1) {
+					LinkageError er1 = new LinkageError();
+					er1.initCause(new VersioningError("Missing NBTTagCompound Constructor in " + task.getCanonicalName(), ex1));
+					throw er1;
+				} catch (InstantiationException ex2) {
+					InstantiationError er2 = new InstantiationError();
+					er2.initCause(er2);
+					throw er2;
+				} catch (IllegalAccessException ex3) {
+					IllegalAccessError er3 = new IllegalAccessError();
+					er3.initCause(ex3);
+					throw er3;
+				} catch (IllegalArgumentException ex4) {
+					LinkageError er4 = new LinkageError();
+					er4.initCause(ex4);
+					throw er4;
+				} catch (InvocationTargetException ex5) {
+					LinkageError er5 = new LinkageError();
+					er5.initCause(ex5);
+					throw er5;
+				}
 			}
 		}
 		else {
@@ -91,15 +164,21 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 		for(Reward r : Main.proxy.getQuestHandler().getAllRewards()) {
 			tasks.setTag(r.getUUID().toString(), r.serializeNBT());
 		}
+		compound.setTag(QUEST_KEY, quests);
+		compound.setTag(TASK_KEY, tasks);
+		compound.setTag(REWARD_KEY, rewards);
 		return compound;
 	}
 	
-	private static void setInstance(QuestWorldData data) {
-		instance = data;
-	}
-	
-	private static QuestWorldData getInstance(World w) {
-		return (QuestWorldData) w.getMapStorage().getOrLoadData(QuestWorldData.class, "Quest");
+	public static QuestWorldData get(World w) {
+		MapStorage storage = w.getMapStorage();
+		instance = (QuestWorldData) storage.getOrLoadData(QuestWorldData.class, "Quest");
+		
+		if (instance == null) {
+			instance = new QuestWorldData("Quest");
+			storage.setData("Quest", instance);
+		}
+		return instance;
 	}
 
 	@Override
