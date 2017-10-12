@@ -20,12 +20,12 @@ public abstract class Reward implements Rewardable, Assertable{
 	private UUID id;
 	
 	public Reward(MinecraftServer s, Quest q) {
-		getGlobalQuestHandler().add(s, this);
+		getGlobalQuestHandler().add(s, true, this);
 	}
 	
 	public Reward(MinecraftServer s, NBTTagCompound nbt) {
 		convert(nbt.getLong("VERSION"), this.getVersion(), nbt);
-		getGlobalQuestHandler().add(s, this);
+		getGlobalQuestHandler().add(s, false, this);
 	}
 	
 	/**
