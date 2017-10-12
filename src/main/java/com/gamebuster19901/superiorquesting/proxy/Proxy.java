@@ -11,11 +11,11 @@ import com.gamebuster19901.superiorquesting.common.command.CommandLives;
 import com.gamebuster19901.superiorquesting.common.command.CommandQuest;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
-import com.gamebuster19901.superiorquesting.common.questing.ExperienceReward;
 import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
-import com.gamebuster19901.superiorquesting.common.questing.ItemReward;
 import com.gamebuster19901.superiorquesting.common.questing.PlayerQuestHandler;
-import com.gamebuster19901.superiorquesting.common.questing.RewardType;
+import com.gamebuster19901.superiorquesting.common.questing.reward.CommonExperienceReward;
+import com.gamebuster19901.superiorquesting.common.questing.reward.CommonItemReward;
+import com.gamebuster19901.superiorquesting.common.questing.reward.RewardType;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Items;
@@ -59,8 +59,8 @@ public abstract class Proxy implements Debuggable{
 	}
 	
 	public void postInit(FMLPostInitializationEvent e){
-		RewardType.registerRewardType(ItemReward.class, TextureMap.LOCATION_MISSING_TEXTURE, "Item Reward", "Rewards the player with some items");
-		RewardType.registerRewardType(ExperienceReward.class, new ResourceLocation("textures/entity/experience_orb.png"), "xP reward", "Rewards the player with some experience");
+		RewardType.registerRewardType(CommonItemReward.class, "Item Reward", "Rewards the player with some items");
+		RewardType.registerRewardType(CommonExperienceReward.class, "xP reward", "Rewards the player with some experience");
 	}
 	
 	public LifeHandler getLifeHandler(){
