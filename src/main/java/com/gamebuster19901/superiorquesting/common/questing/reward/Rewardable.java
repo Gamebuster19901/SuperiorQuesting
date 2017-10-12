@@ -1,10 +1,12 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.reward;
 
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
+import com.gamebuster19901.superiorquesting.common.questing.PlayerQuestHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -12,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * A Rewardable is anything that can give a reward.
  */
 
-interface Rewardable extends UpdatableSerializable, Unique{
+public interface Rewardable extends UpdatableSerializable, Unique{
 	public String COLLECTED = "COLLECTED";
 	
 	/**

@@ -1,8 +1,9 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.task;
 
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.Assertable;
+import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

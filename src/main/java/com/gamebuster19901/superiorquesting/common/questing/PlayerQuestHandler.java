@@ -1,20 +1,22 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import static com.gamebuster19901.superiorquesting.common.questing.Assignment.COMPLETED;
-import static com.gamebuster19901.superiorquesting.common.questing.Assignment.NOTIFIED;
-import static com.gamebuster19901.superiorquesting.common.questing.Assignment.UNLOCKED;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUESTS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUEST_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARDS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARD_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASKS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASK_KEY;
-import static com.gamebuster19901.superiorquesting.common.questing.Rewardable.COLLECTED;
+import static com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable.COLLECTED;
+import static com.gamebuster19901.superiorquesting.common.questing.task.Assignment.COMPLETED;
+import static com.gamebuster19901.superiorquesting.common.questing.task.Assignment.NOTIFIED;
+import static com.gamebuster19901.superiorquesting.common.questing.task.Assignment.UNLOCKED;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
+import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
+import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,12 +57,12 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
 	}
 	
-	NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
+	public NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
 	}
 	
-	NBTTagCompound getRewardNBT(UUID id, UUID p) {
+	public NBTTagCompound getRewardNBT(UUID id, UUID p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found for player " + p);
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
 	}

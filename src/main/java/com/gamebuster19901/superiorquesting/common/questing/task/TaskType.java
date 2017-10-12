@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.task;
 
 import java.util.ArrayList;
 

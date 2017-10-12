@@ -1,5 +1,6 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.reward;
 
+import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
@@ -45,12 +46,14 @@ public final class ExperienceReward extends Reward{
 		}
 	}
 	
+	/*
 	@Override
 	public void render(int x, int y) {
         renderer.doRender(orb, x, y, 0, 0, 0f);
         String suffix = (isLevels) ? "L" : "xP";
         Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, new ItemStack(Items.AIR), x, y, amount + suffix);
 	}
+	*/
 	
 	public int getAmount() {
 		return amount;

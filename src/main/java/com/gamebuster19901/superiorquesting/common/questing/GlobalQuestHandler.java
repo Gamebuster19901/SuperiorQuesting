@@ -10,6 +10,8 @@ import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
+import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
+import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
 
 import net.minecraft.entity.player.EntityPlayer;

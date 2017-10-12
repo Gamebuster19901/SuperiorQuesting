@@ -1,5 +1,6 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.reward;
 
+import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
@@ -33,6 +34,7 @@ public final class ItemReward extends Reward{
 		new EntityItem(p.getEntityWorld(), p.posX, p.posY, p.posZ, reward);
 	}
 	
+	/*
 	@Override
 	public void render(int x, int y) {
 		if(!reward.isEmpty()) {
@@ -44,6 +46,8 @@ public final class ItemReward extends Reward{
 			Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 		}
 	}
+	*/
+	
 	@Override
 	public void convert(long prevVersion, long nextVersion, NBTTagCompound nbtIn) {
 		try {

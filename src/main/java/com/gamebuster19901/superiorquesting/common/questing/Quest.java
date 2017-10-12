@@ -7,6 +7,8 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
+import com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable;
+import com.gamebuster19901.superiorquesting.common.questing.task.Assignment;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.reward;
 
 import java.util.ArrayList;
 
@@ -9,13 +9,11 @@ import net.minecraft.util.ResourceLocation;
 
 public final class RewardType {
 	public Class<? extends Reward> reward;
-	public ResourceLocation image;
 	public String name;
 	public String description;
 	
-	private RewardType(Class<? extends Reward> rew, ResourceLocation loc, String nam, String desc) {
+	private RewardType(Class<? extends Reward> rew, String nam, String desc) {
 		this.reward = rew;
-		this.image = loc;
 		this.name = nam;
 		this.description = desc;
 	}
@@ -29,7 +27,7 @@ public final class RewardType {
 	 * @param name the name of the reward
 	 * @param description the description of the reward
 	 */
-	public static final void registerRewardType(Class<? extends Reward> reward, ResourceLocation image, String name, String description) {
+	public static final void registerRewardType(Class<? extends Reward> reward, String name, String description) {
 		for(RewardType r : rewardTypes) {
 			if(r.reward.equals(reward)) {
 				throw new DuplicateKeyException("Cannot register a reward type more than once: " + reward.getName());
@@ -38,7 +36,7 @@ public final class RewardType {
 				throw new IllegalArgumentException("YOU'RE AN IDIOT, DON'T DO THAT");
 			}
 		}
-		rewardTypes.add(new RewardType(reward, image, name, description));
+		rewardTypes.add(new RewardType(reward, name, description));
 		Main.LOGGER.info("Registered new reward type: " + name);
 	}
 	

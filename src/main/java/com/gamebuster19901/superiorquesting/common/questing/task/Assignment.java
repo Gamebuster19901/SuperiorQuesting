@@ -1,10 +1,12 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.task;
 
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
+import com.gamebuster19901.superiorquesting.common.questing.PlayerQuestHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

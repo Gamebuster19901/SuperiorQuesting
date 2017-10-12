@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.questing;
+package com.gamebuster19901.superiorquesting.common.questing.reward;
 
 import java.util.UUID;
 
@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
+import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -28,11 +29,12 @@ public abstract class Reward implements Rewardable, Assertable{
 		getGlobalQuestHandler().add(s, false, this);
 	}
 	
-	/**
+	/*
+	/*
 	 * renders this reward onto the current GUI, at x,y
 	 * @param x
 	 * @param y
-	 */
+	 *
 	public void render(int x, int y) {
 		ResourceLocation i = null;
 		try {
@@ -51,6 +53,7 @@ public abstract class Reward implements Rewardable, Assertable{
 		
 		Minecraft.getMinecraft().currentScreen.drawTexturedModalRect(x, y, 0, 0, 16, 16);
 	}
+	*/
 	
 	private final NBTTagCompound getRewardTag(EntityPlayer p) {
 		return getPlayerQuestHandler().getRewardNBT(id, p);

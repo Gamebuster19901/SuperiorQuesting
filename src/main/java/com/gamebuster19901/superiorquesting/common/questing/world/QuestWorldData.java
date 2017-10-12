@@ -13,10 +13,10 @@ import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
-import com.gamebuster19901.superiorquesting.common.questing.Reward;
-import com.gamebuster19901.superiorquesting.common.questing.Task;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
+import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
+import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
