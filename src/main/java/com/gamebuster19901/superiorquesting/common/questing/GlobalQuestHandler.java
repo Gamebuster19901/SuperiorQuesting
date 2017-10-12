@@ -202,9 +202,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler {
 	}
 	
 	private final void markDirty() {
-		World runningOverworld = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
-		world = runningOverworld;
-		QuestWorldData.get(runningOverworld).markDirty();
+		QuestWorldData.get(world).markDirty();
 	}
 	
 	private final ArrayList<EntityPlayer> getAllOnlinePlayers(MinecraftServer server) {
@@ -229,7 +227,8 @@ public final class GlobalQuestHandler extends MultiplayerHandler {
 	@SubscribeEvent
 	public void playerEntityJoinWorldEvent(EntityJoinWorldEvent e) {
 		if(e.getEntity() instanceof EntityPlayer) {
-			QuestWorldData.get(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld());
+			world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+			QuestWorldData.get(world);
 		}
 	}
 }
