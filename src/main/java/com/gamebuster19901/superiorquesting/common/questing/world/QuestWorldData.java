@@ -1,14 +1,16 @@
 package com.gamebuster19901.superiorquesting.common.questing.world;
 
-import static com.gamebuster19901.superiorquesting.common.questing.QuestHandler.QUEST_KEY;
-import static com.gamebuster19901.superiorquesting.common.questing.QuestHandler.REWARD_KEY;
-import static com.gamebuster19901.superiorquesting.common.questing.QuestHandler.TASK_KEY;
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUEST_KEY;
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARD_KEY;
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASK_KEY;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
+import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.Reward;
@@ -17,17 +19,20 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVers
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 
-public class QuestWorldData extends WorldSavedData implements UpdatableSerializable, Assertable{
+public class QuestWorldData extends WorldSavedData implements UpdatableSerializable, Assertable, Debuggable, NBTDebugger{
 	public QuestWorldData(String name) {
 		super(name);
+		this.readFromNBT(this.serializeNBT());
 	}
 
 	public static final long VERSION = 1L;
-	public static QuestWorldData instance = null;
+	public static MinecraftServer server;
+	public static World world;
 
 	/**
 	 * Converts the quest data in nbtIn to the specified version recursively.
@@ -70,11 +75,12 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
+		System.out.println(getFullNBTString(nbt, 1, "base"));
 		int ver = nbt.getInteger("VERSION");
 		if(ver == VERSION) {
 			NBTTagCompound quests = nbt.getCompoundTag(QUEST_KEY);
 			for(String key : quests.getKeySet()) {
-				Main.proxy.getQuestHandler().add(new Quest(nbt.getCompoundTag(key)));
+				new Quest(server, quests.getCompoundTag(key));
 			}
 			NBTTagCompound rewards = nbt.getCompoundTag(REWARD_KEY);
 			Class<? extends Reward> reward = Reward.class;
@@ -82,7 +88,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 				try {
 					reward = (Class<? extends Reward>) Class.forName(rewards.getString("CLASS"));
 					Constructor<? extends Reward> constructor = reward.getConstructor(NBTTagCompound.class);
-					constructor.newInstance(nbt.getCompoundTag(key));
+					constructor.newInstance(rewards.getCompoundTag(key));
 				} catch (ClassNotFoundException ex) {
 					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee");
 					er.initCause(ex);
@@ -116,7 +122,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 				try {
 					task = (Class<? extends Task>) Class.forName(tasks.getString("CLASS"));
 					Constructor<? extends Task> constructor = task.getConstructor(NBTTagCompound.class);
-					constructor.newInstance(nbt.getCompoundTag(key));
+					constructor.newInstance(tasks.getCompoundTag(key));
 				} catch (ClassNotFoundException ex) {
 					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee");
 					er.initCause(ex);
@@ -155,13 +161,13 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 		NBTTagCompound quests = new NBTTagCompound();
 		NBTTagCompound tasks = new NBTTagCompound();
 		NBTTagCompound rewards = new NBTTagCompound();
-		for(Quest q : Main.proxy.getQuestHandler().getAllQuests()) {
+		for(Quest q : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
 			quests.setTag(q.getUUID().toString(), q.serializeNBT());
 		}
-		for(Task t : Main.proxy.getQuestHandler().getAllTasks()) {
+		for(Task t : Main.proxy.getGlobalQuestHandler().getAllTasks()) {
 			tasks.setTag(t.getUUID().toString(), t.serializeNBT());
 		}
-		for(Reward r : Main.proxy.getQuestHandler().getAllRewards()) {
+		for(Reward r : Main.proxy.getGlobalQuestHandler().getAllRewards()) {
 			tasks.setTag(r.getUUID().toString(), r.serializeNBT());
 		}
 		compound.setTag(QUEST_KEY, quests);
@@ -172,12 +178,14 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 	
 	public static QuestWorldData get(World w) {
 		MapStorage storage = w.getMapStorage();
-		instance = (QuestWorldData) storage.getOrLoadData(QuestWorldData.class, "Quest");
-		
+		QuestWorldData instance = (QuestWorldData) storage.getOrLoadData(QuestWorldData.class, "Quest");
 		if (instance == null) {
-			instance = new QuestWorldData("Quest");
-			storage.setData("Quest", instance);
+			storage.setData("Quest", new QuestWorldData("Quest"));
+			instance = (QuestWorldData) storage.getOrLoadData(QuestWorldData.class, "Quest");
 		}
+		Assertable.Assert(instance != null, "", new Object());
+		server = w.getMinecraftServer();
+		world = w;
 		return instance;
 	}
 

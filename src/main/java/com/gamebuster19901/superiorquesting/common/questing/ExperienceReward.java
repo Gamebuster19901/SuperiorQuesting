@@ -10,23 +10,24 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 
 public final class ExperienceReward extends Reward{
-	private static final long VERSION = 0L;
+	private static final long VERSION = 1L;
 	private int amount;
 	private boolean isLevels;
 	
 	private RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
 	private EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
 	
-	public ExperienceReward(Quest quest, int exp, boolean isLevels) {
-		super(quest);
+	public ExperienceReward(MinecraftServer s, Quest quest, int exp, boolean isLevels) {
+		super(s, quest);
 		amount = exp;
 		this.isLevels = isLevels; 
 	}
 	
-	public ExperienceReward(NBTTagCompound nbt) {
-		super(nbt);
+	public ExperienceReward(MinecraftServer s, NBTTagCompound nbt) {
+		super(s, nbt);
 	}
 	
 	@Override

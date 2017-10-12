@@ -9,8 +9,8 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
+import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
-import com.gamebuster19901.superiorquesting.common.questing.QuestHandler;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -59,7 +59,7 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		QuestHandler questhandler = Main.proxy.getQuestHandler();
+		GlobalQuestHandler questhandler = Main.proxy.getGlobalQuestHandler();
 		if (args.length == 0){
 			if(sender instanceof EntityPlayerMP){
 				EntityPlayerMP p = (EntityPlayerMP)sender;
@@ -82,7 +82,10 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 				}
 			}
 			if(args[0].equals("add")) {
-				new Quest("Test", "test", 0, 0, 0, (byte)0);
+				new Quest(server, "Test", "test", 0, 0, 0, (byte)0);
+				for(String name : server.getPlayerList().getOnlinePlayerNames()) {
+					EntityPlayer p = server.getPlayerList().getPlayerByUsername(name);
+				}
 				return;
 			}
 		}

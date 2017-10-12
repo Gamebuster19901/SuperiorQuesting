@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class Reward implements Rewardable, Assertable{
@@ -18,12 +19,13 @@ public abstract class Reward implements Rewardable, Assertable{
 	private static final String COLLECTED_KEY = "collected-";
 	private UUID id;
 	
-	public Reward(Quest q) {
-		getQuestHandler().add(this);
+	public Reward(MinecraftServer s, Quest q) {
+		getGlobalQuestHandler().add(s, this);
 	}
 	
-	public Reward(NBTTagCompound nbt) {
+	public Reward(MinecraftServer s, NBTTagCompound nbt) {
 		convert(nbt.getLong("VERSION"), this.getVersion(), nbt);
+		getGlobalQuestHandler().add(s, this);
 	}
 	
 	/**
@@ -51,11 +53,11 @@ public abstract class Reward implements Rewardable, Assertable{
 	}
 	
 	private final NBTTagCompound getRewardTag(EntityPlayer p) {
-		return getQuestHandler().getRewardNBT(id, p);
+		return getPlayerQuestHandler().getRewardNBT(id, p);
 	}
 	
 	private final NBTTagCompound getRewardTag(UUID p) {
-		return getQuestHandler().getRewardNBT(id, p);
+		return getPlayerQuestHandler().getRewardNBT(id, p);
 	}
 
 	@Override

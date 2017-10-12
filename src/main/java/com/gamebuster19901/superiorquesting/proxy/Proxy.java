@@ -12,8 +12,9 @@ import com.gamebuster19901.superiorquesting.common.command.CommandQuest;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.ExperienceReward;
+import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.ItemReward;
-import com.gamebuster19901.superiorquesting.common.questing.QuestHandler;
+import com.gamebuster19901.superiorquesting.common.questing.PlayerQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.RewardType;
 
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -33,18 +34,22 @@ import net.minecraftforge.oredict.OreDictionary;
 public abstract class Proxy implements Debuggable{
 	private static File questDirectory;
 	
-	public static LifeHandler LIFE_HANDLER;
-	public static LoginHandler LOGIN_HANDLER;
-	public static QuestHandler QUEST_HANDLER;
+	private static LifeHandler LIFE_HANDLER;
+	private static LoginHandler LOGIN_HANDLER;
+	private static GlobalQuestHandler GLOBAL_QUEST_HANDLER;
+	private static PlayerQuestHandler PLAYER_QUEST_HANDLER;
 	
 	public void preInit(FMLPreInitializationEvent e){
 		questDirectory = new File(e.getModConfigurationDirectory().getAbsolutePath() + "/questdata");
 		LIFE_HANDLER = new LifeHandler();
 		LOGIN_HANDLER = new LoginHandler();
-		QUEST_HANDLER = new QuestHandler();
+		GLOBAL_QUEST_HANDLER = new GlobalQuestHandler();
+		PLAYER_QUEST_HANDLER = new PlayerQuestHandler();
 		MinecraftForge.EVENT_BUS.register(LIFE_HANDLER);
 		MinecraftForge.EVENT_BUS.register(LOGIN_HANDLER);
-		MinecraftForge.EVENT_BUS.register(QUEST_HANDLER);
+		MinecraftForge.EVENT_BUS.register(GLOBAL_QUEST_HANDLER);
+		MinecraftForge.EVENT_BUS.register(PLAYER_QUEST_HANDLER);
+		
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
@@ -66,8 +71,12 @@ public abstract class Proxy implements Debuggable{
 		return LOGIN_HANDLER;
 	}
 	
-	public QuestHandler getQuestHandler() {
-		return QUEST_HANDLER;
+	public GlobalQuestHandler getGlobalQuestHandler() {
+		return GLOBAL_QUEST_HANDLER;
+	}
+	
+	public PlayerQuestHandler getPlayerQuestHandler(){
+		return PLAYER_QUEST_HANDLER;
 	}
 	
 	@SubscribeEvent

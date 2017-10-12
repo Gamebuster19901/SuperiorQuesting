@@ -6,15 +6,17 @@ import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
-public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
-	private static final long VERSION = 0;
+public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NBTDebugger{
+	private static final long VERSION = 1L;
 	private UUID id;
 	private String title;
 	private String description;
@@ -39,7 +41,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	 * 
 	 * @throws IndexOutOfBoundsException if x or y < 0
 	 */
-	public Quest(String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+	public Quest(MinecraftServer s, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		try {
 			if(title == null) {
 				throw new NullPointerException("String title");
@@ -79,10 +81,10 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 		this.rewards = new ArrayList<UUID>(rewards);
 		this.prerequisites = new ArrayList<UUID>(prerequisites);
 		this.tasks = new ArrayList<UUID>(tasks);
-		getQuestHandler().add(this);
+		getGlobalQuestHandler().add(s, true, this);
 	}
 	
-	private Quest(UUID id, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+	private Quest(MinecraftServer s, UUID id, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		try {
 			if(id == null) {
 				throw new NullPointerException("UUID id");
@@ -125,10 +127,10 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 		this.rewards = new ArrayList<UUID>(rewards);
 		this.prerequisites = new ArrayList<UUID>(prerequisites);
 		this.tasks = new ArrayList<UUID>(tasks);
-		getQuestHandler().add(this);
+		getGlobalQuestHandler().add(s, true, this);
 	}
 	
-	public Quest(String title, String description, int page, int x, int y, byte important) {
+	public Quest(MinecraftServer s, String title, String description, int page, int x, int y, byte important) {
 		try {
 			if(title == null) {
 				throw new NullPointerException("String title");
@@ -156,12 +158,12 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 		this.x = x;
 		this.y = y;
 		this.important = important;
-		getQuestHandler().add(this);
+		getGlobalQuestHandler().add(s, true, this);
 	}
 	
-	public Quest(NBTTagCompound data) {
+	public Quest(MinecraftServer s, NBTTagCompound data) {
 		this.deserializeNBT(data);
-		getQuestHandler().add(this);
+		getGlobalQuestHandler().add(s, false, this);
 	}
 	
 	/*
@@ -191,12 +193,12 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	public boolean areConditionsSatisfied(EntityPlayer p) {
 		if(this.isUnlocked(p)) {
 			for(UUID q : prerequisites) {
-				if(!getQuestHandler().getQuest(q).isFinished(p)) {
+				if(!getGlobalQuestHandler().getQuest(q).isFinished(p)) {
 					return false;
 				}
 			}
 			for(UUID t : tasks) {
-				if(!getQuestHandler().getTask(t).isFinished(p)) {
+				if(!getGlobalQuestHandler().getTask(t).isFinished(p)) {
 					return false;
 				}
 			}
@@ -207,13 +209,13 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	
 	@Override
 	public boolean isFinished(EntityPlayer p) {
-		return getQuestHandler().getQuestNBT(getUUID(), p).getBoolean(COMPLETED);
+		return getPlayerQuestHandler().getQuestNBT(getUUID(), p).getBoolean(COMPLETED);
 	}
 	
 	@Override
 	public boolean isFinished(UUID p) {
-		if(getQuestHandler().getNbtOfPlayerUsingUUID(p) != null) {
-			return getQuestHandler().getQuestNBT(getUUID(), p).getBoolean(COMPLETED);
+		if(getPlayerQuestHandler().getNbtOfPlayerUsingUUID(p) != null) {
+			return getPlayerQuestHandler().getQuestNBT(getUUID(), p).getBoolean(COMPLETED);
 		}
 		return false;
 	}
@@ -226,10 +228,10 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	@Override
 	public void finish(EntityPlayer p) {
 		for(UUID q : prerequisites) {
-			getQuestHandler().getQuest(q).finish(p);
+			getGlobalQuestHandler().getQuest(q).finish(p);
 		}
 		for(UUID t : tasks) {
-			getQuestHandler().getTask(t).finish(p);
+			getGlobalQuestHandler().getTask(t).finish(p);
 		}
 		unlock(p);
 		markFinished(p);
@@ -243,10 +245,10 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	@Override
 	public void finish(UUID p) {
 		for(UUID q : prerequisites) {
-			getQuestHandler().getQuest(q).finish(p);
+			getGlobalQuestHandler().getQuest(q).finish(p);
 		}
 		for(UUID t : tasks) {
-			getQuestHandler().getTask(t).finish(p);
+			getGlobalQuestHandler().getTask(t).finish(p);
 		}
 		unlock(p);
 		markFinished(p);
@@ -280,12 +282,12 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	 */
 	@Override
 	public boolean hasCollected(EntityPlayer p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(COLLECTED);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(COLLECTED);
 	}
 	
 	@Override
 	public boolean hasCollected(UUID p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(COLLECTED);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(COLLECTED);
 	}
 
 	/**
@@ -311,7 +313,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	@Override
 	public void collect(EntityPlayer p) {
 		for(UUID r : rewards) {
-			this.getQuestHandler().getReward(r).collect(p);
+			this.getGlobalQuestHandler().getReward(r).collect(p);
 		}
 		markCollected(p);
 	}
@@ -319,25 +321,25 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	@Override
 	@Deprecated
 	public void markCollected(EntityPlayer p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, true);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, true);
 	}
 
 	@Override
 	@Deprecated
 	public void markCollected(UUID p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, true);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, true);
 	}
 	
 	@Override
 	@Deprecated
 	public void markUncollected(EntityPlayer p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, false);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, false);
 	}
 
 	@Override
 	@Deprecated
 	public void markUncollected(UUID p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, false);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(COLLECTED, false);
 	}
 	
 	/*
@@ -350,12 +352,12 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	
 	@Override
 	public boolean hasNotified(EntityPlayer p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(NOTIFIED);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(NOTIFIED);
 	}
 	
 	@Override
 	public boolean hasNotified(UUID p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(NOTIFIED);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(NOTIFIED);
 	}
 	
 	@Override
@@ -385,32 +387,32 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	
 	@Override
 	public boolean isUnlocked(EntityPlayer p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(UNLOCKED);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(UNLOCKED);
 	}
 	
 	@Override
 	public boolean isUnlocked(UUID p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(UNLOCKED);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(UNLOCKED);
 	}
 	
 	@Override
 	public void lock(EntityPlayer p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, false);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, false);
 	}
 
 	@Override
 	public void lock(UUID p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, false);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, false);
 	}
 
 	@Override
 	public void unlock(EntityPlayer p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, true);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, true);
 	}
 
 	@Override
 	public void unlock(UUID p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, true);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(UNLOCKED, true);
 	}
 	
 	@Override
@@ -428,32 +430,32 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	
 	@Override
 	public boolean isHidden(EntityPlayer p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(HIDDEN);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(HIDDEN);
 	}
 
 	@Override
 	public boolean isHidden(UUID p) {
-		return getQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(HIDDEN);
+		return getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).getBoolean(HIDDEN);
 	}
 	
 	@Override
 	public void hide(EntityPlayer p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, true);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, true);
 	}
 
 	@Override
 	public void hide(UUID p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, true);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, true);
 	}
 
 	@Override
 	public void unhide(EntityPlayer p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, false);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, false);
 	}
 
 	@Override
 	public void unhide(UUID p) {
-		getQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, false);
+		getPlayerQuestHandler().getQuestNBT(this.getUUID(), p).setBoolean(HIDDEN, false);
 	}
 	
 	@Override
@@ -527,8 +529,13 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	}
 
 	@Override
-	public QuestHandler getQuestHandler() {
-		return Assignment.super.getQuestHandler();
+	public GlobalQuestHandler getGlobalQuestHandler() {
+		return Assignment.super.getGlobalQuestHandler();
+	}
+	
+	@Override
+	public PlayerQuestHandler getPlayerQuestHandler() {
+		return Assignment.super.getPlayerQuestHandler();
 	}
 	
 	@Override
@@ -556,7 +563,8 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 		NBTTagCompound data = new NBTTagCompound();
 		
 		data.setLong("VERSION", VERSION);
-		data.setUniqueId("UUID", id);
+		Assert(id != null, "UUID of quest " + this + " is null");
+		data.setString("UUID", id.toString());
 		data.setString("TITLE", title);
 		data.setString("DESCRIPTION", description);
 		data.setInteger("PAGE", page);
@@ -575,10 +583,19 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable{
 	@Override
 	public void deserializeNBT(NBTTagCompound data) {
 		long ver = data.getLong("VERSION");
+		try {
+			Assert(ver != 0, "Missing version data in quest " + data.getString("UUID"));
+		}
+		catch(AssertionError e) {
+			debug(getFullNBTString(data, 1));
+			throw e;
+		}
 		if(ver != VERSION) {
 			convert(ver, VERSION, data);
 		}
 		else {
+			debug(data.getString("UUID"));
+			id = UUID.fromString(data.getString("UUID"));
 			title = data.getString("TITLE");
 			description = data.getString("DESCRIPTION");
 			page = data.getInteger("PAGE");

@@ -248,8 +248,12 @@ public interface Assignment extends UpdatableSerializable, Unique{
 	@Override
 	public String toString();
 	
-	public default QuestHandler getQuestHandler() {
-		return Main.proxy.getQuestHandler();
+	public default GlobalQuestHandler getGlobalQuestHandler() {
+		return Main.proxy.getGlobalQuestHandler();
+	}
+	
+	public default PlayerQuestHandler getPlayerQuestHandler() {
+		return Main.proxy.getPlayerQuestHandler();
 	}
 	
 	public UUID getUUID();

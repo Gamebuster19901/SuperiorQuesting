@@ -9,17 +9,18 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 
 public final class ItemReward extends Reward{
-	private static final long VERSION = 0;
+	private static final long VERSION = 1L;
 	private ItemStack reward;
 	
-	public ItemReward(Quest parent, ItemStack stack) {
-		super(parent);
+	public ItemReward(MinecraftServer s, Quest parent, ItemStack stack) {
+		super(s, parent);
 	}
 	
-	public ItemReward(NBTTagCompound nbt) {
-		super(nbt);
+	public ItemReward(MinecraftServer s, NBTTagCompound nbt) {
+		super(s, nbt);
 	}
 	
 	@Override
