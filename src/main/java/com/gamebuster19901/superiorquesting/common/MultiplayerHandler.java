@@ -114,7 +114,7 @@ public abstract class MultiplayerHandler implements Assertable{
 	 * @param e
 	 */
 	@SubscribeEvent
-	private final void playerLoggedInEvent(PlayerLoggedInEvent e){
+	public final void playerLoggedInEvent(PlayerLoggedInEvent e){
 		playerLoggedIn(e);
 	}
 	
