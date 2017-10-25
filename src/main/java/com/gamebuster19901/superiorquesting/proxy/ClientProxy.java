@@ -2,10 +2,16 @@ package com.gamebuster19901.superiorquesting.proxy;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
+import org.apache.logging.log4j.Level;
+
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.Confirmed;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
+import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
+import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
+import com.gamebuster19901.superiorquesting.common.packet.handle.ClientPacketReceiver;
+import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
@@ -20,13 +26,27 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber()
 public final class ClientProxy extends Proxy {
+	private static String SERVER_TYPE = "NONE";
+	private static boolean doesServerContainMod = false;
+	private static boolean isServerRemote = false;
+	
 	public void preInit(FMLPreInitializationEvent e){
 		super.preInit(e);
 		MinecraftForge.EVENT_BUS.register(this); //so forge knows about your modelRegistryEvent that is in this class
 		MinecraftForge.EVENT_BUS.register(new Confirmed());
+		
+		PacketType[] types = GenericQuestingPacket.PacketType.values();
+		for(int discriminator = 0; discriminator < types.length; discriminator++) {
+			Class<? extends GenericQuestingPacket> clazz = types[discriminator].getMappedClass();
+			if(clazz != null) {
+				NETWORK.registerMessage(new ClientPacketReceiver(clazz), clazz, discriminator, Side.CLIENT);
+				NETWORK.registerMessage(new ServerPacketReceiver(clazz), clazz, discriminator, Side.SERVER);
+			}
+		}
 	}
 	
 	public void init(FMLInitializationEvent e){
@@ -52,5 +72,33 @@ public final class ClientProxy extends Proxy {
 	@SubscribeEvent
 	public void soundRegistryEvent(RegistryEvent<SoundEvent> e){
 		ForgeRegistries.SOUND_EVENTS.register(CONFIRMED);
+	}
+
+	public void setConnectionType(String s) {
+		if (s.equals("MODDED") || s.equals("BUKKIT") || s.equals("VANILLA") || s.equals("NONE")) {
+			SERVER_TYPE = s;
+			Main.LOGGER.log(Level.INFO, "Connected to a " + s + "server");
+			if(s.equals("VANILLA") || s.equals("NONE")){
+				doesServerContainMod = false;
+			}
+			return;
+		}
+		throw new IllegalArgumentException(s + " is not a valid server type");
+	}
+	
+	public void setRemoteStatus(boolean isRemote) {
+		isServerRemote = isRemote;
+	}
+	
+	public boolean serverContainsMod() {
+		return doesServerContainMod;
+	}
+	
+	public boolean isServerRemote() {
+		return isServerRemote;
+	}
+
+	public void onConnect() {
+
 	}
 }

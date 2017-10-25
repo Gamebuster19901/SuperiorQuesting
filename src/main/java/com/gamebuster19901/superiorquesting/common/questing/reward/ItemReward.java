@@ -4,8 +4,6 @@ import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

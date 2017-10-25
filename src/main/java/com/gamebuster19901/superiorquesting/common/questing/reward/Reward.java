@@ -2,18 +2,12 @@ package com.gamebuster19901.superiorquesting.common.questing.reward;
 
 import java.util.UUID;
 
-import org.apache.logging.log4j.Level;
-
-import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 
 public abstract class Reward implements Rewardable, Assertable{
 	private static final String REWARD_KEY = "rewards";

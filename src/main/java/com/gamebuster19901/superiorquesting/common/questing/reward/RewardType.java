@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 
-import net.minecraft.util.ResourceLocation;
-
 public final class RewardType {
 	public Class<? extends Reward> reward;
 	public String name;

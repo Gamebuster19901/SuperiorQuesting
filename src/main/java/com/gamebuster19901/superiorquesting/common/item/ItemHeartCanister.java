@@ -1,7 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.item;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.client.CreativeTabQuesting;
+import com.gamebuster19901.superiorquesting.client.gui.CreativeTabQuesting;
 import com.gamebuster19901.superiorquesting.common.LifeHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,14 +53,14 @@ public final class ItemHeartCanister extends Item{
     {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         if(itemstack.getMetadata() == 0){
-        	if (playerIn instanceof EntityPlayerMP)
+        	if (playerIn instanceof EntityPlayerMP && worldIn.isRemote)
         	{
         		EntityPlayerMP p = (EntityPlayerMP)playerIn;
         		double lives = LIFE_HANDLER.getLives(p);
-        		if(Double.isFinite(lives) && LIFE_HANDLER.addLife(p)){
+        		if(Double.isFinite(lives) && ((LifeHandler)LIFE_HANDLER).addLife(p)){
         			itemstack.shrink(1);
         			p.sendMessage(new TextComponentTranslation("questing.life.change.add", LIFE_HANDLER.getLives(p)));
-        			LIFE_HANDLER.messageLives(p);
+        			((LifeHandler)LIFE_HANDLER).messageLives(p);
         			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
         		}
             

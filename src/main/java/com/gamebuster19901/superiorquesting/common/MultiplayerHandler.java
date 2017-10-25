@@ -5,17 +5,26 @@ import static net.minecraft.entity.player.EntityPlayer.PERSISTED_NBT_TAG;
 
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.packet.PacketLifeTotal;
+import com.gamebuster19901.superiorquesting.common.packet.PacketMaxLife;
+import com.gamebuster19901.superiorquesting.common.packet.PacketStartingLifeTotal;
+import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 public abstract class MultiplayerHandler implements Assertable{
 	/**
@@ -105,13 +114,36 @@ public abstract class MultiplayerHandler implements Assertable{
 	 * @param e
 	 */
 	@SubscribeEvent
-	final void playerLoggedInEvent(PlayerLoggedInEvent e){
-		EntityPlayerMP p = (EntityPlayerMP)e.player;
-		if (!hasPersistantTag(p)){
-			p.getEntityData().setTag(PERSISTED_NBT_TAG, new NBTTagCompound());
-		}
-		NBTTagCompound nbt = getPersistantTag(p);
+	private final void playerLoggedInEvent(PlayerLoggedInEvent e){
 		playerLoggedIn(e);
+	}
+	
+	@SubscribeEvent
+	public void onConnect(FMLNetworkEvent.ClientConnectedToServerEvent e) {
+		((ClientProxy)Main.proxy).setConnectionType(e.getConnectionType());
+		((ClientProxy)Main.proxy).setRemoteStatus(!e.isLocal());
+		((ClientProxy)Main.proxy).onConnect();
+	}
+	
+	@SubscribeEvent
+	public void playerEntityJoinWorldEvent(EntityJoinWorldEvent e) {
+		if(e.getEntity() instanceof EntityPlayerMP) {
+			EntityPlayerMP p = (EntityPlayerMP)e.getEntity();
+			if(!hasPersistantTag(p)) {
+				p.getEntityData().setTag(PERSISTED_NBT_TAG, new NBTTagCompound());
+			}
+			Main.proxy.NETWORK.sendTo(new PacketMaxLife(ModConfig.RULES.maxLives), p);
+			Main.proxy.NETWORK.sendTo(new PacketStartingLifeTotal(ModConfig.RULES.startingLives), p);
+			Main.proxy.NETWORK.sendTo(new PacketLifeTotal(Main.proxy.getLifeHandler().getLives(p)), p);
+			p.sendMessage(new TextComponentString("sent packets"));
+			p.sendMessage(new TextComponentString("what the fuck"));
+		}
+	}
+	
+	@SubscribeEvent
+	public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
+		((ClientProxy)Main.proxy).setConnectionType("NONE");
+		((ClientProxy)Main.proxy).setRemoteStatus(false);
 	}
 	
 	/**

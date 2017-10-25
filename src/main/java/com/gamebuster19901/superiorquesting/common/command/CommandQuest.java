@@ -112,13 +112,13 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
 		if (sender instanceof EntityPlayer){
 			debug(((EntityPlayer)sender).getName());
-			for(String s : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayerNames()){
+			for(String s : Main.proxy.getServer().getPlayerList().getOppedPlayerNames()){
 				if (((EntityPlayer)sender).getName().equals(s)){
 					return true;
 				}
 			}
-			debug(FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner());
-			if (FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equals(((EntityPlayer)sender).getName())){
+			debug(Main.proxy.getServer().getServerOwner());
+			if (Main.proxy.getServer().getServerOwner() != null && Main.proxy.getServer().getServerOwner().equals(((EntityPlayer)sender).getName())){
 				return true;
 			}
 		}

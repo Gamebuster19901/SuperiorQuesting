@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client;
+package com.gamebuster19901.superiorquesting.client.gui;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;

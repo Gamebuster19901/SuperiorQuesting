@@ -8,8 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderXPOrb;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 

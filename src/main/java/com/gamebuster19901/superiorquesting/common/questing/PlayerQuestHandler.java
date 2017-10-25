@@ -166,6 +166,8 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 	}
 	
 	void add(MinecraftServer s, Quest q) {
+		Assert(s != null);
+		Assert(q != null);
 		for(String username : s.getOnlinePlayerNames()) {
 			EntityPlayer p = s.getPlayerList().getPlayerByUsername(username);
 			resetQuest(q, p);

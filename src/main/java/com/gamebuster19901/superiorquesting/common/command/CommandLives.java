@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.LifeHandler;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -58,7 +59,7 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length == 0){
 			if(sender instanceof EntityPlayerMP){
-				Main.proxy.getLifeHandler().messageLives((EntityPlayerMP)sender);
+				((LifeHandler)Main.proxy.getLifeHandler()).messageLives((EntityPlayerMP)sender);
 				return;
 			}
 		}
@@ -69,7 +70,7 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 			if(sender instanceof EntityPlayerMP){
 				for(String s : server.getOnlinePlayerNames()){
 					if (s.equals(args[0]) || getPlayer(server, sender, s).getUniqueID().toString().equals(args[0])){
-						Main.proxy.getLifeHandler().messageLives((EntityPlayerMP)sender, getPlayer(server, sender, args[0]));
+						((LifeHandler) Main.proxy.getLifeHandler()).messageLives((EntityPlayerMP)sender, getPlayer(server, sender, args[0]));
 						return;
 					}
 				}
@@ -88,7 +89,7 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 						}
 						EntityPlayerMP p = getPlayer(server, sender, args[2]);
 						if(args[0].equals("add")){
-							if (Main.proxy.getLifeHandler().addLives(p, lives)){
+							if (((LifeHandler) Main.proxy.getLifeHandler()).addLives(p, lives)){
 								p.sendMessage(new TextComponentTranslation(MODID + ".life.change.unnatural"));
 								sender.sendMessage(new TextComponentTranslation(MODID + ".commands.lives.success"));
 								return;
@@ -96,7 +97,7 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 							throw new NumberInvalidException(MODID + ".commands.lives.outofbounds", new Object[]{args[1]});
 						}
 						else if(args[0].equals("remove")){
-							if (Main.proxy.getLifeHandler().addLives(p, lives * -1)){
+							if (((LifeHandler) Main.proxy.getLifeHandler()).addLives(p, lives * -1)){
 								p.sendMessage(new TextComponentTranslation(MODID + ".life.change.unnatural"));
 								sender.sendMessage(new TextComponentTranslation(MODID + ".commands.lives.success"));
 								return;
@@ -104,7 +105,7 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 							throw new NumberInvalidException(MODID + ".commands.lives.outofbounds", new Object[]{args[1]});
 						}
 						else if(args[0].equals("set")){
-							if(Main.proxy.getLifeHandler().setLives(p, lives, true)){
+							if(((LifeHandler) Main.proxy.getLifeHandler()).setLives(p, lives, true)){
 								p.sendMessage(new TextComponentTranslation(MODID + ".life.change.unnatural"));
 								sender.sendMessage(new TextComponentTranslation(MODID + ".commands.lives.success"));
 								return;

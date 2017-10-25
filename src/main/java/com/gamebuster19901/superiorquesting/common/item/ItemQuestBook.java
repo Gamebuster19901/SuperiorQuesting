@@ -1,7 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.item;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.client.CreativeTabQuesting;
+import com.gamebuster19901.superiorquesting.client.gui.CreativeTabQuesting;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

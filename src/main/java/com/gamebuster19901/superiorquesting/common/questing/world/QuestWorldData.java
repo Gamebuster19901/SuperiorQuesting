@@ -80,6 +80,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 		if(ver == VERSION) {
 			NBTTagCompound quests = nbt.getCompoundTag(QUEST_KEY);
 			for(String key : quests.getKeySet()) {
+				Assert(server != null);
 				new Quest(server, quests.getCompoundTag(key));
 			}
 			NBTTagCompound rewards = nbt.getCompoundTag(REWARD_KEY);
@@ -177,15 +178,17 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 	}
 	
 	public static QuestWorldData get(World w) {
+		Debuggable.debug(w, (Object)null);
 		MapStorage storage = w.getMapStorage();
+		server = Main.proxy.getServer();
+		Assertable.Assert(server != null, "Server is null", new Object());
+		world = w;
 		QuestWorldData instance = (QuestWorldData) storage.getOrLoadData(QuestWorldData.class, "Quest");
 		if (instance == null) {
 			storage.setData("Quest", new QuestWorldData("Quest"));
 			instance = (QuestWorldData) storage.getOrLoadData(QuestWorldData.class, "Quest");
 		}
 		Assertable.Assert(instance != null, "", new Object());
-		server = w.getMinecraftServer();
-		world = w;
 		return instance;
 	}
 
