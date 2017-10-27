@@ -1,4 +1,7 @@
-package com.gamebuster19901.superiorquesting.common.packet;
+package com.gamebuster19901.superiorquesting.common.packet.life;
+
+import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
+import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
 
 import io.netty.buffer.ByteBuf;
 

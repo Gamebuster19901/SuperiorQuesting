@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.packet.handle;
+package com.gamebuster19901.superiorquesting.common.packet;
 
 import static com.gamebuster19901.superiorquesting.Main.proxy;
 
@@ -7,7 +7,6 @@ import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
-import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -29,13 +28,6 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 		EntityPlayerSP p = Minecraft.getMinecraft().player;
 		debug(message.getType());
 		switch(message.getType()) {
-		case FULL_QUEST_DATA:
-			return null;
-		case LIFE_MAXIMUM:
-			b = Unpooled.buffer(4);
-			message.toBytes(b);
-			proxy.getLifeHandler().setMaxLives(b.getDouble(0));
-			return null;
 		case LIFE_TOTAL:
 			b = Unpooled.buffer(4);
 			message.toBytes(b);
@@ -44,6 +36,11 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				p.sendMessage(new TextComponentString("Received new life total: " + life));
 				proxy.getLifeHandler().setLives(p, life, false);
 			}
+			return null;
+		case LIFE_MAXIMUM:
+			b = Unpooled.buffer(4);
+			message.toBytes(b);
+			proxy.getLifeHandler().setMaxLives(b.getDouble(0));
 			return null;
 		case LIFE_STARTING_TOTAL:
 			b = Unpooled.buffer(4);

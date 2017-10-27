@@ -9,9 +9,9 @@ import com.gamebuster19901.superiorquesting.client.gui.Confirmed;
 import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
+import com.gamebuster19901.superiorquesting.common.packet.ClientPacketReceiver;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
-import com.gamebuster19901.superiorquesting.common.packet.handle.ClientPacketReceiver;
 import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

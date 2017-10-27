@@ -121,9 +121,6 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		return getPersistantTag(p).getCompoundTag(TASK_KEY).hasKey(task.toString());
 	}
 	
-	
-	
-	
 	void resetQuest(Quest q, EntityPlayer p) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setLong("VERSION", q.getVersion());

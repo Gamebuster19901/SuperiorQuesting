@@ -2,7 +2,7 @@ package com.gamebuster19901.superiorquesting.common.command;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
-import com.gamebuster19901.superiorquesting.common.packet.PacketFinalDeath;
+import com.gamebuster19901.superiorquesting.common.packet.life.PacketFinalDeath;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
