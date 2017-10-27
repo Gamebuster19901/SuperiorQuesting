@@ -5,23 +5,15 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 import java.util.LinkedHashSet;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.common.packet.PacketFinalDeath;
 import com.gamebuster19901.superiorquesting.common.packet.PacketLifeTotal;
-import com.gamebuster19901.superiorquesting.common.packet.PacketMaxLife;
+import com.gamebuster19901.superiorquesting.common.questing.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
-import com.gamebuster19901.superiorquesting.proxy.ServerProxy;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.SPacketOpenWindow;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.GameType;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class LifeHandler extends MultiplayerHandler implements Assertable, Debuggable{
 	private static final String LIFE_KEY = MODID + ":lives"; 
@@ -85,13 +77,12 @@ public class LifeHandler extends MultiplayerHandler implements Assertable, Debug
 			return false;
 		}
 		getPersistantTag(p).setDouble(LIFE_KEY, amount);
-		if (amount < 1d){
-			p.setGameType(GameType.SPECTATOR);
-		}
 		if(sendMessage){
 			messageLives(p);
 		}
-		Main.proxy.NETWORK.sendTo(new PacketLifeTotal(getLives(p)), (EntityPlayerMP) p);
+		if(p instanceof EntityPlayerMP) {
+			Main.proxy.NETWORK.sendTo(new PacketLifeTotal(getLives(p)), (EntityPlayerMP) p);
+		}
 		return true;
 	}
 	
@@ -227,59 +218,10 @@ public class LifeHandler extends MultiplayerHandler implements Assertable, Debug
 			req.sendMessage(new TextComponentString(p + " has " + (char)0x221E + " lives remaining."));
 		}
 	}
-	
-	@Override
-	public void playerLoggedIn(PlayerLoggedInEvent e){
-		EntityPlayer p = (EntityPlayer)e.player;
-		if(!assertValidLives(p)){
-			messageLives(p);
-		}
-		if(e.player.world.isRemote && Main.proxy instanceof ServerProxy) {
-			Main.proxy.NETWORK.sendTo(new PacketMaxLife(getMaxLives()), (EntityPlayerMP) e.player);
-		}
-		Main.proxy.NETWORK.sendTo(new PacketLifeTotal(getLives(e.player)), (EntityPlayerMP) e.player);
-	}
-	
-	@SubscribeEvent
-	public void onPlayerDeath(LivingDeathEvent e){
-		if (e.getEntity() instanceof EntityPlayer){
-			EntityPlayer p = (EntityPlayer) e.getEntity();
-			if(removeLife(p) && p.isSpectator() && p.posY >= 0){
-				p.setHealth(0.01f);
-				if(p instanceof EntityPlayerMP) {
-					Main.proxy.NETWORK.sendTo(new PacketFinalDeath(), (EntityPlayerMP) p);
-				}
-				debug("test1");
-			}
-		}
-		debug("test2");
-	}
-	
-	/**
-	 * Used to make sure that lives are still within bounds after the config has changed
-	 */
-	@Override
-	protected void onConfigFinishChanged() {
-		boolean remote = (Main.proxy instanceof ClientProxy && Minecraft.getMinecraft().player.world.isRemote) || Main.proxy instanceof ServerProxy;
-		if(remote) {
-			double prevMaxLives = getMaxLives();
-			double prevStartingLives = getStartingLives();
-			assertValidLives();
-			double newMaxLives = getMaxLives();
-			double newStartingLives = getStartingLives();
-			if(prevMaxLives != newMaxLives) {
-				Main.proxy.NETWORK.sendToAll(new PacketMaxLife(newMaxLives));
-			}
-		}
-		else {
-			assertValidLives();
-		}
-	}
 
 	public void setMaxLives(double amount) {
-		if(((ClientProxy)Main.proxy).isServerRemote()) {
+		if(Main.proxy instanceof ClientProxy) {
 			maxLives = amount;
-			Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Max lives set to " + amount));
 		}
 		else {
 			throw new IllegalStateException("A non integerated server cannot set the max life total except via a config change!");
@@ -289,7 +231,6 @@ public class LifeHandler extends MultiplayerHandler implements Assertable, Debug
 	public void setStartingLives(double amount) {
 		if(((ClientProxy)Main.proxy).isServerRemote()) {
 			startingLives = amount;
-			Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Starting lives set to " + amount));
 		}
 		else {
 			throw new IllegalStateException("A non integerated server cannot set the starting life total except via a config change!");

@@ -7,25 +7,17 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
-import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 public final class GlobalQuestHandler extends MultiplayerHandler implements Debuggable{
 	public static final String QUEST_KEY = MODID + ":quests";
@@ -191,21 +183,6 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		markDirty();
 	}
 	
-
-	
-
-	@Override
-	protected void onConfigFinishChanged() {}
-	
-	@SubscribeEvent
-	public final void worldUnloadEvent(WorldEvent.Unload e) {
-		if(e.getWorld() == world) {
-			QUESTS.clear();
-			REWARDS.clear();
-			TASKS.clear();
-		}
-	}
-	
 	private final void markDirty() {
 		QuestWorldData.get(world).markDirty();
 	}
@@ -223,33 +200,5 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	
 	private final PlayerQuestHandler getPlayerQuestHandler() {
 		return Main.proxy.getPlayerQuestHandler();
-	}
-
-	@Override
-	protected void playerLoggedIn(PlayerLoggedInEvent e) {
-	}
-	
-	@SubscribeEvent
-	public void playerEntityJoinWorldEvent(EntityJoinWorldEvent e) {
-		debug(1);
-		if(e.getEntity() instanceof EntityPlayer) {
-			debug(2);
-			if(Main.proxy instanceof ClientProxy) {
-				debug(3);
-				if(!((ClientProxy)Main.proxy).isServerRemote()) {
-					debug(4);
-					world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
-					QuestWorldData.get(world);
-					return;
-				}
-				world = null;
-			}
-			else {
-				debug(5);
-				world = Main.proxy.getServer().getEntityWorld();
-				QuestWorldData.get(world);
-				return;
-			}
-		}
 	}
 }

@@ -2,6 +2,7 @@ package com.gamebuster19901.superiorquesting.common.command;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,8 +52,9 @@ public final class CommandLives extends CommandBase implements ICommand, Debugga
 
 	@Override
 	public List<String> getAliases() {
-		// TODO Auto-generated method stub
-		return Collections.EMPTY_LIST;
+		ArrayList<String> aliases = new ArrayList<String>();
+		aliases.add("life");
+		return aliases;
 	}
 
 	@Override

@@ -14,14 +14,12 @@ import static com.gamebuster19901.superiorquesting.common.questing.task.Assignme
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.gamebuster19901.superiorquesting.common.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class PlayerQuestHandler extends MultiplayerHandler{
 	NBTTagCompound getQuestNBT(UUID id, EntityPlayer p) {
@@ -263,13 +261,5 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		for(String r : rewardsToRemove) {
 			rewards.removeTag(r);
 		}
-	}
-
-	@Override
-	protected void onConfigFinishChanged() {}
-
-	@Override
-	protected void playerLoggedIn(PlayerLoggedInEvent e) {
-		assertValidNBT(e.player);
 	}
 }

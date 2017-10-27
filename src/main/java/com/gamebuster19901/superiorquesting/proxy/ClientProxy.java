@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.Confirmed;
+import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
@@ -16,6 +17,7 @@ import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketRec
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +40,7 @@ public final class ClientProxy extends Proxy {
 		super.preInit(e);
 		MinecraftForge.EVENT_BUS.register(this); //so forge knows about your modelRegistryEvent that is in this class
 		MinecraftForge.EVENT_BUS.register(new Confirmed());
+		MinecraftForge.EVENT_BUS.register(new GuiTrueGameOver(new TextComponentString("This should never appear")));
 		
 		PacketType[] types = GenericQuestingPacket.PacketType.values();
 		for(int discriminator = 0; discriminator < types.length; discriminator++) {

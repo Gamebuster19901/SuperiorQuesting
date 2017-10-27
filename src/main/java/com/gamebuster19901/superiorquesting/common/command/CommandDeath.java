@@ -3,8 +3,6 @@ package com.gamebuster19901.superiorquesting.common.command;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.packet.PacketFinalDeath;
-import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
-import com.gamebuster19901.superiorquesting.proxy.ServerProxy;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -29,18 +27,12 @@ public class CommandDeath extends CommandBase implements ICommand, Debuggable{
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if(Main.proxy instanceof ServerProxy || ((ClientProxy)Main.proxy).isServerRemote()) {
-			if(sender instanceof EntityPlayerMP) {
-				Main.proxy.NETWORK.sendTo(new PacketFinalDeath(), (EntityPlayerMP) sender);
-				debug("sent packet");
-			}
-			else {
-				throw new CommandException("You must be a player to execute this command!");
-			}
+		if(sender instanceof EntityPlayerMP) {
+			Main.proxy.NETWORK.sendTo(new PacketFinalDeath(), (EntityPlayerMP) sender);
+			debug("sent packet");
 		}
 		else {
-			throw new CommandException("Server is not remote!");
+			throw new CommandException("You must be a player to execute this command!");
 		}
 	}
-
 }
