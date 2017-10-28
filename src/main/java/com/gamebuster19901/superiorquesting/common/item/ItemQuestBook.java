@@ -1,7 +1,10 @@
 package com.gamebuster19901.superiorquesting.common.item;
 
+import static com.gamebuster19901.superiorquesting.Main.MODID;
+
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.CreativeTabQuesting;
+import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -17,8 +20,8 @@ public final class ItemQuestBook extends Item{
 	public ItemQuestBook(){
 		super();
 		this.setCreativeTab(CreativeTabQuesting.QUESTING_TAB);
-		this.setUnlocalizedName(Main.MODID + ".questbook");
-		this.setRegistryName(new ResourceLocation(Main.MODID + ":questbook"));
+		this.setUnlocalizedName(MODID + ".questbook");
+		this.setRegistryName(new ResourceLocation(MODID + ":questbook"));
 	}
 	
     /**
@@ -27,12 +30,7 @@ public final class ItemQuestBook extends Item{
 	@Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
     {
-		if(!worldIn.isRemote) {
-			
-		}
-		else {
-			
-		}
+		playerIn.openGui(Main.getInstance(), GuiHandler.QUEST_BOOK, worldIn, (int)playerIn.posX, (int)playerIn.posY, (int)playerIn.posZ);
         return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
 }
