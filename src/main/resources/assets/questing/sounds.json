@@ -6,5 +6,21 @@
 			"stream": true
 		}],
 		"subtitle": "questing.subtitle.confirmed"
+	},
+	"bookclose": {
+	   "category": "player",
+	   "sounds": [{
+	       "name": "questing:book_close",
+	       "stream": false
+	   }],
+	   "subtitle": "questing.subtitle.book_close"
+	},
+	"book": {
+	   "category": "player",
+	   "sounds": [{
+	       "name": "questing:book",
+	       "stream": false
+	   }],
+	   "subtitle": "questing.subtitle.book"
 	}
 }
