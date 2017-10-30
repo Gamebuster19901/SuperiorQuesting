@@ -73,7 +73,7 @@ public final class ClientProxy extends Proxy {
 	public static final SoundEvent CONFIRMED = new SoundEvent(new ResourceLocation(MODID + ":confirmed")).setRegistryName(MODID + ":confirmed");
 	public static final SoundEvent BOOK_CLOSE = new SoundEvent(new ResourceLocation(MODID + ":bookclose")).setRegistryName(MODID + ":bookclose");
 	public static final SoundEvent BOOK_TURN = new SoundEvent(new ResourceLocation(MODID + ":book")).setRegistryName(MODID + ":book");
-	public static final SoundEvent QUEST_COMPLETE = new SoundEvent(new ResourceLocation(MODID + ":complete")).setRegistryName(MODID + "complete");
+	public static final SoundEvent QUEST_COMPLETE = new SoundEvent(new ResourceLocation(MODID + ":complete")).setRegistryName(MODID + ":complete");
 	public static final SoundEvent QUEST_NOTIFY = new SoundEvent(new ResourceLocation(MODID + ":notify")).setRegistryName(MODID + ":notify");
 	
 	@SubscribeEvent
