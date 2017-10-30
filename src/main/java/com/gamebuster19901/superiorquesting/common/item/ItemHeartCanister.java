@@ -53,9 +53,9 @@ public final class ItemHeartCanister extends Item{
     {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         if(itemstack.getMetadata() == 0){
-        	if (playerIn instanceof EntityPlayerMP && worldIn.isRemote)
+        	if (!worldIn.isRemote)
         	{
-        		EntityPlayerMP p = (EntityPlayerMP)playerIn;
+        		EntityPlayerMP p = (EntityPlayerMP) playerIn;
         		double lives = LIFE_HANDLER.getLives(p);
         		if(Double.isFinite(lives) && ((LifeHandler)LIFE_HANDLER).addLife(p)){
         			itemstack.shrink(1);

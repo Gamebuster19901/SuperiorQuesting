@@ -9,9 +9,12 @@ import com.gamebuster19901.superiorquesting.common.packet.life.PacketLifeTotal;
 import com.gamebuster19901.superiorquesting.common.questing.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketCustomSound;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -35,6 +38,12 @@ public class LifeHandler extends MultiplayerHandler implements Assertable, Debug
 		}
 		if (newLives <= maxLives){
 			setLives(p, newLives, false);
+			if(p instanceof EntityPlayerMP) {
+				((EntityPlayerMP) p).connection.sendPacket(new SPacketCustomSound("questing:1up", SoundCategory.PLAYERS, p.posX, p.posY, p.posZ, 1, 1));
+			}
+			else {
+				p.sendMessage(new TextComponentString("Client player"));
+			}
 			return true;
 		}
 		return false;
