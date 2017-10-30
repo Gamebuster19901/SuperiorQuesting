@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.packet;
+package com.gamebuster19901.superiorquesting.client.packet;
 
 import static com.gamebuster19901.superiorquesting.Main.proxy;
 
@@ -7,6 +7,7 @@ import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
