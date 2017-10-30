@@ -55,7 +55,7 @@
         "category": "player",
         "sounds": [{
             "name": "questing:quest_complete",
-            "stream": true
+            "stream": false
         }],
         "subtitle": "questing.subtitle.complete"
     },
@@ -63,8 +63,16 @@
         "category": "player",
         "sounds": [{
             "name": "questing:quest_notification",
-            "stream": true
+            "stream": false
         }],
         "subtitle": "questing.subtitle.notification"
+    },
+    "1up": {
+        "category": "player",
+        "sounds": [{
+            "name": "questing:1up",
+            "stream": false
+        }],
+        "subtitle": "questing.subtitle.1up"
     }
 }

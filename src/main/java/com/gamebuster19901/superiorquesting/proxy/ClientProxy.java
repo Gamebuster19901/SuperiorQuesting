@@ -75,6 +75,7 @@ public final class ClientProxy extends Proxy {
 	public static final SoundEvent BOOK_TURN = new SoundEvent(new ResourceLocation(MODID + ":book")).setRegistryName(MODID + ":book");
 	public static final SoundEvent QUEST_COMPLETE = new SoundEvent(new ResourceLocation(MODID + ":complete")).setRegistryName(MODID + ":complete");
 	public static final SoundEvent QUEST_NOTIFY = new SoundEvent(new ResourceLocation(MODID + ":notify")).setRegistryName(MODID + ":notify");
+	public static final SoundEvent ONE_UP = new SoundEvent(new ResourceLocation(MODID + ":1up")).setRegistryName(MODID + ":1up");
 	
 	@SubscribeEvent
 	public void soundRegistryEvent(RegistryEvent<SoundEvent> e){
@@ -83,6 +84,7 @@ public final class ClientProxy extends Proxy {
 		ForgeRegistries.SOUND_EVENTS.register(BOOK_TURN);
 		ForgeRegistries.SOUND_EVENTS.register(QUEST_COMPLETE);
 		ForgeRegistries.SOUND_EVENTS.register(QUEST_NOTIFY);
+		ForgeRegistries.SOUND_EVENTS.register(ONE_UP);
 	}
 
 	public void setConnectionType(String s) {

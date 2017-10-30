@@ -12,6 +12,7 @@ questing.subtitle.book=Page turned
 questing.subtitle.confirmed=Confirmed
 questing.subtitle.complete=Quest Completed
 questing.subtitle.notification=Quest Notification
+questing.subtitle.1up=Life Gained
 
 
 item.questing.questbook.name=Quest Book
