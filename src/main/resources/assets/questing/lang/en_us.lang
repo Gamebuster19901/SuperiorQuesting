@@ -7,7 +7,12 @@ questing.commands.lives.outofbounds=Could not change life total, %s is smaller t
 questing.commands.lives.success=Successfully changed player's life total
 questing.commands.lives.usage=lives <set|add|remove> <amount> <player>
 
+questing.subtitle.book_close=Book closed
+questing.subtitle.book=Page turned
 questing.subtitle.confirmed=Confirmed
+questing.subtitle.complete=Quest Completed
+questing.subtitle.notification=Quest Notification
+
 
 item.questing.questbook.name=Quest Book
 item.questing.heartcanisterfull.name=Extra Life

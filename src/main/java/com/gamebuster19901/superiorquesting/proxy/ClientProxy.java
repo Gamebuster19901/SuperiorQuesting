@@ -7,9 +7,9 @@ import org.apache.logging.log4j.Level;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.Confirmed;
 import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
+import com.gamebuster19901.superiorquesting.client.packet.ClientPacketReceiver;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
-import com.gamebuster19901.superiorquesting.common.packet.ClientPacketReceiver;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
 import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
@@ -70,11 +70,19 @@ public final class ClientProxy extends Proxy {
 		ModelLoader.setCustomModelResourceLocation(ItemHeartCanister.ITEM, 4, new ModelResourceLocation(MODID + ":heartcanisterempty"));
 	}
 	
-	public static final SoundEvent CONFIRMED = new SoundEvent(new ResourceLocation(Main.MODID + ":confirmed")).setRegistryName(MODID + ":confirmed");
+	public static final SoundEvent CONFIRMED = new SoundEvent(new ResourceLocation(MODID + ":confirmed")).setRegistryName(MODID + ":confirmed");
+	public static final SoundEvent BOOK_CLOSE = new SoundEvent(new ResourceLocation(MODID + ":bookclose")).setRegistryName(MODID + ":bookclose");
+	public static final SoundEvent BOOK_TURN = new SoundEvent(new ResourceLocation(MODID + ":book")).setRegistryName(MODID + ":book");
+	public static final SoundEvent QUEST_COMPLETE = new SoundEvent(new ResourceLocation(MODID + ":complete")).setRegistryName(MODID + "complete");
+	public static final SoundEvent QUEST_NOTIFY = new SoundEvent(new ResourceLocation(MODID + ":notify")).setRegistryName(MODID + ":notify");
 	
 	@SubscribeEvent
 	public void soundRegistryEvent(RegistryEvent<SoundEvent> e){
 		ForgeRegistries.SOUND_EVENTS.register(CONFIRMED);
+		ForgeRegistries.SOUND_EVENTS.register(BOOK_CLOSE);
+		ForgeRegistries.SOUND_EVENTS.register(BOOK_TURN);
+		ForgeRegistries.SOUND_EVENTS.register(QUEST_COMPLETE);
+		ForgeRegistries.SOUND_EVENTS.register(QUEST_NOTIFY);
 	}
 
 	public void setConnectionType(String s) {

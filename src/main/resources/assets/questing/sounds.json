@@ -10,17 +10,61 @@
 	"bookclose": {
 	   "category": "player",
 	   "sounds": [{
-	       "name": "questing:book_close",
+	       "name": "questing:book_closing-01",
 	       "stream": false
-	   }],
+	   },
+	   {
+           "name": "questing:book_closing-02",
+           "stream": false
+       },
+       {
+           "name": "questing:book_closing-03",
+           "stream": false
+       },
+       {
+           "name": "questing:book_closing-04",
+           "stream": false
+       }],
 	   "subtitle": "questing.subtitle.book_close"
 	},
 	"book": {
 	   "category": "player",
 	   "sounds": [{
-	       "name": "questing:book",
+	       "name": "questing:book_turn-01",
 	       "stream": false
-	   }],
+	   },
+	   {
+           "name": "questing:book_turn-02",
+           "stream": false
+       },
+       {
+           "name": "questing:book_turn-03",
+           "stream": false
+       },
+       {
+           "name": "questing:book_turn-04",
+           "stream": false
+       },
+       {
+           "name": "questing:book_turn-05",
+           "stream": false
+       }],
 	   "subtitle": "questing.subtitle.book"
-	}
+	},
+	"complete": {
+        "category": "player",
+        "sounds": [{
+            "name": "questing:quest_complete",
+            "stream": true
+        }],
+        "subtitle": "questing.subtitle.complete"
+    },
+    "notify": {
+        "category": "player",
+        "sounds": [{
+            "name": "questing:quest_notification",
+            "stream": true
+        }],
+        "subtitle": "questing.subtitle.notification"
+    }
 }
