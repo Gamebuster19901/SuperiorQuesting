@@ -33,7 +33,7 @@ public final class ServerProxy extends Proxy {
 
 	@Override
 	protected void checkValidState() {
-		if(FMLCommonHandler.instance().getMinecraftServerInstance().isServerInOnlineMode()) {
+		if(!FMLCommonHandler.instance().getMinecraftServerInstance().isServerInOnlineMode()) {
 			throw new IllegalStateException("Server must be in online mode to use SuperiorQuesting");
 		}
 	}
