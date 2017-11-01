@@ -135,8 +135,7 @@ public final class ClientProxy extends Proxy {
 					Class c = Class.forName("java.lang.Shutdown");
 					Method shutdownMethod = c.getDeclaredMethod("exit", int.class);
 					shutdownMethod.setAccessible(true);
-					shutdownMethod.invoke(null, 403);
-					
+					shutdownMethod.invoke(null, 71);
 				}
 				catch(NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
 					throw new RuntimeException(e);
