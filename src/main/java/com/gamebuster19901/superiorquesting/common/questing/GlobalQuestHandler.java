@@ -135,15 +135,15 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		markDirty();
 	}
 	
-	final Quest getQuest(UUID uuid) {
+	public final Quest getQuest(UUID uuid) {
 		return QUESTS.get(uuid);
 	}
 	
-	final Task getTask(UUID uuid) {
+	public final Task getTask(UUID uuid) {
 		return TASKS.get(uuid);
 	}
 	
-	final Reward getReward(UUID uuid) {
+	public final Reward getReward(UUID uuid) {
 		return REWARDS.get(uuid);
 	}
 	

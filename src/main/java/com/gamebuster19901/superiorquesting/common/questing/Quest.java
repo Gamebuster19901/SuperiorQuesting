@@ -490,6 +490,13 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	}
 	
 	/**
+	 * @return the page of this quest
+	 */
+	public int getPage() {
+		return page;
+	}
+	
+	/**
 	 * adds a prerequisite to this quest, a prerequisite is another Quest or a Task
 	 * @param a the assignment to add
 	 */
