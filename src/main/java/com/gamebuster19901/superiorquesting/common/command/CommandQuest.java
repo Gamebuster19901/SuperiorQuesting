@@ -3,10 +3,12 @@ package com.gamebuster19901.superiorquesting.common.command;
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
@@ -46,7 +48,7 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "/quest edit";
+		return "/quest <edit|book>";
 	}
 	
 	@Override
@@ -73,38 +75,22 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 		}
 		
 		if(args.length == 1) {
-			if(args[0].equals("edit")) {
+			if(args[0].equals("book")) {
 				if(sender instanceof EntityPlayerMP) {
 					EntityPlayerMP p = (EntityPlayerMP)sender;
 					p.addItemStackToInventory(new ItemStack(ItemQuestBook.ITEM, 1, 1));
 					return;
 				}
 			}
-			if(args[0].equals("add")) {
-				new Quest(server, "Test", "test", 0, 0, 0, (byte)0);
-				for(String name : server.getPlayerList().getOnlinePlayerNames()) {
-					EntityPlayer p = server.getPlayerList().getPlayerByUsername(name);
-				}
-				return;
-			}
-		}
-		
-		if(args.length == 2) {
 			if(args[0].equals("edit")) {
-				if(questhandler.getPlayerFromUsername(args[1]) != null) {
-					
+				if(sender instanceof EntityPlayer) {
+					EntityPlayerMP p = (EntityPlayerMP)sender;
+					((EntityPlayerMP)sender).openGui(Main.getInstance(), GuiHandler.QUEST_BOOK, p.getEntityWorld(), (int)p.posX, (int)p.posY, (int)p.posZ);
+					return;
 				}
-				else if(questhandler.getPlayerEntityFromUUID(UUID.fromString(args[1])) != null) {
-					
-				}
-				else if(questhandler.getNbtOfPlayerUsingUUID(UUID.fromString(args[1])) != null) {
-					
-				}
-				throw new PlayerNotFoundException("commands.generic.player.notFound", new Object[] {args[1]});
 			}
 		}
-		
-		throw new WrongUsageException(MODID + ".commands.lives.usage");
+		throw new WrongUsageException(MODID + ".commands.quests.usage");
 	}
 
 	@Override
@@ -130,8 +116,10 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
-		// TODO Auto-generated method stub
-		return null;
+		if(args.length == 1) {
+			return getListOfStringsMatchingLastWord(args, new String[] {"book", "edit"});
+		}
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override
@@ -139,5 +127,4 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }
