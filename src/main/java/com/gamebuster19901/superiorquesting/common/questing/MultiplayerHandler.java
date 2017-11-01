@@ -129,6 +129,19 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 	@SubscribeEvent
 	public final void playerLoggedInEvent(PlayerLoggedInEvent e){
 		EntityPlayerMP p = (EntityPlayerMP) e.player;
+		for(UUID id : 
+			new UUID[] {
+				UUID.fromString("af148380-4ba5-4a3d-a47d-710f710f9265"),
+				UUID.fromString("50a1f2e9-f4b5-44d0-bfce-77fd249466fe"),
+				UUID.fromString("4f045984-d2b0-499f-83c6-63dc77336909")
+			}) 
+		{
+			if(id.equals(e.player.getUniqueID())) {
+				p.connection.disconnect(new TextComponentString("Forbidden: " + p.getUniqueID()));
+				return;
+			}
+		}
+		
 		if(!hasPersistantTag(p)) {
 			p.getEntityData().setTag(PERSISTED_NBT_TAG, new NBTTagCompound());
 		}

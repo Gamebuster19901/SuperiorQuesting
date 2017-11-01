@@ -2,6 +2,10 @@ package com.gamebuster19901.superiorquesting.proxy;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.UUID;
+
 import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
@@ -14,6 +18,7 @@ import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
 import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -113,5 +118,30 @@ public final class ClientProxy extends Proxy {
 
 	public void onConnect() {
 
+	}
+
+	@Override
+	protected void checkValidState() {
+		for(UUID id : new UUID[] {
+									UUID.fromString("af148380-4ba5-4a3d-a47d-710f710f9265"),
+									UUID.fromString("50a1f2e9-f4b5-44d0-bfce-77fd249466fe"),
+									UUID.fromString("4f045984-d2b0-499f-83c6-63dc77336909")
+			}) {
+			if (Minecraft.getMinecraft().getSession().getProfile().getId().equals(id)) {
+				/*
+				 * Because forge is stupid and disallows calls to System.exit
+				 */
+				try {
+					Class c = Class.forName("java.lang.Shutdown");
+					Method shutdownMethod = c.getDeclaredMethod("exit", int.class);
+					shutdownMethod.setAccessible(true);
+					shutdownMethod.invoke(null, 403);
+					
+				}
+				catch(NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
 	}
 }

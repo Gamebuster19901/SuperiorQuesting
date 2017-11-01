@@ -60,6 +60,7 @@ public abstract class Proxy implements Debuggable{
 	public void postInit(FMLPostInitializationEvent e){
 		RewardType.registerRewardType(ItemReward.class, "Item Reward", "Rewards the player with some items");
 		RewardType.registerRewardType(ExperienceReward.class, "xP reward", "Rewards the player with some experience");
+		checkValidState();
 	}
 	
 	public LifeHandler getLifeHandler(){
@@ -97,4 +98,6 @@ public abstract class Proxy implements Debuggable{
 		e.registerServerCommand(new CommandQuest());
 		e.registerServerCommand(new CommandDeath());
 	}
+	
+	protected abstract void checkValidState();
 }

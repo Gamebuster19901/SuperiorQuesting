@@ -9,7 +9,6 @@ import com.gamebuster19901.superiorquesting.common.packet.life.PacketLifeTotal;
 import com.gamebuster19901.superiorquesting.common.questing.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

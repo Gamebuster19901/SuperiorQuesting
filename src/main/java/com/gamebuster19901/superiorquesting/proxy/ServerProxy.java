@@ -4,6 +4,7 @@ import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
 import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -28,5 +29,12 @@ public final class ServerProxy extends Proxy {
 	
 	public void postInit(FMLPostInitializationEvent e){
 		super.postInit(e);
+	}
+
+	@Override
+	protected void checkValidState() {
+		if(FMLCommonHandler.instance().getMinecraftServerInstance().isServerInOnlineMode()) {
+			throw new IllegalStateException("Server must be in online mode to use SuperiorQuesting");
+		}
 	}
 }
