@@ -29,34 +29,34 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 		EntityPlayerSP p = Minecraft.getMinecraft().player;
 		debug(message.getType());
 		switch(message.getType()) {
-		case LIFE_TOTAL:
-			b = Unpooled.buffer(4);
-			message.toBytes(b);
-			double life = b.getDouble(0);
-			if(p != null) {
-				p.sendMessage(new TextComponentString("Received new life total: " + life));
-				proxy.getLifeHandler().setLives(p, life, false);
-			}
-			return null;
-		case LIFE_MAXIMUM:
-			b = Unpooled.buffer(4);
-			message.toBytes(b);
-			proxy.getLifeHandler().setMaxLives(b.getDouble(0));
-			return null;
-		case LIFE_STARTING_TOTAL:
-			b = Unpooled.buffer(4);
-			message.toBytes(b);
-			proxy.getLifeHandler().setStartingLives(b.getDouble(0));
-			return null;
-		case FINAL_DEATH:
-			b = Unpooled.buffer(4);
-			message.toBytes(b);
-			GuiTrueGameOver.deathCause = new TextComponentString(ByteBufUtils.readUTF8String(b));
-			p.openGui(Main.getInstance(), GuiHandler.FINAL_DEATH, p.world, (int)p.posX, (int)p.posY, (int)p.posZ);
-			debug("opened gui");
-			return null;
-		default:
-			throw new AssertionError();
+			case LIFE_TOTAL:
+				b = Unpooled.buffer(4);
+				message.toBytes(b);
+				double life = b.getDouble(0);
+				if(p != null) {
+					p.sendMessage(new TextComponentString("Received new life total: " + life));
+					proxy.getLifeHandler().setLives(p, life, false);
+				}
+				return null;
+			case LIFE_MAXIMUM:
+				b = Unpooled.buffer(4);
+				message.toBytes(b);
+				proxy.getLifeHandler().setMaxLives(b.getDouble(0));
+				return null;
+			case LIFE_STARTING_TOTAL:
+				b = Unpooled.buffer(4);
+				message.toBytes(b);
+				proxy.getLifeHandler().setStartingLives(b.getDouble(0));
+				return null;
+			case FINAL_DEATH:
+				b = Unpooled.buffer(4);
+				message.toBytes(b);
+				GuiTrueGameOver.deathCause = new TextComponentString(ByteBufUtils.readUTF8String(b));
+				p.openGui(Main.getInstance(), GuiHandler.FINAL_DEATH, p.world, (int)p.posX, (int)p.posY, (int)p.posZ);
+				debug("opened gui");
+				return null;
+			default:
+				throw new AssertionError("Don't know how to handle packet " + message.getType());
 		}
 	}
 
