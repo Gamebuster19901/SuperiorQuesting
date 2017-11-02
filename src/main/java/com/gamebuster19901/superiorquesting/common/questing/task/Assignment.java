@@ -85,6 +85,22 @@ public interface Assignment extends UpdatableSerializable, Unique{
 	@Deprecated
 	public void markFinished(UUID p);
 	
+	/**
+	 * Marks this assignment as incomplete for the player
+	 * @param p the the player to mark this assignment as incomplete for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markUnFinished(EntityPlayer p);
+	
+	/**
+	 * Marks this assignment as incomplete for the player
+	 * @param p the UUID of the player to mark this assignment as incomplete for
+	 * @deprecated for internal use only
+	 */
+	@Deprecated
+	public void markUnfinished(UUID p);
+	
 	/*
 	 * 
 	 * 
@@ -124,6 +140,19 @@ public interface Assignment extends UpdatableSerializable, Unique{
 	 * @param p the uuid of the player to mark this assignment as notified for
 	 */
 	public void markNotified(UUID p);
+	
+	/**
+	 * Marks this assignment as unnotified for the player
+	 * @param p the player to mark this assignment as unnotified for
+	 */
+	public void markUnnotified(EntityPlayer p);
+	
+	/**
+	 * Marks this assignment as unnotified for the player
+	 * @param p the uuid of the player to mark this assignment as unnotified for
+	 */
+	public void markUnnotified(UUID p);
+	
 	
 	/*
 	 * 
