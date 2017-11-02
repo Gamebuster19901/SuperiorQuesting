@@ -270,6 +270,20 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		
 	}
 	
+	@Override
+	@Deprecated
+	public void markUnfinished(EntityPlayer p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	@Deprecated
+	public void markUnfinished(UUID p) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * 
 	 * 
@@ -368,13 +382,29 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	}
 
 	@Override
+	@Deprecated
 	public void markNotified(EntityPlayer p) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
+	@Deprecated
 	public void markNotified(UUID p) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	@Deprecated
+	public void markUnnotified(EntityPlayer p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	@Deprecated
+	public void markUnnotified(UUID p) {
 		// TODO Auto-generated method stub
 		
 	}

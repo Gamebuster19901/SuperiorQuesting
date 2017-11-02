@@ -47,6 +47,9 @@ public abstract class Task implements Assignment, Assertable{
 	@Override
 	public abstract boolean areConditionsSatisfied(EntityPlayer p);
 
+	/*
+	 *FINISHED 
+	 */
 	@Override
 	public boolean isFinished(EntityPlayer p) {
 		return Assert(false, "Not yet implemented");
@@ -76,7 +79,15 @@ public abstract class Task implements Assignment, Assertable{
 	public void markFinished(UUID p) {
 		Assert(false, "Not yet implemented");
 	}
+	
+	@Override
+	public void markUnfinished(EntityPlayer p) {
+		Assert(false, "Not yet implemented");
+	}
 
+	/*
+	 * NOTIFY
+	 */
 	@Override
 	public boolean hasNotified(EntityPlayer p) {
 		return Assert(false, "Not yet implemented");
@@ -102,6 +113,10 @@ public abstract class Task implements Assignment, Assertable{
 		Assert(false, "Not yet implemented");
 	}
 
+	/*
+	 * HIDE
+	 */
+	
 	@Override
 	public boolean isHidden(EntityPlayer p) {
 		return Assert(false, "Not yet implemented");
@@ -137,6 +152,10 @@ public abstract class Task implements Assignment, Assertable{
 		return hiddenByDefault;
 	}
 
+	/*
+	 * LOCK
+	 */
+	
 	@Override
 	public void lock(EntityPlayer p) {
 		Assert(false, "Not yet implemented");
@@ -172,6 +191,10 @@ public abstract class Task implements Assignment, Assertable{
 		// TODO Auto-generated method stub
 		return lockedByDefault;
 	}
+	
+	/*
+	 * OTHER TASK DATA
+	 */
 
 	@Override
 	public final UUID getUUID() {

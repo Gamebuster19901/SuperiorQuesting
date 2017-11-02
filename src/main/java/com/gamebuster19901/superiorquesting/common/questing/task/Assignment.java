@@ -91,7 +91,7 @@ public interface Assignment extends UpdatableSerializable, Unique{
 	 * @deprecated for internal use only
 	 */
 	@Deprecated
-	public void markUnFinished(EntityPlayer p);
+	public void markUnfinished(EntityPlayer p);
 	
 	/**
 	 * Marks this assignment as incomplete for the player
