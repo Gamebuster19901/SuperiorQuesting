@@ -497,15 +497,11 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	}
 	
 	/**
-	 * adds a prerequisite to this quest, a prerequisite is another Quest or a Task
+	 * adds a prerequisite to this quest, a prerequisite is another Quest
 	 * @param a the assignment to add
 	 */
 	void addPrerequisite(UUID q) {
 		prerequisites.add(q);
-	}
-	
-	void addTask(UUID t) {
-		prerequisites.add(t);
 	}
 	
 	/**
@@ -516,6 +512,21 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		prerequisites.remove(q);
 	}
 	
+	/**
+	 * adds a task to this quest
+	 * @param t
+	 */
+	void addTask(UUID t) {
+		prerequisites.add(t);
+	}
+	
+	/**
+	 * removes a task from this quest
+	 * @param t
+	 */
+	void removeTask(UUID t) {
+		tasks.remove(t);
+	}
 	/**
 	 * adds a reward to this quest
 	 * @param r the reward to add

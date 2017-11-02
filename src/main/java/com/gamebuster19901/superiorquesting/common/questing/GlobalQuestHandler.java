@@ -108,25 +108,31 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		}
 	}
 	
-	private final void removeQuest(MinecraftServer server, UUID uuid) {
+	public final void removeQuest(MinecraftServer server, UUID uuid) {
 		if(!QUESTS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Quest " + uuid);
 		}
 		markDirty();
+		for(Quest q : QUESTS.values()) {
+			q.removePrerequisite(uuid);
+		}
 		QUESTS.remove(uuid);
 		markDirty();
 	}
 	
-	private final void removeTask(MinecraftServer server, UUID uuid) {
+	public final void removeTask(MinecraftServer server, UUID uuid) {
 		if(!TASKS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Task " + uuid);
 		}
 		markDirty();
+		for(Quest q : QUESTS.values()) {
+			q.removeTask(uuid);
+		}
 		TASKS.remove(uuid);
 		markDirty();
 	}
 	
-	private final void removeReward(MinecraftServer server, UUID uuid) {
+	public final void removeReward(MinecraftServer server, UUID uuid) {
 		if(!REWARDS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Reward " + uuid.toString());
 		}
