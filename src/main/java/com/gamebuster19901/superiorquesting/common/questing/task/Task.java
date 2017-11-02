@@ -84,6 +84,11 @@ public abstract class Task implements Assignment, Assertable{
 	public void markUnfinished(EntityPlayer p) {
 		Assert(false, "Not yet implemented");
 	}
+	
+	@Override
+	public void markUnfinished(UUID p) {
+		Assert(false, "Not yet implemented");
+	}
 
 	/*
 	 * NOTIFY
