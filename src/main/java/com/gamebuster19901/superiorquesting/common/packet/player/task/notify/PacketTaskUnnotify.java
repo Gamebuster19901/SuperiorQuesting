@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.packet.player;
+package com.gamebuster19901.superiorquesting.common.packet.player.task.notify;
 
 import java.util.UUID;
 
@@ -11,42 +11,27 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
-public class PacketUnhide extends GenericQuestingPacket{
-	public Class<? extends Assignment> type;
+public class PacketTaskUnnotify extends GenericQuestingPacket{
 	public UUID id;
 	
-	public PacketUnhide() {
-		super(PacketType.UNHIDE);
+	public PacketTaskUnnotify() {
+		super(PacketType.QUEST_NOTIFY);
 	}
 	
-	public PacketUnhide(Assignment a) {
+	public PacketTaskUnnotify(Quest q) {
 		this();
-		if(a instanceof Quest) {
-			type = Quest.class;
-		}
-		else if (a instanceof Task) {
-			type = Task.class;
-		}
-		else {
-			throw new AssertionError();
-		}
+		id = q.getUUID();
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		NBTTagCompound nbt = ByteBufUtils.readTag(buf);
-		try {
-			type = (Class<? extends Assignment>) Class.forName(nbt.getString("CLASS"));
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
 		id = UUID.fromString(nbt.getString("UUID"));
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setString("CLASS", type.getCanonicalName());
 		nbt.setString("UUID", id.toString());
 		ByteBufUtils.writeTag(buf, nbt);
 	}

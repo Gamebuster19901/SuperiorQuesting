@@ -11,13 +11,26 @@ import com.gamebuster19901.superiorquesting.common.packet.life.PacketFinalDeath;
 import com.gamebuster19901.superiorquesting.common.packet.life.PacketLifeTotal;
 import com.gamebuster19901.superiorquesting.common.packet.life.PacketMaxLife;
 import com.gamebuster19901.superiorquesting.common.packet.life.PacketStartingLifeTotal;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketCollect;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketFinish;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketHide;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketLock;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketNotify;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketUnhide;
-import com.gamebuster19901.superiorquesting.common.packet.player.PacketUnlock;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.collection.PacketQuestCollect;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.collection.PacketQuestUncollect;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.finish.PacketQuestFinish;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.finish.PacketQuestUnfinish;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.hide.PacketQuestHide;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.hide.PacketQuestUnhide;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.lock.PacketQuestLock;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.lock.PacketQuestUnlock;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.notify.PacketQuestNotify;
+import com.gamebuster19901.superiorquesting.common.packet.player.quest.notify.PacketQuestUnnotify;
+import com.gamebuster19901.superiorquesting.common.packet.player.reward.collection.PacketRewardCollect;
+import com.gamebuster19901.superiorquesting.common.packet.player.reward.collection.PacketRewardUncollect;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.finish.PacketTaskFinish;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.finish.PacketTaskUnfinish;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.hide.PacketTaskHide;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.hide.PacketTaskUnhide;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.lock.PacketTaskLock;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.lock.PacketTaskUnlock;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.notify.PacketTaskNotify;
+import com.gamebuster19901.superiorquesting.common.packet.player.task.notify.PacketTaskUnnotify;
 import com.gamebuster19901.superiorquesting.common.packet.remove.PacketRemoveQuest;
 import com.gamebuster19901.superiorquesting.common.packet.remove.PacketRemoveReward;
 import com.gamebuster19901.superiorquesting.common.packet.remove.PacketRemoveTask;
@@ -56,13 +69,28 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 		REMOVE_TASK,
 		REMOVE_REWARD,
 		
-		FINISH,
-		COLLECT,
-		NOTIFY,
-		LOCK,
-		UNLOCK,
-		HIDE,
-		UNHIDE,
+		QUEST_FINISH,
+		QUEST_UNFINISH,
+		QUEST_COLLECT,
+		QUEST_UNCOLLECT,
+		QUEST_NOTIFY,
+		QUEST_UNNOTIFY,
+		QUEST_LOCK,
+		QUEST_UNLOCK,
+		QUEST_HIDE,
+		QUEST_UNHIDE,
+		
+		TASK_FINISH,
+		TASK_UNFINISH,
+		TASK_NOTIFY,
+		TASK_UNNOTIFY,
+		TASK_LOCK,
+		TASK_UNLOCK,
+		TASK_HIDE,
+		TASK_UNHIDE,
+		
+		REWARD_COLLECT,
+		REWARD_UNCOLLECT,
 		
 		FINAL_DEATH;
 		
@@ -96,20 +124,48 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 				case REMOVE_REWARD:
 					return PacketRemoveReward.class;
 				
-				case FINISH:
-					return PacketFinish.class;
-				case COLLECT:
-					return PacketCollect.class;
-				case NOTIFY:
-					return PacketNotify.class;
-				case LOCK:
-					return PacketLock.class;
-				case UNLOCK:
-					return PacketUnlock.class;
-				case HIDE:
-					return PacketHide.class;
-				case UNHIDE:
-					return PacketUnhide.class;
+				case QUEST_FINISH:
+					return PacketQuestFinish.class;
+				case QUEST_UNFINISH:
+					return PacketQuestUnfinish.class;
+				case QUEST_COLLECT:
+					return PacketQuestCollect.class;
+				case QUEST_UNCOLLECT:
+					return PacketQuestUncollect.class;
+				case QUEST_NOTIFY:
+					return PacketQuestNotify.class;
+				case QUEST_UNNOTIFY:
+					return PacketQuestUnnotify.class;
+				case QUEST_LOCK:
+					return PacketQuestLock.class;
+				case QUEST_UNLOCK:
+					return PacketQuestUnlock.class;
+				case QUEST_HIDE:
+					return PacketQuestHide.class;
+				case QUEST_UNHIDE:
+					return PacketQuestUnhide.class;
+					
+				case TASK_FINISH:
+					return PacketTaskFinish.class;
+				case TASK_UNFINISH:
+					return PacketTaskUnfinish.class;
+				case TASK_NOTIFY:
+					return PacketTaskNotify.class;
+				case TASK_UNNOTIFY:
+					return PacketTaskUnnotify.class;
+				case TASK_LOCK:
+					return PacketTaskLock.class;
+				case TASK_UNLOCK:
+					return PacketTaskUnlock.class;
+				case TASK_HIDE:
+					return PacketTaskHide.class;
+				case TASK_UNHIDE:
+					return PacketTaskUnhide.class;
+					
+				case REWARD_COLLECT:
+					return PacketRewardCollect.class;
+				case REWARD_UNCOLLECT:
+					return PacketRewardUncollect.class;
 				
 				case FINAL_DEATH:
 					return PacketFinalDeath.class;
