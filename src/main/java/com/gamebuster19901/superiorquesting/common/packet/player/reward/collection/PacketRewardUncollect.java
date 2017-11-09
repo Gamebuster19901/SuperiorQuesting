@@ -3,7 +3,6 @@ package com.gamebuster19901.superiorquesting.common.packet.player.reward.collect
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
-import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
 import io.netty.buffer.ByteBuf;

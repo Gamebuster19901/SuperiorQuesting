@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
-import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
-import com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;

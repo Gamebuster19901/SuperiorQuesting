@@ -1,8 +1,5 @@
 package com.gamebuster19901.superiorquesting.common.packet;
 
-import org.apache.logging.log4j.Level;
-
-import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.packet.create.PacketNewQuest;
 import com.gamebuster19901.superiorquesting.common.packet.create.PacketNewReward;
