@@ -5,7 +5,7 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 import java.util.LinkedHashSet;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.common.packet.life.PacketLifeTotal;
+import com.gamebuster19901.superiorquesting.common.network.packet.life.PacketLifeTotal;
 import com.gamebuster19901.superiorquesting.common.questing.MultiplayerHandler;
 import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 

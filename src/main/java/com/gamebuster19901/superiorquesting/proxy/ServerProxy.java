@@ -1,8 +1,8 @@
 package com.gamebuster19901.superiorquesting.proxy;
 
-import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
-import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
-import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
+import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
+import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket.PacketType;
+import com.gamebuster19901.superiorquesting.server.network.ServerPacketReceiver;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

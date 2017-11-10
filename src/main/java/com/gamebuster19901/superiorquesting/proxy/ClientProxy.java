@@ -11,12 +11,12 @@ import org.apache.logging.log4j.Level;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.Confirmed;
 import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
-import com.gamebuster19901.superiorquesting.client.packet.ClientPacketReceiver;
+import com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver;
 import com.gamebuster19901.superiorquesting.common.item.ItemHeartCanister;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
-import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket;
-import com.gamebuster19901.superiorquesting.common.packet.GenericQuestingPacket.PacketType;
-import com.gamebuster19901.superiorquesting.server.packet.handle.ServerPacketReceiver;
+import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
+import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket.PacketType;
+import com.gamebuster19901.superiorquesting.server.network.ServerPacketReceiver;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
