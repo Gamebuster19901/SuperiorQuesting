@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
+import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
 import com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable;
 import com.gamebuster19901.superiorquesting.common.questing.task.Assignment;
 
@@ -18,7 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NBTDebugger{
-	private static final long VERSION = 1L;
+	public static final long VERSION = 1L;
 	private UUID id;
 	private String title;
 	private String description;
@@ -44,58 +45,19 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 * @throws IndexOutOfBoundsException if x or y < 0
 	 */
 	public Quest(MinecraftServer s, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
-		try {
-			if(title == null) {
-				throw new NullPointerException("String title");
-			}
-			if(description == null) {
-				throw new NullPointerException("String description");
-			}
-			if (x < 0) {
-				throw new IndexOutOfBoundsException(x + " < 0. (x)");
-			}
-			if(y < 0) {
-				throw new IndexOutOfBoundsException(y + " < 0. (y)");
-			}
-			if(page < 0) {
-				throw new IndexOutOfBoundsException(page + " < 0. (page)");
-			}
-			if(rewards == null) {
-				throw new NullPointerException("Collection<UUID> rewards");
-			}
-			if(prerequisites == null) {
-				throw new NullPointerException("Collection<UUID> prerequisites");
-			}
-			if(tasks == null) {
-				throw new NullPointerException("Collection<UUID> tasks");
-			}
-		}
-		catch(RuntimeException e) {
-			throw new IllegalArgumentException("Programming error, report to Gamebuster1990", e);
-		}
-		this.id = UUID.randomUUID();
-		this.title = title;
-		this.description = description;
-		this.page = page;
-		this.x = x;
-		this.y = y;
-		this.important = important;
-		this.rewards = new ArrayList<UUID>(rewards);
-		this.prerequisites = new ArrayList<UUID>(prerequisites);
-		this.tasks = new ArrayList<UUID>(tasks);
-		getGlobalQuestHandler().add(s, true, this);
+		this(s, UUID.randomUUID(), title, description, page, x, y, important, rewards, prerequisites, tasks);
 	}
 	
 	private Quest(MinecraftServer s, UUID id, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		try {
 			if(id == null) {
-				throw new NullPointerException("UUID id");
+				throw new NullPointerException("id");
 			}
 			if(title == null) {
-				throw new NullPointerException("String title");
+				throw new NullPointerException("title");
 			}
 			if(description == null) {
-				throw new NullPointerException("String description");
+				throw new NullPointerException("description");
 			}
 			if (x < 0) {
 				throw new IndexOutOfBoundsException(x + " < 0. (x)");
@@ -103,23 +65,26 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 			if(y < 0) {
 				throw new IndexOutOfBoundsException(y + " < 0. (y)");
 			}
+			if(important < 1) {
+				throw new IndexOutOfBoundsException(important + " < 1 (importance)");
+			}
 			if(page < 0) {
 				throw new IndexOutOfBoundsException(page + " < 0. (page)");
 			}
 			if(rewards == null) {
-				throw new NullPointerException("Collection<UUID> rewards");
+				throw new NullPointerException("rewards");
 			}
 			if(prerequisites == null) {
-				throw new NullPointerException("Collection<UUID> prerequisites");
+				throw new NullPointerException("prerequisites");
 			}
 			if(tasks == null) {
-				throw new NullPointerException("Collection<UUID> tasks");
+				throw new NullPointerException("tasks");
 			}
 		}
-		catch(RuntimeException e) {
+		catch(NullPointerException | IndexOutOfBoundsException e) {
 			throw new IllegalArgumentException("Programming error, report to Gamebuster1990", e);
 		}
-		this.id = UUID.randomUUID();
+		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.page = page;
@@ -133,34 +98,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	}
 	
 	public Quest(MinecraftServer s, String title, String description, int page, int x, int y, byte important) {
-		try {
-			if(title == null) {
-				throw new NullPointerException("String title");
-			}
-			if(description == null) {
-				throw new NullPointerException("String description");
-			}
-			if (x < 0) {
-				throw new IndexOutOfBoundsException(x + " < 0. (x)");
-			}
-			if(y < 0) {
-				throw new IndexOutOfBoundsException(y + " < 0. (y)");
-			}
-			if(page < 0) {
-				throw new IndexOutOfBoundsException(page + " < 0. (page)");
-			}
-		}
-		catch(RuntimeException e) {
-			throw new IllegalArgumentException("Programming error, report to Gamebuster1990", e);
-		}
-		this.id = UUID.randomUUID();
-		this.title = title;
-		this.description = description;
-		this.page = page;
-		this.x = x;
-		this.y = y;
-		this.important = important;
-		getGlobalQuestHandler().add(s, true, this);
+		this(s, UUID.randomUUID(), title, description, page, x, y, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
 	}
 	
 	public Quest(MinecraftServer s, NBTTagCompound data) {
@@ -634,40 +572,57 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	public void deserializeNBT(NBTTagCompound data) {
 		long ver = data.getLong("VERSION");
 		try {
-			Assert(ver != 0, "Missing version data in quest " + data.getString("UUID"));
-		}
-		catch(AssertionError e) {
-			debug(getFullNBTString(data, 1));
-			throw e;
-		}
-		if(ver != VERSION) {
-			convert(ver, VERSION, data);
-		}
-		else {
-			debug(data.getString("UUID"));
-			id = UUID.fromString(data.getString("UUID"));
-			title = data.getString("TITLE");
-			description = data.getString("DESCRIPTION");
-			page = data.getInteger("PAGE");
-			x = data.getInteger("X");
-			y = data.getInteger("Y");
-			important = data.getByte("IMPORTANT");
-			lockedByDefault = data.getBoolean("LOCKEDBYDEFAULT");
-			hiddenByDefault = data.getBoolean("HIDDENBYDEFAULT");
-			
-			NBTTagList prereqs = data.getTagList("PREREQUISITES", 8);
-			NBTTagList rews = data.getTagList("REWARDS", 8);
-			NBTTagList tsks = data.getTagList("TASKS", 8);
-			
-			for(int i = 0; i < prereqs.tagCount(); i++) {
-				this.addPrerequisite(UUID.fromString(prereqs.getStringTagAt(i)));
+			try {
+				Assert(ver != 0, "Missing version data in quest " + data.getString("UUID"));
 			}
-			for(int i = 0; i < rews.tagCount(); i++) {
-				this.addTask(UUID.fromString(rews.getStringTagAt(i)));
+			catch(AssertionError e) {
+				debug(getFullNBTString(data, 1));
+				throw e;
 			}
-			for(int i = 0; i < tsks.tagCount(); i++) {
-				this.addTask(UUID.fromString(tsks.getStringTagAt(i)));
+			if(ver != VERSION) {
+				convert(ver, VERSION, data);
 			}
+			else {
+				debug(data.getString("UUID"));
+				id = UUID.fromString(data.getString("UUID"));
+				title = data.getString("TITLE");
+				description = data.getString("DESCRIPTION");
+				page = data.getInteger("PAGE");
+				if(page <= 0) {
+					throw new IndexOutOfBoundsException("page <= 0");
+				}
+				x = data.getInteger("X");
+				if(x <= 0) {
+					throw new IndexOutOfBoundsException("x <= 0");
+				}
+				y = data.getInteger("Y");
+				if(y <= 0) {
+					throw new IndexOutOfBoundsException("y <= 0");
+				}
+				important = data.getByte("IMPORTANT");
+				if(important < 1) {
+					throw new IndexOutOfBoundsException("important < 1");
+				}
+				lockedByDefault = data.getBoolean("LOCKEDBYDEFAULT");
+				hiddenByDefault = data.getBoolean("HIDDENBYDEFAULT");
+				
+				NBTTagList prereqs = data.getTagList("PREREQUISITES", 8);
+				NBTTagList rews = data.getTagList("REWARDS", 8);
+				NBTTagList tsks = data.getTagList("TASKS", 8);
+				
+				for(int i = 0; i < prereqs.tagCount(); i++) {
+					this.addPrerequisite(UUID.fromString(prereqs.getStringTagAt(i)));
+				}
+				for(int i = 0; i < rews.tagCount(); i++) {
+					this.addTask(UUID.fromString(rews.getStringTagAt(i)));
+				}
+				for(int i = 0; i < tsks.tagCount(); i++) {
+					this.addTask(UUID.fromString(tsks.getStringTagAt(i)));
+				}
+			}
+		}
+		catch(Exception | AssertionError e) {
+			throw new SerializationException(e);
 		}
 	}
 
