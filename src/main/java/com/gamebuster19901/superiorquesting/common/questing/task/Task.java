@@ -7,6 +7,7 @@ import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 
 public abstract class Task implements Assignment, Assertable{
 	
@@ -17,20 +18,20 @@ public abstract class Task implements Assignment, Assertable{
 	private boolean lockedByDefault = true;
 	private boolean hiddenByDefault = false;
 	
-	Task(Quest parent, String title, String description, int order){
+	Task(MinecraftServer server, Quest parent, String title, String description, int order){
 		this.id = UUID.randomUUID();
 		this.parent = parent.getUUID();
 		this.title = title;
 		this.description = description;
 	}
 	
-	Task(Quest parent, String title, String description, int order, boolean lockedByDefault, boolean hiddenByDefault){
-		this(parent, title, description, order);
+	Task(MinecraftServer server, Quest parent, String title, String description, int order, boolean lockedByDefault, boolean hiddenByDefault){
+		this(server, parent, title, description, order);
 		this.lockedByDefault = lockedByDefault;
 		this.hiddenByDefault = hiddenByDefault;
 	}
 	
-	Task(NBTTagCompound data){
+	Task(MinecraftServer server, NBTTagCompound data){
 		this.deserializeNBT(data);
 	}
 
