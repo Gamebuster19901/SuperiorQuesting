@@ -67,6 +67,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	}
 	
 	public final void add(MinecraftServer server, boolean markDirty, Quest quest) {
+		if(server == null) {return;};
 		if(QUESTS.containsKey(quest.getUUID())) {
 			throw new DuplicateKeyException("Quest " + quest.getUUID().toString());
 		}
@@ -81,6 +82,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	}
 	
 	public final void add(MinecraftServer server, boolean markDirty, Task task) {
+		if(server == null) {return;};
 		if(TASKS.containsKey(task.getUUID())) {
 			throw new DuplicateKeyException("Task " + task.getUUID().toString());
 		}
@@ -95,6 +97,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	}
 	
 	public void add(MinecraftServer server, boolean markDirty, Reward reward) {
+		if(server == null) {return;};
 		if(REWARDS.containsKey(reward.getUUID())) {
 			throw new DuplicateKeyException("Reward " + reward.getUUID());
 		}
