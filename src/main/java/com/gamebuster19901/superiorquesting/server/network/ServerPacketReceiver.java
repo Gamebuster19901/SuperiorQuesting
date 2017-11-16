@@ -320,7 +320,12 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 			}
 		}
 		catch(PacketException e) {
-			
+			if(e.getCause() != null) {
+				ctx.getServerHandler().disconnect(new TextComponentString(e.getCause().toString()));
+			}
+			else {
+				ctx.getServerHandler().disconnect(new TextComponentString(e.toString()));
+			}
 		}
 		return null;
 	}
