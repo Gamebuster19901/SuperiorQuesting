@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class PacketRemoveTask extends GenericQuestingPacket{
@@ -21,11 +22,13 @@ public class PacketRemoveTask extends GenericQuestingPacket{
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		id = UUID.fromString(ByteBufUtils.readUTF8String(buf));
+		NBTTagCompound nbt = ByteBufUtils.readTag(buf);
+		id = UUID.fromString(nbt.getString("UUID"));
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeUTF8String(buf, id.toString());
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setString("UUID", id.toString());
 	}
 }
