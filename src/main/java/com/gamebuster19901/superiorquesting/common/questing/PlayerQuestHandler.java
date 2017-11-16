@@ -37,30 +37,30 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY);
 	}
 	
-	boolean hasQuestNBT(EntityPlayer p){
+	public boolean hasQuestNBT(EntityPlayer p){
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
 	
-	boolean hasQuestNBT(UUID p) {
+	public boolean hasQuestNBT(UUID p) {
 		return getPersistantTag(p).hasKey(QUEST_KEY);
 	}
 	
-	boolean hasQuestNBT(UUID quest, EntityPlayer p) {
+	public boolean hasQuestNBT(UUID quest, EntityPlayer p) {
 		Assert(hasQuestNBT(p), "quest " + quest + " not found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
 	}
 	
-	boolean hasQuestNBT(UUID quest, UUID p) {
+	public boolean hasQuestNBT(UUID quest, UUID p) {
 		Assert(hasQuestNBT(p), "quest " + quest + " not found for player " + p);
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
 	}
 	
-	public NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
+	NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
 	}
 	
-	public NBTTagCompound getRewardNBT(UUID id, UUID p) {
+	NBTTagCompound getRewardNBT(UUID id, UUID p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found for player " + p);
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
 	}
