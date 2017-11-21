@@ -14,6 +14,7 @@ import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
+import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket.PacketType;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.MalformedTypeError;
@@ -24,6 +25,7 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
+import ibxm.Player;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,13 +48,19 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 	public IMessage onMessage(Message message, MessageContext ctx) { 
 		EntityPlayerMP p = ctx.getServerHandler().player;
 		try {
-			if(p.getServer().canUseCommand(2, "")) {	//the server should never receive a packet from a non-op
-				
-				ByteBuf b = Unpooled.buffer();
-				NBTTagCompound nbt;
-				TypeWrapper wrap;
+			ByteBuf b = Unpooled.buffer();
+			NBTTagCompound nbt;
+			TypeWrapper wrap;
+			if(p.getServer().canUseCommand(2, "")) {	//the server should never receive a packet from a non-op unless they are collecting a quest
 				
 				switch(message.getType()) {
+					/*
+					 * 
+					 * 
+					 * CREATION
+					 * 
+					 * 
+					 */
 					case NEW_QUEST:
 						ensureValidType(b, ctx, QUEST, true, false);
 						break;
@@ -64,6 +72,14 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					case NEW_REWARD:
 						ensureValidType(b, ctx, REWARD, true, false);
 						break;
+						
+					/*
+					 * 
+					 * 
+					 * UPDATION
+					 * 
+					 * 
+					 */
 	
 					case UPDATE_QUEST:
 						wrap = ensureValidType(b, ctx, QUEST, false, false);
@@ -82,6 +98,40 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 						((Reward) wrap.u).deserializeNBT(wrap.nbt);
 						sendToAll(message);
 						break;
+						
+					/*
+					 * 
+					 * 
+					 * REMOVAL
+					 * 
+					 * 
+					 */
+						
+					case REMOVE_QUEST:
+						wrap = ensureValidType(b, ctx, QUEST, false, false);
+						Main.proxy.getGlobalQuestHandler().removeQuest(wrap.u.getUUID());
+						sendToAll(message);
+						break;
+						
+					case REMOVE_TASK:
+						wrap = ensureValidType(b, ctx, TASK, false, false);
+						Main.proxy.getGlobalQuestHandler().removeTask(wrap.u.getUUID());
+						sendToAll(message);
+						break;
+						
+					case REMOVE_REWARD:
+						wrap = ensureValidType(b, ctx, REWARD, false, false);
+						Main.proxy.getGlobalQuestHandler().removeReward(wrap.u.getUUID());
+						sendToAll(message);
+						break;
+						
+					/*
+					 * 
+					 * 
+					 * PLAYER QUEST DATA
+					 * 
+					 * 
+					 */
 						
 					case QUEST_UNCOLLECT:
 						wrap = ensureValidType(b, ctx, QUEST, false, true);
@@ -187,24 +237,14 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 							((Quest)wrap.u).markUnnotified(affectedOfflinePlayer);
 						}
 						break;
-					
-					case REMOVE_QUEST:
-						wrap = ensureValidType(b, ctx, QUEST, false, false);
-						Main.proxy.getGlobalQuestHandler().removeQuest(p.mcServer, wrap.u.getUUID());
-						sendToAll(message);
-						break;
 						
-					case REMOVE_TASK:
-						wrap = ensureValidType(b, ctx, TASK, false, false);
-						Main.proxy.getGlobalQuestHandler().removeTask(p.mcServer, wrap.u.getUUID());
-						sendToAll(message);
-						break;
-						
-					case REMOVE_REWARD:
-						wrap = ensureValidType(b, ctx, REWARD, false, false);
-						Main.proxy.getGlobalQuestHandler().removeReward(p.mcServer, wrap.u.getUUID());
-						sendToAll(message);
-						break;
+					/*
+					 * 
+					 * 
+					 * PLAYER REWARD DATA
+					 * 
+					 * 
+					 */
 						
 					case REWARD_UNCOLLECT:
 						wrap = ensureValidType(b, ctx, REWARD, false, true);
@@ -217,6 +257,14 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 							((Reward)wrap.u).markUncollected(affectedOfflinePlayer);
 						}
 						break;
+						
+					/*
+					 * 
+					 * 
+					 * PLAYER TASK DATA
+					 * 
+					 * 
+					 */
 					
 					case TASK_FINISH:
 						wrap = ensureValidType(b, ctx, TASK, false, true);
@@ -303,8 +351,27 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 							((Task)wrap.u).markUnnotified(affectedOfflinePlayer);
 						}
 						break;
+						
+					/*
+					 * 
+					 * 
+					 * PACKET SENDER ONLY
+					 * 
+					 * 
+					 */
+						case QUEST_COLLECT:
+							wrap = ensureValidType(b, ctx, QUEST, false, false);
+							((Quest)wrap.u).collect(ctx.getServerHandler().player);
+							return null;
+					/*
+					 * 
+					 * 
+					 * INVALID
+					 * 
+					 * 
+					 */
 					
-					case QUEST_COLLECT: //cannot collect quests because the player may not always be online
+					
 					case REWARD_COLLECT: //cannot collect rewards because the player may not always be online
 					case FINAL_DEATH: //Server only packet, the server is not a player and cannot die
 					case LIFE_MAXIMUM: //Server only packet, clients shouldn't set life totals
@@ -314,6 +381,11 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					default:
 						throw new PacketException("Unknown packet received (" + message.getType() + ')');
 				}
+			}
+			else if (message.getType() == PacketType.QUEST_COLLECT) {
+				wrap = ensureValidType(b, ctx, QUEST, false, false);
+				((Quest)wrap.u).collect(ctx.getServerHandler().player);
+				return null;
 			}
 			else {
 				throw new PacketException("Unauthorized packet received, not enough permission (" + message.getType() + ')');
@@ -374,7 +446,7 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					if(isNew) {
 						switch(type) {
 						case QUEST:
-							Quest q = new Quest(p.getServer(), nbt);
+							Quest q = new Quest(nbt);
 							break;
 						case TASK:
 							try {
@@ -445,7 +517,7 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 								u = Main.proxy.getGlobalQuestHandler().getTask(id);
 								break;
 							default:
-								throw new IncompatibleClassChangeError(); //should never happen, do not catch
+								throw new AssertionError(); //should never happen, do not catch
 						}
 						if(u != null) {
 							this.t = type;
