@@ -1,6 +1,9 @@
 package com.gamebuster19901.superiorquesting.client.network;
 
 import static com.gamebuster19901.superiorquesting.Main.proxy;
+import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.QUEST;
+import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.REWARD;
+import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.TASK;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -21,10 +24,6 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Serializat
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 import com.gamebuster19901.superiorquesting.common.questing.task.Task;
-import com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type;
-import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.QUEST;
-import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.TASK;
-import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.REWARD;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

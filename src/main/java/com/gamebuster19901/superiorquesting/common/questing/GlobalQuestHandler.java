@@ -16,7 +16,6 @@ import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 public final class GlobalQuestHandler extends MultiplayerHandler implements Debuggable{

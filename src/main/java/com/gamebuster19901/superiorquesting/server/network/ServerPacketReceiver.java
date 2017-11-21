@@ -16,7 +16,6 @@ import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket.PacketType;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
-import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.MalformedTypeError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.PacketException;
@@ -25,14 +24,12 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
-import ibxm.Player;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
