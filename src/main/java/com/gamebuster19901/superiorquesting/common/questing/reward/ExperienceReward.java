@@ -19,14 +19,14 @@ public final class ExperienceReward extends Reward{
 	private RenderXPOrb renderer = new RenderXPOrb(Minecraft.getMinecraft().getRenderManager());
 	private EntityXPOrb orb = new EntityXPOrb(null, 0, 0, 0, 2477);
 	
-	public ExperienceReward(MinecraftServer s, Quest quest, int exp, boolean isLevels) {
-		super(s, quest);
+	public ExperienceReward(Quest quest, int exp, boolean isLevels) {
+		super(quest);
 		amount = exp;
 		this.isLevels = isLevels; 
 	}
 	
-	public ExperienceReward(MinecraftServer s, NBTTagCompound nbt) {
-		super(s, nbt);
+	public ExperienceReward(NBTTagCompound nbt) {
+		super(nbt);
 	}
 	
 	@Override

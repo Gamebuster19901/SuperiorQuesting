@@ -14,12 +14,13 @@ public final class ItemReward extends Reward{
 	private static final long VERSION = 1L;
 	private ItemStack reward;
 	
-	public ItemReward(MinecraftServer s, Quest parent, ItemStack stack) {
-		super(s, parent);
+	public ItemReward(Quest parent, ItemStack stack) {
+		super(parent);
+		reward = stack;
 	}
 	
-	public ItemReward(MinecraftServer s, NBTTagCompound nbt) {
-		super(s, nbt);
+	public ItemReward(NBTTagCompound nbt) {
+		super(nbt);
 	}
 	
 	@Override
@@ -91,9 +92,8 @@ public final class ItemReward extends Reward{
 		if(ver != VERSION) {
 			convert(ver, VERSION, nbt);
 		}
-		else {
-			this.reward = new ItemStack(nbt.getCompoundTag("ITEMSTACK"));
-		}
+		this.setUUID(nbt.getString("UUID"));
+		this.reward = new ItemStack(nbt.getCompoundTag("ITEMSTACK"));
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 
@@ -14,12 +15,14 @@ public abstract class Reward implements Rewardable, Assertable{
 	private static final String COLLECTED_KEY = "collected-";
 	private UUID id;
 	
-	public Reward(MinecraftServer s, Quest q) {
+	public Reward(Quest q) {
+		id = UUID.randomUUID();
 		getGlobalQuestHandler().add(true, this);
+		q.addReward(this.getUUID());
 	}
 	
-	public Reward(MinecraftServer s, NBTTagCompound nbt) {
-		convert(nbt.getLong("VERSION"), this.getVersion(), nbt);
+	public Reward(NBTTagCompound nbt) {
+		deserializeNBT(nbt);
 		getGlobalQuestHandler().add(false, this);
 	}
 	
@@ -99,5 +102,9 @@ public abstract class Reward implements Rewardable, Assertable{
 	
 	public final UUID getUUID() {
 		return id;
+	}
+	
+	public String toString() {
+		return getUUID().toString();
 	}
 }

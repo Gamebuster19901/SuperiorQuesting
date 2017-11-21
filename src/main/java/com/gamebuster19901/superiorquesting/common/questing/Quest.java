@@ -498,7 +498,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 * adds a reward to this quest
 	 * @param r the reward to add
 	 */
-	void addReward(UUID r) {
+	public void addReward(UUID r) {
 		rewards.add(r);
 	}
 	
@@ -508,11 +508,6 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 */
 	void removeReward(UUID r) {
 		rewards.remove(r);
-	}
-	
-	@Override
-	public String toString() {
-		return getTitle() + " [" + id + "]";
 	}
 
 	@Override
@@ -591,11 +586,11 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 					throw new IndexOutOfBoundsException("page <= 0");
 				}
 				x = data.getInteger("X");
-				if(x <= 0) {
+				if(x < 0) {
 					throw new IndexOutOfBoundsException("x <= 0");
 				}
 				y = data.getInteger("Y");
-				if(y <= 0) {
+				if(y < 0) {
 					throw new IndexOutOfBoundsException("y <= 0");
 				}
 				important = data.getByte("IMPORTANT");
@@ -651,5 +646,10 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	
 	ArrayList<UUID> getTasks(){
 		return tasks;
+	}
+	
+	@Override
+	public String toString() {
+		return getTitle() + " [" + id + "]";
 	}
 }

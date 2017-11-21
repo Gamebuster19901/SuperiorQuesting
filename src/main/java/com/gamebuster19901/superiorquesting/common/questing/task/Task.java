@@ -211,4 +211,8 @@ public abstract class Task implements Assignment, Assertable{
 	public final UUID getParent() {
 		return parent;
 	}
+	
+	public final String toString() {
+		return getUUID().toString();
+	}
 }
