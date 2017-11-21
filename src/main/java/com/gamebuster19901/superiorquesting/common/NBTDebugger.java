@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 
 public interface NBTDebugger{
@@ -67,6 +68,18 @@ public interface NBTDebugger{
 				}
 				for(String s : compound.getKeySet()) {
 					ret = ret + "\n" + computeLines(compound.getTag(s), level, s);
+				}
+			}
+			else if (nbt instanceof NBTTagList) {
+				NBTTagList list = (NBTTagList) nbt;
+				level++;
+				if(list.iterator().hasNext()) {
+					for(NBTBase b : list) {
+						ret = ret + "\n" + computeLines(b, level);
+					}
+				}
+				else {
+					ret = ret + "(Empty)";
 				}
 			}
 			else {
