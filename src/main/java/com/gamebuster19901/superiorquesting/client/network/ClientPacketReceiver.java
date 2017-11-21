@@ -14,6 +14,8 @@ import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 import com.gamebuster19901.superiorquesting.client.gui.GuiTrueGameOver;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.IngameDebuggable;
+import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
@@ -37,7 +39,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class ClientPacketReceiver<Message extends GenericQuestingPacket> implements IMessageHandler<Message, IMessage>, Assertable, Debuggable{
+public class ClientPacketReceiver<Message extends GenericQuestingPacket> implements IMessageHandler<Message, IMessage>, Assertable, IngameDebuggable, NBTDebugger{
 	private final TypeWrapper typeObject = new TypeWrapper();
 	public ClientPacketReceiver(Class<Message> type) {debug(type);};
 	
@@ -59,17 +61,20 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				case LIFE_TOTAL:
 					message.toBytes(b);
 					double life = b.getDouble(0);
-					if(p != null) {
-						proxy.getLifeHandler().setLives(p, life, false);
-					}
+					proxy.getLifeHandler().setLives(p, life, false);
+					debug(p, "New life total received from server: " + life);
 					return null;
 				case LIFE_MAXIMUM:
 					message.toBytes(b);
-					proxy.getLifeHandler().setMaxLives(b.getDouble(0));
+					double maxLife = b.getDouble(0);
+					proxy.getLifeHandler().setMaxLives(maxLife);
+					debug(p, "New max life total received from server:" + maxLife);
 					return null;
 				case LIFE_STARTING_TOTAL:
 					message.toBytes(b);
-					proxy.getLifeHandler().setStartingLives(b.getDouble(0));
+					double startingLife = b.getDouble(0);
+					proxy.getLifeHandler().setStartingLives(startingLife);
+					debug(p, "New starting life total received from server:" + startingLife);
 					return null;
 					
 				/*
@@ -82,12 +87,15 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					
 				case NEW_QUEST:
 					wrap = ensureValidType(b, ctx, QUEST, true);
+					debug(p, "New quest recieved from server:" + (Quest)wrap.u);
 					break;
 				case NEW_TASK:
 					wrap = ensureValidType(b, ctx, TASK, true);
+					debug(p, "New task recieved from server:" + (Task)wrap.u);
 					break;
 				case NEW_REWARD:
 					wrap = ensureValidType(b, ctx, REWARD, true);
+					debug(p, "New reward received from server:" + (Reward)wrap.u);
 					break;
 					
 				/*
@@ -100,15 +108,21 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					
 				case UPDATE_QUEST:
 					wrap = ensureValidType(b, ctx, QUEST, false);
-					((Quest)wrap.u).deserializeNBT(wrap.nbt);
+					Quest q = ((Quest)wrap.u);
+					q.deserializeNBT(wrap.nbt);
+					debug(p, "Quest data update recieved " + q);
 					break;
 				case UPDATE_TASK:
 					wrap = ensureValidType(b, ctx, TASK, false);
-					((Task) wrap.u).deserializeNBT(wrap.nbt);
+					Task t = ((Task)wrap.u);
+					t.deserializeNBT(wrap.nbt);
+					debug(p, "Task data update received " + t);
 					break;
 				case UPDATE_REWARD:
 					wrap = ensureValidType(b, ctx, REWARD, false);
-					((Reward) wrap.u).deserializeNBT(wrap.nbt);
+					Reward r = ((Reward)wrap.u);
+					r.deserializeNBT(wrap.nbt);
+					debug(p, "Reward data update recieved " + r);
 					break;
 				
 				/*
@@ -122,14 +136,17 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				case REMOVE_QUEST:
 					wrap = ensureValidType(b, ctx, QUEST, false);
 					Main.proxy.getGlobalQuestHandler().removeQuest(wrap.u.getUUID());
+					debug(p, "Server removed quest " + wrap.u);
 					break;
 				case REMOVE_TASK:
 					wrap = ensureValidType(b, ctx, TASK, false);
 					Main.proxy.getGlobalQuestHandler().removeTask(wrap.u.getUUID());
+					debug(p, "Server removed task " + wrap.u);
 					break;
 				case REMOVE_REWARD:
 					wrap = ensureValidType(b, ctx, TASK, false);
 					Main.proxy.getGlobalQuestHandler().removeReward(wrap.u.getUUID());
+					debug(p, "Server removed reward " + wrap.u);
 					break;
 					
 				/*
@@ -141,61 +158,49 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 */
 					
 				case QUEST_FINISH:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					NBTTagCompound nbt = ByteBufUtils.readTag(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).finish(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).finish(p);
+					debug(p, "Server said you completed quest" + wrap.u);
+					return null;
+				case QUEST_UNFINISH:
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).markUnfinished(p);
+					debug(p, "Server says to mark the following quest as unfinished " + wrap.u);
 					return null;
 				case QUEST_COLLECT:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).collect(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).collect(p);
+					debug(p, "Server directs client to collect rewards from quest" + wrap.u);
 					return null;
 				case QUEST_NOTIFY:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).notify(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).notify();
+					debug(p, "Server notifies you of quest " + wrap.u);
+					return null;
+				case QUEST_UNNOTIFY:
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).notify();
+					debug(p, "Server says to mark the following quest as unnotifed " + wrap.u);
 					return null;
 				case QUEST_LOCK:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).lock(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).lock(p);
+					debug(p, "Server locked quest " + wrap.u);
 					return null;
 				case QUEST_UNLOCK:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).unlock(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).unlock(p);
+					debug(p, "Server unlocked quest " + wrap.u);
 					return null;
 				case QUEST_HIDE:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).hide(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).hide(p);
+					debug(p, "Server hid quest " + wrap.u);
 					return null;
 				case QUEST_UNHIDE:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getQuest(id).unhide(p);
-					}
+					wrap = ensureValidType(b, ctx, QUEST, false);
+					((Quest)wrap.u).unhide(p);
+					debug(p, "Server unhid quest " + wrap.u);
 					return null;
 					
 				/*
@@ -206,70 +211,46 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 * 
 				 */
 				case TASK_FINISH:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).finish(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).finish(p);
+					debug(p, "Server said you finished task " + wrap.u);
 					return null;
 					
 				case TASK_UNFINISH:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).markUnfinished(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).markUnfinished(p);
+					debug(p, "Server said to mark the following task as unfinished " + wrap.u);
 					return null;
 				case TASK_NOTIFY:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).notify(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).notify();
+					debug(p, "Server notified you of trask " + wrap.u);
 					return null;
 					
 				case TASK_UNNOTIFY:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).markUnnotified(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).markUnnotified(p);
+					debug(p, "Server says to mark the following task as unnotified " + wrap.u);
 					return null;
 				case TASK_LOCK:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).lock(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).lock(p);
+					debug(p, "Server locked task " + wrap.u);
 					return null;
 				case TASK_UNLOCK:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).unlock(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).unlock(p);
+					debug(p, "Server unlocked task " + wrap.u);
 					return null;
 				case TASK_HIDE:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).hide(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).hide(p);
+					debug(p, "Server hid task " + wrap.u);
 					return null;
 				case TASK_UNHIDE:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getTask(id).unhide(p);
-					}
+					wrap = ensureValidType(b, ctx, TASK, false);
+					((Task)wrap.u).unhide(p);
+					debug(p, "Server unhid task " + wrap.u);
 					return null;
 				
 				/*
@@ -281,20 +262,14 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 */
 					
 				case REWARD_COLLECT:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getReward(id).markCollected(p); //should just mark it to avoid desync issues
-					}
+					wrap = ensureValidType(b, ctx, REWARD, false);
+					((Reward)wrap.u).collect(p);
+					debug(p, "Server said to collect reward " + wrap.u);
 					return null;
 				case REWARD_UNCOLLECT:
-					b = Unpooled.buffer(4);
-					message.toBytes(b);
-					{
-						UUID id = UUID.fromString(ByteBufUtils.readUTF8String(b));
-						Main.proxy.getGlobalQuestHandler().getReward(id).markUncollected(p);
-					}
+					wrap = ensureValidType(b, ctx, REWARD, false);
+					((Reward)wrap.u).collect(p);
+					debug(p, "Server said to mark the folowing reward as uncollected " + wrap.u);
 					return null;
 					
 				/*
@@ -306,7 +281,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 */
 					
 				case FINAL_DEATH:
-					b = Unpooled.buffer(4);
+					b = Unpooled.buffer();
 					message.toBytes(b);
 					GuiTrueGameOver.deathCause = new TextComponentString(ByteBufUtils.readUTF8String(b));
 					p.openGui(Main.getInstance(), GuiHandler.FINAL_DEATH, p.world, (int)p.posX, (int)p.posY, (int)p.posZ);
@@ -360,7 +335,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					if(isNew) {
 						switch(type) {
 							case QUEST:
-								Quest q = new Quest(nbt);
+								u = new Quest(nbt);
 								break;
 							case TASK:
 								try {
@@ -368,7 +343,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 									clazz = (Class<? extends Task>) Class.forName(nbt.getString("CLASS"));
 									erroredClass = clazz.getCanonicalName();
 									Constructor c = clazz.getConstructor(NBTTagCompound.class);
-									Task t = (Task) c.newInstance(nbt);
+									u = (Task) c.newInstance(nbt);
 								}
 								catch (NoSuchMethodException e) {
 									NoSuchMethodError e2 = new NoSuchMethodError(erroredClass + " is missing a required constructor, contact the mod author");
@@ -394,7 +369,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 									clazz = (Class<? extends Reward>) Class.forName(nbt.getString("CLASS"));
 									erroredClass = clazz.getCanonicalName();
 									Constructor c = clazz.getConstructor(NBTTagCompound.class);
-									c.newInstance(nbt);
+									u = (Reward)c.newInstance(nbt);
 								} catch (NoSuchMethodException e) {
 									NoSuchMethodError e2 = new NoSuchMethodError(erroredClass + " is missing a required constructor, contact the mod author");
 									e2.initCause(e);

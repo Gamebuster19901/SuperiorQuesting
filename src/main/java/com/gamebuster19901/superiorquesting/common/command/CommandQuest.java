@@ -9,8 +9,12 @@ import java.util.List;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
+import com.gamebuster19901.superiorquesting.common.questing.Quest;
+import com.gamebuster19901.superiorquesting.common.questing.reward.ItemReward;
+import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -19,10 +23,12 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.CommandBlockBaseLogic;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
@@ -86,6 +92,33 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 					return;
 				}
 			}
+		}
+		if(args[0].equals("add") && Debuggable.debug) {
+			if(args[1].equals("quest")) {
+				Quest q = new Quest("Test", "A test quest.", 1, 0, 0, (byte)1);
+				if(args.length > 2) {
+					for(int i = 2; i < args.length; i++) {
+						if(args[i].equals("task")) {
+							throw new AssertionError();
+						}
+						else if (args[i].equals("reward")) {
+							if(sender instanceof EntityPlayer) {
+								new ItemReward(q,((EntityPlayer)sender).getHeldItem(EnumHand.MAIN_HAND));
+							}
+							new ItemReward(q, new ItemStack(Items.DIAMOND, 2));
+						}
+					}
+				}
+				return;
+			}
+		}
+		if(args[0].equals("clear") && Debuggable.debug) {
+			Main.proxy.getGlobalQuestHandler().clean();
+			return;
+		}
+		if(args[0].equals("debug") && Debuggable.debug) {
+			QuestWorldData.get(sender.getEntityWorld());
+			return;
 		}
 		throw new WrongUsageException(MODID + ".commands.quests.usage");
 	}
