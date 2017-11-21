@@ -44,11 +44,11 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 * 
 	 * @throws IndexOutOfBoundsException if x or y < 0
 	 */
-	public Quest(MinecraftServer s, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
-		this(s, UUID.randomUUID(), title, description, page, x, y, important, rewards, prerequisites, tasks);
+	public Quest(String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+		this(UUID.randomUUID(), title, description, page, x, y, important, rewards, prerequisites, tasks);
 	}
 	
-	private Quest(MinecraftServer s, UUID id, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+	private Quest(UUID id, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		try {
 			if(id == null) {
 				throw new NullPointerException("id");
@@ -94,16 +94,16 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		this.rewards = new ArrayList<UUID>(rewards);
 		this.prerequisites = new ArrayList<UUID>(prerequisites);
 		this.tasks = new ArrayList<UUID>(tasks);
-		getGlobalQuestHandler().add(s, true, this);
+		getGlobalQuestHandler().add(true, this);
 	}
 	
-	public Quest(MinecraftServer s, String title, String description, int page, int x, int y, byte important) {
-		this(s, UUID.randomUUID(), title, description, page, x, y, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
+	public Quest(String title, String description, int page, int x, int y, byte important) {
+		this(UUID.randomUUID(), title, description, page, x, y, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
 	}
 	
 	public Quest(MinecraftServer s, NBTTagCompound data) {
 		this.deserializeNBT(data);
-		getGlobalQuestHandler().add(s, false, this);
+		getGlobalQuestHandler().add(false, this);
 	}
 	
 	/*

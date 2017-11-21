@@ -14,6 +14,7 @@ import static com.gamebuster19901.superiorquesting.common.questing.task.Assignme
 import java.util.ArrayList;
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
@@ -55,17 +56,17 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
 	}
 	
-	NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
+	public NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
 	}
 	
-	NBTTagCompound getRewardNBT(UUID id, UUID p) {
+	public NBTTagCompound getRewardNBT(UUID id, UUID p) {
 		Assert(hasRewardNBT(id, p), "reward " + id + " not found for player " + p);
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY).getCompoundTag(id.toString());
 	}
 	
-	NBTTagCompound getRewardNBT(EntityPlayer p) {
+	public NBTTagCompound getRewardNBT(EntityPlayer p) {
 		Assert(hasRewardNBT(p), "No reward nbt found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(REWARD_KEY);
 	}
@@ -160,7 +161,8 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		getPersistantTag(p).getCompoundTag(REWARD_KEY).setTag(r.getUUID().toString(), nbt);
 	}
 	
-	void add(MinecraftServer s, Quest q) {
+	void add(Quest q) {
+		MinecraftServer s = Main.proxy.getServer();
 		Assert(s != null);
 		Assert(q != null);
 		for(String username : s.getOnlinePlayerNames()) {
@@ -169,14 +171,16 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		}
 	}
 	
-	void add(MinecraftServer s, Reward r) {
+	void add(Reward r) {
+		MinecraftServer s = Main.proxy.getServer();
 		for(String username : s.getOnlinePlayerNames()) {
 			EntityPlayer p = s.getPlayerList().getPlayerByUsername(username);
 			resetReward(r, p);
 		}
 	}
 	
-	void add(MinecraftServer s, Task t) {
+	void add(Task t) {
+		MinecraftServer s = Main.proxy.getServer();
 		for(String username : s.getOnlinePlayerNames()) {
 			EntityPlayer p = s.getPlayerList().getPlayerByUsername(username);
 			resetTask(t, p);

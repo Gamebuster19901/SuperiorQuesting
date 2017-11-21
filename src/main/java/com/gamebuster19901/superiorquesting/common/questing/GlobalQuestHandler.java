@@ -66,8 +66,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		return ret;
 	}
 	
-	public final void add(MinecraftServer server, boolean markDirty, Quest quest) {
-		if(server == null) {return;};
+	public final void add(boolean markDirty, Quest quest) {
 		if(QUESTS.containsKey(quest.getUUID())) {
 			throw new DuplicateKeyException("Quest " + quest.getUUID().toString());
 		}
@@ -75,14 +74,13 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 			markDirty();
 		}
 		QUESTS.put(quest.getUUID(), quest);
-		getPlayerQuestHandler().add(server, quest);
+		getPlayerQuestHandler().add(quest);
 		if(markDirty) {
 			markDirty();
 		}
 	}
 	
-	public final void add(MinecraftServer server, boolean markDirty, Task task) {
-		if(server == null) {return;};
+	public final void add(boolean markDirty, Task task) {
 		if(TASKS.containsKey(task.getUUID())) {
 			throw new DuplicateKeyException("Task " + task.getUUID().toString());
 		}
@@ -90,14 +88,13 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 			markDirty();
 		}
 		TASKS.put(task.getUUID(), task);
-		getPlayerQuestHandler().add(server, task);
+		getPlayerQuestHandler().add(task);
 		if(markDirty) {
 			markDirty();
 		}
 	}
 	
-	public void add(MinecraftServer server, boolean markDirty, Reward reward) {
-		if(server == null) {return;};
+	public void add(boolean markDirty, Reward reward) {
 		if(REWARDS.containsKey(reward.getUUID())) {
 			throw new DuplicateKeyException("Reward " + reward.getUUID());
 		}
@@ -105,13 +102,13 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 			markDirty();
 		}
 		REWARDS.put(reward.getUUID(), reward);
-		getPlayerQuestHandler().add(server, reward);
+		getPlayerQuestHandler().add(reward);
 		if(markDirty) {
 			markDirty();
 		}
 	}
 	
-	public final void removeQuest(MinecraftServer server, UUID uuid) {
+	public final void removeQuest(UUID uuid) {
 		if(!QUESTS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Quest " + uuid);
 		}
@@ -123,7 +120,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		markDirty();
 	}
 	
-	public final void removeTask(MinecraftServer server, UUID uuid) {
+	public final void removeTask(UUID uuid) {
 		if(!TASKS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Task " + uuid);
 		}
@@ -135,7 +132,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		markDirty();
 	}
 	
-	public final void removeReward(MinecraftServer server, UUID uuid) {
+	public final void removeReward(UUID uuid) {
 		if(!REWARDS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Reward " + uuid.toString());
 		}
@@ -196,10 +193,10 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		QuestWorldData.get(world).markDirty();
 	}
 	
-	private final ArrayList<EntityPlayer> getAllOnlinePlayers(MinecraftServer server) {
+	private final ArrayList<EntityPlayer> getAllOnlinePlayers() {
 		ArrayList<EntityPlayer> onlineplayers = new ArrayList<EntityPlayer>();
-		for(String username : server.getOnlinePlayerNames()) {
-			EntityPlayer p = server.getPlayerList().getPlayerByUsername(username);
+		for(String username : Main.proxy.getServer().getOnlinePlayerNames()) {
+			EntityPlayer p = Main.proxy.getServer().getPlayerList().getPlayerByUsername(username);
 			if(p != null) {
 				onlineplayers.add(p);
 			}
