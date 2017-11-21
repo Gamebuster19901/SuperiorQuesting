@@ -23,8 +23,6 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	public static final String REWARD_KEY = MODID + ":rewards";
 	public static final String TASK_KEY = MODID + ":tasks";
 	
-	public static final NBTTagCompound BUFFER = new NBTTagCompound();
-	
 	static final HashMap<UUID, Quest> QUESTS = new HashMap<UUID, Quest>();
 	static final HashMap<UUID, Task> TASKS = new HashMap<UUID, Task>();
 	static final HashMap<UUID, Reward> REWARDS = new HashMap<UUID, Reward>();
@@ -205,5 +203,11 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	
 	private final PlayerQuestHandler getPlayerQuestHandler() {
 		return Main.proxy.getPlayerQuestHandler();
+	}
+	
+	public final void clean() {
+		QUESTS.clear();
+		TASKS.clear();
+		REWARDS.clear();
 	}
 }

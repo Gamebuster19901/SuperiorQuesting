@@ -204,6 +204,7 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 	
 	@SubscribeEvent
 	public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
+		((ClientProxy)Main.proxy).getGlobalQuestHandler().clean();
 		((ClientProxy)Main.proxy).setConnectionType("NONE");
 		((ClientProxy)Main.proxy).setRemoteStatus(false);
 	}
