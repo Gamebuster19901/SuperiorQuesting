@@ -51,6 +51,14 @@
        }],
 	   "subtitle": "questing.subtitle.book"
 	},
+	"bookvanish": {
+        "category": "player",
+        "sounds": [{
+            "name": "questing:book_vanish",
+            "stream": false
+        }],
+        "subtitle": "questing.subtitle.book.vanish"
+    },
 	"complete": {
         "category": "player",
         "sounds": [{

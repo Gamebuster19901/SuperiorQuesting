@@ -68,6 +68,7 @@ public final class ClientProxy extends Proxy {
 	@SubscribeEvent
 	public void modelRegistryEvent(ModelRegistryEvent e){
 		ModelLoader.setCustomModelResourceLocation(ItemQuestBook.ITEM, 0, new ModelResourceLocation(MODID + ":questbook"));
+		ModelLoader.setCustomModelResourceLocation(ItemQuestBook.ITEM, 1, new ModelResourceLocation(MODID + ":questbook"));
 		ModelLoader.setCustomModelResourceLocation(ItemHeartCanister.ITEM, 0, new ModelResourceLocation(MODID + ":heartcanisterfull"));
 		ModelLoader.setCustomModelResourceLocation(ItemHeartCanister.ITEM, 1, new ModelResourceLocation(MODID + ":heartcanisterthreequarters"));
 		ModelLoader.setCustomModelResourceLocation(ItemHeartCanister.ITEM, 2, new ModelResourceLocation(MODID + ":heartcanisterhalf"));
@@ -78,6 +79,7 @@ public final class ClientProxy extends Proxy {
 	public static final SoundEvent CONFIRMED = new SoundEvent(new ResourceLocation(MODID + ":confirmed")).setRegistryName(MODID + ":confirmed");
 	public static final SoundEvent BOOK_CLOSE = new SoundEvent(new ResourceLocation(MODID + ":bookclose")).setRegistryName(MODID + ":bookclose");
 	public static final SoundEvent BOOK_TURN = new SoundEvent(new ResourceLocation(MODID + ":book")).setRegistryName(MODID + ":book");
+	public static final SoundEvent BOOK_VANISH = new SoundEvent(new ResourceLocation(MODID + ":bookvanish")).setRegistryName(MODID + ":bookvanish");
 	public static final SoundEvent QUEST_COMPLETE = new SoundEvent(new ResourceLocation(MODID + ":complete")).setRegistryName(MODID + ":complete");
 	public static final SoundEvent QUEST_NOTIFY = new SoundEvent(new ResourceLocation(MODID + ":notify")).setRegistryName(MODID + ":notify");
 	public static final SoundEvent ONE_UP = new SoundEvent(new ResourceLocation(MODID + ":1up")).setRegistryName(MODID + ":1up");
