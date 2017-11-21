@@ -101,7 +101,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		this(UUID.randomUUID(), title, description, page, x, y, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
 	}
 	
-	public Quest(MinecraftServer s, NBTTagCompound data) {
+	public Quest(NBTTagCompound data) {
 		this.deserializeNBT(data);
 		getGlobalQuestHandler().add(false, this);
 	}
