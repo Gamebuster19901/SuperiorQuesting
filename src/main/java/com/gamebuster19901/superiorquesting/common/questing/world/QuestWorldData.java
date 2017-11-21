@@ -85,13 +85,15 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 			}
 			NBTTagCompound rewards = nbt.getCompoundTag(REWARD_KEY);
 			Class<? extends Reward> reward = Reward.class;
+			String erroredClass = rewards.getString("CLASS");
+			erroredClass = erroredClass.equals("") ? "[EMPTY STRING]" : erroredClass; 
 			for(String key : rewards.getKeySet()) {
 				try {
-					reward = (Class<? extends Reward>) Class.forName(rewards.getString("CLASS"));
+					reward = (Class<? extends Reward>) Class.forName(((NBTTagCompound)rewards.getTag(key)).getString("CLASS"));
 					Constructor<? extends Reward> constructor = reward.getConstructor(NBTTagCompound.class);
 					constructor.newInstance(rewards.getCompoundTag(key));
 				} catch (ClassNotFoundException ex) {
-					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee");
+					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee: " + erroredClass);
 					er.initCause(ex);
 					throw er;
 				} catch (NoSuchMethodException ex1) {
@@ -121,11 +123,11 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 			Class<? extends Task> task = Task.class;
 			for(String key : tasks.getKeySet()) {
 				try {
-					task = (Class<? extends Task>) Class.forName(tasks.getString("CLASS"));
+					task = (Class<? extends Task>) Class.forName(((NBTTagCompound)tasks.getTag(key)).getString("CLASS"));
 					Constructor<? extends Task> constructor = task.getConstructor(NBTTagCompound.class);
 					constructor.newInstance(tasks.getCompoundTag(key));
 				} catch (ClassNotFoundException ex) {
-					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee");
+					NoClassDefFoundError er = new NoClassDefFoundError("Missing class, most likely a missing dependee: " + erroredClass);
 					er.initCause(ex);
 					throw er;
 				} catch (NoSuchMethodException ex1) {
@@ -169,7 +171,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 			tasks.setTag(t.getUUID().toString(), t.serializeNBT());
 		}
 		for(Reward r : Main.proxy.getGlobalQuestHandler().getAllRewards()) {
-			tasks.setTag(r.getUUID().toString(), r.serializeNBT());
+			rewards.setTag(r.getUUID().toString(), r.serializeNBT());
 		}
 		compound.setTag(QUEST_KEY, quests);
 		compound.setTag(TASK_KEY, tasks);
