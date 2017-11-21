@@ -49,12 +49,10 @@ public final class ItemHeartCanister extends Item{
      * Called when the equipped item is right clicked.
      */
 	@Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-    {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn){
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         if(itemstack.getMetadata() == 0){
-        	if (!worldIn.isRemote)
-        	{
+        	if (!worldIn.isRemote){
         		EntityPlayerMP p = (EntityPlayerMP) playerIn;
         		double lives = LIFE_HANDLER.getLives(p);
         		if(Double.isFinite(lives) && ((LifeHandler)LIFE_HANDLER).addLife(p)){
