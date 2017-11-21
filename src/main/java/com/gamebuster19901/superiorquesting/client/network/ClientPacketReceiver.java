@@ -361,7 +361,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					if(isNew) {
 						switch(type) {
 							case QUEST:
-								Quest q = new Quest(Main.proxy.getServer(), nbt);
+								Quest q = new Quest(nbt);
 								break;
 							case TASK:
 								try {

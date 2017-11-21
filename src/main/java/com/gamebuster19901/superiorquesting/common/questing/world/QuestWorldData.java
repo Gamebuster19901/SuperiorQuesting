@@ -81,7 +81,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 			NBTTagCompound quests = nbt.getCompoundTag(QUEST_KEY);
 			for(String key : quests.getKeySet()) {
 				Assert(server != null);
-				new Quest(server, quests.getCompoundTag(key));
+				new Quest(quests.getCompoundTag(key));
 			}
 			NBTTagCompound rewards = nbt.getCompoundTag(REWARD_KEY);
 			Class<? extends Reward> reward = Reward.class;
