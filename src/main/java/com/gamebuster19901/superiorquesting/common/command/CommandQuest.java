@@ -31,8 +31,9 @@ import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import scala.actors.threadpool.Arrays;
 
-public class CommandQuest extends CommandBase implements ICommand, Debuggable{
+public class CommandQuest extends CommandBase implements ICommand, Debuggable, NBTDebugger{
 
 	@Override
 	public int getRequiredPermissionLevel(){
@@ -116,8 +117,15 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable{
 			Main.proxy.getGlobalQuestHandler().clean();
 			return;
 		}
-		if(args[0].equals("debug") && Debuggable.debug) {
-			QuestWorldData.get(sender.getEntityWorld());
+		if(args[0].equals("list") && Debuggable.debug) {
+			for(Quest q : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
+				String fullMessage = getFullNBTString(q.serializeNBT(), 1);
+				fullMessage = fullMessage.replaceAll('\t' + "", "  ");
+				String[] lines = fullMessage.split("\\n");
+				for(String line : lines) {
+					sender.sendMessage(new TextComponentString(line));
+				}
+			}
 			return;
 		}
 		throw new WrongUsageException(MODID + ".commands.quests.usage");
