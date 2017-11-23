@@ -3,7 +3,8 @@
     "group": "questing:hearts",
     "ingredients": [
             {
-                "item": "questing:questbook"
+                "item": "questing:questbook",
+                "data": 0
             }
     ],
     "result": {

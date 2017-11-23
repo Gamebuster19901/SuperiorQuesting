@@ -12,6 +12,7 @@
             }
     ],
     "result": {
-        "item": "questing:questbook"
+        "item": "questing:questbook",
+        "data": 0
     }
 }
