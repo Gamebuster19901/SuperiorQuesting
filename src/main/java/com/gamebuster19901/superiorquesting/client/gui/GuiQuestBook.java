@@ -60,14 +60,15 @@ public final class GuiQuestBook extends GuiScreen implements Assertable{
 				break;
 			case -1:
 				int texW = 146;
-				int texH = 164;
+				int texH = 180;
 				mc.getTextureManager().bindTexture(COVER_TEXTURE);
 				//mc.getTextureManager().bindTexture(new ResourceLocation("unknown"));
-				this.drawTexturedModalRect(width / 2 - texW / 2, height / 2 - texH / 2, 0, 16, texW, texH);
-				//this.drawScaledCustomSizeModalRect(width / 4, 16, 0, 0, texW - 63, texH - 48, width / 2, height /2, texW, texH);
+				GlStateManager.scale(1.5, 1.5, 1);
+				this.drawTexturedModalRect(width / 3 - texW / 2, height / 3 - texH / 2, 0, -4, texW, texH + 4);
+				GlStateManager.scale(1, 1, 1);
 				break;
 			default:
-				Assert(page > 0, "Illegal quest book state " + page);
+				Assert(page > 0, "Illegal quest book page " + page);
 				mc.getTextureManager().bindTexture(FULLSCREEN_TEXTURE);
 				this.drawTexturedModalRect(146, 2, 0, 0, 192, 192);
 		}
