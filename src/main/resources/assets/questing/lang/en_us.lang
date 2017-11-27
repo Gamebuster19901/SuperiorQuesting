@@ -6,7 +6,7 @@ questing.life.change.add=You gained a life! You now have %s lives
 questing.commands.lives.outofbounds=Could not change life total, %s is smaller than 0 or larger than the maximum life count
 questing.commands.lives.success=Successfully changed player's life total
 questing.commands.lives.usage=lives <set|add|remove> <amount> <player>
-
+questing.subtitle.book.vanish=Item vanishes
 questing.subtitle.book_close=Book closed
 questing.subtitle.book=Page turned
 questing.subtitle.confirmed=Confirmed
