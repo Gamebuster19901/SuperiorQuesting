@@ -8,7 +8,7 @@ import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface Hideable extends UpdatableSerializable, Unique{
-	
+	public String HIDDEN = "HIDDEN";
 	/**
 	 * Checks if this is marked as hidden for the player
 	 * @param p the player to check

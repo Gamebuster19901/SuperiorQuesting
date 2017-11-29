@@ -19,10 +19,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
  * different types of assignments in future updates
  */
 public interface Assignment extends Lockable, Hideable, Notifyable{
-	public String UNLOCKED = "UNLOCKED";
 	public String COMPLETED = "COMPLETED";
-	public String HIDDEN = "HIDDEN";
-	public String NOTIFIED = "NOTIFIED";
+	
+	
 	
 	/**
 	 * Check if this assignment is finished by checking if it's prerequisites are finished and 

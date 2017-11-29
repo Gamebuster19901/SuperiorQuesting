@@ -8,7 +8,7 @@ import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface Notifyable extends UpdatableSerializable, Unique{
-	
+	public String NOTIFIED = "NOTIFIED";
 	/**
 	 * Checks if the player has been notified that this has been completed.
 	 * @param p the player to check

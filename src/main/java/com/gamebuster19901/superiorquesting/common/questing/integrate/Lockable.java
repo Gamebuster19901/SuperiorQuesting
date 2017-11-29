@@ -8,7 +8,7 @@ import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface Lockable extends UpdatableSerializable, Unique{
-	
+	public String UNLOCKED = "UNLOCKED";
 	/**
 	 * Locks this for the player. this will immediately unlock next tick if all
 	 * prerequisites are completed.
