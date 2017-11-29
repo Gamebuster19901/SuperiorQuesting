@@ -7,7 +7,9 @@ import java.util.UUID;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
+import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
+import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 import com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable;
 import com.gamebuster19901.superiorquesting.common.questing.task.Assignment;
 
@@ -521,8 +523,32 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	}
 	
 	@Override
-	public void convert(long prevVersion, long nextVersion, NBTTagCompound in) {
-		// TODO Auto-generated method stub
+	public void convert(long prevVersion, long nextVersion, NBTTagCompound nbtIn) {
+		try {
+			if(nextVersion > VERSION) {
+				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
+			}
+			
+			Assert(nextVersion != prevVersion, "Cannot convert to a version if it is the same version, this should never happen! (" + nextVersion + ")");
+			
+			if(nextVersion > prevVersion + 1L) {
+				convert(prevVersion, nextVersion - 1L, nbtIn);
+			}
+			
+			if(prevVersion == 0L && nextVersion == 1L) {
+				throw new AssertionError("Tried to convert from nonexistant version 0 to version 1");
+			}
+			
+			if(prevVersion == 1L && nextVersion == 2L) {
+				//Future: convert from version 1 to version 2
+			}
+			
+			throw new AssertionError("Tried to convert directly from version " + prevVersion + " to version " + nextVersion);
+			
+		}
+		catch(Exception | AssertionError e) {
+			throw new VersioningError("There was an issue converting from version " + prevVersion + " to version " + nextVersion, e);
+		}
 		
 	}
 
