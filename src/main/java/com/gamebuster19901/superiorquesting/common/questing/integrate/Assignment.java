@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
  * Currently, all Assignments are instances of Quest or Task, support may be added for
  * different types of assignments in future updates
  */
-public interface Assignment extends UpdatableSerializable, Lockable, Hideable, Notifyable, Unique{
+public interface Assignment extends Lockable, Hideable, Notifyable{
 	public String UNLOCKED = "UNLOCKED";
 	public String COMPLETED = "COMPLETED";
 	public String HIDDEN = "HIDDEN";

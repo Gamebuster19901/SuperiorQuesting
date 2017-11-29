@@ -2,9 +2,12 @@ package com.gamebuster19901.superiorquesting.common.questing.integrate;
 
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.common.Unique;
+import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+
 import net.minecraft.entity.player.EntityPlayer;
 
-public interface Notifyable {
+public interface Notifyable extends UpdatableSerializable, Unique{
 	
 	/**
 	 * Checks if the player has been notified that this has been completed.

@@ -2,9 +2,12 @@ package com.gamebuster19901.superiorquesting.common.questing.integrate;
 
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.common.Unique;
+import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+
 import net.minecraft.entity.player.EntityPlayer;
 
-public interface Hideable {
+public interface Hideable extends UpdatableSerializable, Unique{
 	
 	/**
 	 * Checks if this is marked as hidden for the player
