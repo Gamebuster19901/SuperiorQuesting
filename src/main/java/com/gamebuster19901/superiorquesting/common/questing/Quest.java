@@ -10,8 +10,8 @@ import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
-import com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable;
-import com.gamebuster19901.superiorquesting.common.questing.task.Assignment;
+import com.gamebuster19901.superiorquesting.common.questing.integrate.Assignment;
+import com.gamebuster19901.superiorquesting.common.questing.integrate.Rewardable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +24,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	private UUID id;
 	private String title;
 	private String description;
-	private int page;
+	private UUID page;
 	private int x;
 	private int y;
 	private byte important = 1;
@@ -45,11 +45,11 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 * 
 	 * @throws IndexOutOfBoundsException if x or y < 0
 	 */
-	public Quest(String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+	public Quest(String title, String description, UUID page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		this(UUID.randomUUID(), title, description, page, x, y, important, rewards, prerequisites, tasks);
 	}
 	
-	private Quest(UUID id, String title, String description, int page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+	private Quest(UUID id, String title, String description, UUID page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		try {
 			if(id == null) {
 				throw new NullPointerException("id");
@@ -69,8 +69,8 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 			if(important < 1) {
 				throw new IndexOutOfBoundsException(important + " < 1 (importance)");
 			}
-			if(page < 0) {
-				throw new IndexOutOfBoundsException(page + " < 0. (page)");
+			if(page == null) {
+				throw new NullPointerException(page + "page");
 			}
 			if(rewards == null) {
 				throw new NullPointerException("rewards");
@@ -98,7 +98,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		getGlobalQuestHandler().add(true, this);
 	}
 	
-	public Quest(String title, String description, int page, int x, int y, byte important) {
+	public Quest(String title, String description, UUID page, int x, int y, byte important) {
 		this(UUID.randomUUID(), title, description, page, x, y, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
 	}
 	
@@ -461,7 +461,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	/**
 	 * @return the page of this quest
 	 */
-	public int getPage() {
+	public UUID getPage() {
 		return page;
 	}
 	
@@ -575,7 +575,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		data.setString("UUID", id.toString());
 		data.setString("TITLE", title);
 		data.setString("DESCRIPTION", description);
-		data.setInteger("PAGE", page);
+		data.setString("PAGE", page.toString());
 		data.setInteger("X", x);
 		data.setInteger("Y", y);
 		data.setByte("IMPORTANT", important);
@@ -607,10 +607,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 				id = UUID.fromString(data.getString("UUID"));
 				title = data.getString("TITLE");
 				description = data.getString("DESCRIPTION");
-				page = data.getInteger("PAGE");
-				if(page <= 0) {
-					throw new IndexOutOfBoundsException("page <= 0");
-				}
+				page = UUID.fromString(data.getString("PAGE"));
 				x = data.getInteger("X");
 				if(x < 0) {
 					throw new IndexOutOfBoundsException("x <= 0");

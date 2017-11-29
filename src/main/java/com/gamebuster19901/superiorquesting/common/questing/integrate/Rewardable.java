@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.common.questing.reward;
+package com.gamebuster19901.superiorquesting.common.questing.integrate;
 
 import java.util.UUID;
 
