@@ -86,9 +86,9 @@ public final class ClientProxy extends Proxy {
 	
 	@SubscribeEvent
 	public void soundRegistryEvent(RegistryEvent<SoundEvent> e){
-		ForgeRegistries.SOUND_EVENTS.register(CONFIRMED);
 		ForgeRegistries.SOUND_EVENTS.register(BOOK_CLOSE);
 		ForgeRegistries.SOUND_EVENTS.register(BOOK_TURN);
+		ForgeRegistries.SOUND_EVENTS.register(BOOK_VANISH);
 		ForgeRegistries.SOUND_EVENTS.register(QUEST_COMPLETE);
 		ForgeRegistries.SOUND_EVENTS.register(QUEST_NOTIFY);
 		ForgeRegistries.SOUND_EVENTS.register(ONE_UP);
