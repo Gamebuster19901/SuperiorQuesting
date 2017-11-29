@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.entity.RenderXPOrb;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 
 public final class ExperienceReward extends Reward{
 	private static final long VERSION = 1L;

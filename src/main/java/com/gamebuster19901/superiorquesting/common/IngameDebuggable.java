@@ -1,7 +1,5 @@
 package com.gamebuster19901.superiorquesting.common;
 
-import com.gamebuster19901.superiorquesting.Main;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 

@@ -14,7 +14,6 @@ import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.reward.ItemReward;
-import com.gamebuster19901.superiorquesting.common.questing.world.QuestWorldData;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -31,7 +30,6 @@ import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import scala.actors.threadpool.Arrays;
 
 public class CommandQuest extends CommandBase implements ICommand, Debuggable, NBTDebugger{
 

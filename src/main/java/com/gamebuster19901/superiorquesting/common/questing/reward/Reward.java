@@ -6,9 +6,7 @@ import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 
 public abstract class Reward implements Rewardable, Assertable{
 	private static final String REWARD_KEY = "rewards";
