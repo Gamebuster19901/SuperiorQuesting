@@ -76,7 +76,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		System.out.println(getFullNBTString(nbt, 1, "base"));
-		int ver = nbt.getInteger("VERSION");
+		long ver = nbt.getLong("VERSION");
 		if(ver == VERSION) {
 			NBTTagCompound quests = nbt.getCompoundTag(QUEST_KEY);
 			for(String key : quests.getKeySet()) {
