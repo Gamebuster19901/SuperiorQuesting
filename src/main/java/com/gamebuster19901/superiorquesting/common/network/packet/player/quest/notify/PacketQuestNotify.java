@@ -57,5 +57,4 @@ public class PacketQuestNotify extends GenericQuestingPacket{
 		
 		ByteBufUtils.writeTag(buf, nbt);
 	}
-
 }

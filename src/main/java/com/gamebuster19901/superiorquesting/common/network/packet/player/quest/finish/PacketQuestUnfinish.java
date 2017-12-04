@@ -20,7 +20,7 @@ public class PacketQuestUnfinish extends GenericQuestingPacket{
 	public List<UUID> players = new ArrayList<UUID>();
 	
 	public PacketQuestUnfinish() {
-		super(PacketType.QUEST_FINISH);
+		super(PacketType.QUEST_UNFINISH);
 	}
 	
 	public PacketQuestUnfinish(Quest q) {

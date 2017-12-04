@@ -20,7 +20,7 @@ public class PacketQuestUnnotify extends GenericQuestingPacket{
 	public List<UUID> players = new ArrayList<UUID>();
 	
 	public PacketQuestUnnotify() {
-		super(PacketType.QUEST_NOTIFY);
+		super(PacketType.QUEST_UNNOTIFY);
 	}
 	
 	public PacketQuestUnnotify(Quest q) {

@@ -20,7 +20,7 @@ public class PacketQuestUncollect extends GenericQuestingPacket{
 	public List<UUID> players = new ArrayList<UUID>();
 	
 	public PacketQuestUncollect() {
-		super(PacketType.QUEST_COLLECT);
+		super(PacketType.QUEST_UNCOLLECT);
 	}
 	
 	public PacketQuestUncollect(Quest q) {

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
-import com.gamebuster19901.superiorquesting.common.questing.Quest;
+import com.gamebuster19901.superiorquesting.common.questing.task.Task;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTBase;
@@ -20,17 +20,17 @@ public class PacketTaskUnfinish extends GenericQuestingPacket{
 	public List<UUID> players = new ArrayList<UUID>();
 	
 	public PacketTaskUnfinish() {
-		super(PacketType.QUEST_FINISH);
+		super(PacketType.TASK_UNFINISH);
 	}
 	
-	public PacketTaskUnfinish(Quest q) {
+	public PacketTaskUnfinish(Task t) {
 		this();
-		id = q.getUUID();
+		id = t.getUUID();
 	}
 	
-	public PacketTaskUnfinish(Quest q, UUID... players) {
+	public PacketTaskUnfinish(Task t, UUID... players) {
 		this();
-		id = q.getUUID();
+		id = t.getUUID();
 		this.players = Arrays.asList(players);
 	}
 

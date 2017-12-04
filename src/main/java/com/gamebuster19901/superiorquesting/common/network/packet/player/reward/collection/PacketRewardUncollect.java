@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
-import com.gamebuster19901.superiorquesting.common.questing.Quest;
+import com.gamebuster19901.superiorquesting.common.questing.reward.Reward;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTBase;
@@ -20,17 +20,17 @@ public class PacketRewardUncollect extends GenericQuestingPacket{
 	public List<UUID> players = new ArrayList<UUID>();
 	
 	public PacketRewardUncollect() {
-		super(PacketType.QUEST_COLLECT);
+		super(PacketType.REWARD_UNCOLLECT);
 	}
 	
-	public PacketRewardUncollect(Quest q) {
+	public PacketRewardUncollect(Reward r) {
 		this();
-		id = q.getUUID();
+		id = r.getUUID();
 	}
 	
-	public PacketRewardUncollect(Quest q, UUID... players) {
+	public PacketRewardUncollect(Reward r, UUID... players) {
 		this();
-		id = q.getUUID();
+		id = r.getUUID();
 		this.players = Arrays.asList(players);
 	}
 
