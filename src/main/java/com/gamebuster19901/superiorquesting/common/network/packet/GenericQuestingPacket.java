@@ -1,6 +1,7 @@
 package com.gamebuster19901.superiorquesting.common.network.packet;
 
 import com.gamebuster19901.superiorquesting.common.Assertable;
+import com.gamebuster19901.superiorquesting.common.network.packet.create.PacketNewPage;
 import com.gamebuster19901.superiorquesting.common.network.packet.create.PacketNewQuest;
 import com.gamebuster19901.superiorquesting.common.network.packet.create.PacketNewReward;
 import com.gamebuster19901.superiorquesting.common.network.packet.create.PacketNewTask;
@@ -8,6 +9,12 @@ import com.gamebuster19901.superiorquesting.common.network.packet.life.PacketFin
 import com.gamebuster19901.superiorquesting.common.network.packet.life.PacketLifeTotal;
 import com.gamebuster19901.superiorquesting.common.network.packet.life.PacketMaxLife;
 import com.gamebuster19901.superiorquesting.common.network.packet.life.PacketStartingLifeTotal;
+import com.gamebuster19901.superiorquesting.common.network.packet.player.page.hide.PacketPageHide;
+import com.gamebuster19901.superiorquesting.common.network.packet.player.page.hide.PacketPageUnhide;
+import com.gamebuster19901.superiorquesting.common.network.packet.player.page.lock.PacketPageLock;
+import com.gamebuster19901.superiorquesting.common.network.packet.player.page.lock.PacketPageUnlock;
+import com.gamebuster19901.superiorquesting.common.network.packet.player.page.notify.PacketPageNotify;
+import com.gamebuster19901.superiorquesting.common.network.packet.player.page.notify.PacketPageUnnotify;
 import com.gamebuster19901.superiorquesting.common.network.packet.player.quest.collection.PacketQuestCollect;
 import com.gamebuster19901.superiorquesting.common.network.packet.player.quest.collection.PacketQuestUncollect;
 import com.gamebuster19901.superiorquesting.common.network.packet.player.quest.finish.PacketQuestFinish;
@@ -28,9 +35,11 @@ import com.gamebuster19901.superiorquesting.common.network.packet.player.task.lo
 import com.gamebuster19901.superiorquesting.common.network.packet.player.task.lock.PacketTaskUnlock;
 import com.gamebuster19901.superiorquesting.common.network.packet.player.task.notify.PacketTaskNotify;
 import com.gamebuster19901.superiorquesting.common.network.packet.player.task.notify.PacketTaskUnnotify;
+import com.gamebuster19901.superiorquesting.common.network.packet.remove.PacketRemovePage;
 import com.gamebuster19901.superiorquesting.common.network.packet.remove.PacketRemoveQuest;
 import com.gamebuster19901.superiorquesting.common.network.packet.remove.PacketRemoveReward;
 import com.gamebuster19901.superiorquesting.common.network.packet.remove.PacketRemoveTask;
+import com.gamebuster19901.superiorquesting.common.network.packet.update.PacketUpdatePage;
 import com.gamebuster19901.superiorquesting.common.network.packet.update.PacketUpdateQuest;
 import com.gamebuster19901.superiorquesting.common.network.packet.update.PacketUpdateReward;
 import com.gamebuster19901.superiorquesting.common.network.packet.update.PacketUpdateTask;
@@ -54,17 +63,27 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 		LIFE_MAXIMUM,
 		LIFE_STARTING_TOTAL,
 		
+		NEW_PAGE,
 		NEW_QUEST,
 		NEW_TASK,
 		NEW_REWARD,
 		
+		UPDATE_PAGE,
 		UPDATE_QUEST,
 		UPDATE_TASK,
 		UPDATE_REWARD,
 		
+		REMOVE_PAGE,
 		REMOVE_QUEST,
 		REMOVE_TASK,
 		REMOVE_REWARD,
+		
+		PAGE_NOTIFY,
+		PAGE_UNNOTIFY,
+		PAGE_LOCK,
+		PAGE_UNLOCK,
+		PAGE_HIDE,
+		PAGE_UNHIDE,
 		
 		QUEST_FINISH,
 		QUEST_UNFINISH,
@@ -100,6 +119,8 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 				case LIFE_STARTING_TOTAL:
 					return PacketStartingLifeTotal.class;
 				
+				case NEW_PAGE:
+					return PacketNewPage.class;
 				case NEW_QUEST:
 					return PacketNewQuest.class;
 				case NEW_TASK:
@@ -107,6 +128,8 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 				case NEW_REWARD:
 					return PacketNewReward.class;
 				
+				case UPDATE_PAGE:
+					return PacketUpdatePage.class;
 				case UPDATE_QUEST:
 					return PacketUpdateQuest.class;
 				case UPDATE_TASK:
@@ -114,12 +137,27 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 				case UPDATE_REWARD:
 					return PacketUpdateReward.class;
 				
+				case REMOVE_PAGE:
+					return PacketRemovePage.class;
 				case REMOVE_QUEST:
 					return PacketRemoveQuest.class;
 				case REMOVE_TASK:
 					return PacketRemoveTask.class;
 				case REMOVE_REWARD:
 					return PacketRemoveReward.class;
+					
+				case PAGE_NOTIFY:
+					return PacketPageNotify.class;
+				case PAGE_UNNOTIFY:
+					return PacketPageUnnotify.class;
+				case PAGE_LOCK:
+					return PacketPageLock.class;
+				case PAGE_UNLOCK:
+					return PacketPageUnlock.class;
+				case PAGE_HIDE:
+					return PacketPageHide.class;
+				case PAGE_UNHIDE:
+					return PacketPageUnhide.class;
 				
 				case QUEST_FINISH:
 					return PacketQuestFinish.class;
@@ -168,7 +206,7 @@ public abstract class GenericQuestingPacket implements IMessage, Assertable{
 					return PacketFinalDeath.class;
 				default:
 					Assertable.Assert(false, this + " has no associated class", (Object)null);
-					return null; //unreachable code
+					return null; //unreachable
 			}
 		}
 	}

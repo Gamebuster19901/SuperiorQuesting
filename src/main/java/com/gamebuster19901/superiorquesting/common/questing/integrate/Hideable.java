@@ -6,9 +6,13 @@ import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public interface Hideable extends UpdatableSerializable, Unique{
 	public String HIDDEN = "HIDDEN";
+	
+	public NBTTagCompound getDefaultPlayerNBT();
+	
 	/**
 	 * Checks if this is marked as hidden for the player
 	 * @param p the player to check

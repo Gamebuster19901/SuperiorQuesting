@@ -9,6 +9,7 @@ import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.PlayerQuestHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * A Rewardable is anything that can give a reward.
@@ -16,6 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface Rewardable extends UpdatableSerializable, Unique{
 	public String COLLECTED = "COLLECTED";
+	
+	public NBTTagCompound getDefaultPlayerNBT();
 	
 	/**
 	 * If the reward can be given. Should check that all prerequisites are complete

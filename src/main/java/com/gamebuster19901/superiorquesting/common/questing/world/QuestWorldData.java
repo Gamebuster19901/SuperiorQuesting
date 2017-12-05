@@ -1,5 +1,6 @@
 package com.gamebuster19901.superiorquesting.common.questing.world;
 
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.PAGE_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUEST_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARD_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASK_KEY;
@@ -12,6 +13,7 @@ import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+import com.gamebuster19901.superiorquesting.common.questing.Page;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
@@ -78,6 +80,11 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 		System.out.println(getFullNBTString(nbt, 1, "base"));
 		long ver = nbt.getLong("VERSION");
 		if(ver == VERSION) {
+			NBTTagCompound pages = nbt.getCompoundTag(QUEST_KEY);
+			for(String key : pages.getKeySet()) {
+				Assert(server != null);
+				new Page(pages.getCompoundTag(key));
+			}
 			NBTTagCompound quests = nbt.getCompoundTag(QUEST_KEY);
 			for(String key : quests.getKeySet()) {
 				Assert(server != null);
@@ -161,9 +168,13 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setLong("VERSION", VERSION);
+		NBTTagCompound pages = new NBTTagCompound();
 		NBTTagCompound quests = new NBTTagCompound();
 		NBTTagCompound tasks = new NBTTagCompound();
 		NBTTagCompound rewards = new NBTTagCompound();
+		for(Page p : Main.proxy.getGlobalQuestHandler().getAllPages()) {
+			pages.setTag(p.getUUID().toString(), p.serializeNBT());
+		}
 		for(Quest q : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
 			quests.setTag(q.getUUID().toString(), q.serializeNBT());
 		}
@@ -173,6 +184,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 		for(Reward r : Main.proxy.getGlobalQuestHandler().getAllRewards()) {
 			rewards.setTag(r.getUUID().toString(), r.serializeNBT());
 		}
+		compound.setTag(PAGE_KEY, pages);
 		compound.setTag(QUEST_KEY, quests);
 		compound.setTag(TASK_KEY, tasks);
 		compound.setTag(REWARD_KEY, rewards);

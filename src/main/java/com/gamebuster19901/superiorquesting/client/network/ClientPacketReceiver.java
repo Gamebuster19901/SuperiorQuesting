@@ -1,6 +1,7 @@
 package com.gamebuster19901.superiorquesting.client.network;
 
 import static com.gamebuster19901.superiorquesting.Main.proxy;
+import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.PAGE;
 import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.QUEST;
 import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.REWARD;
 import static com.gamebuster19901.superiorquesting.client.network.ClientPacketReceiver.Type.TASK;
@@ -17,6 +18,7 @@ import com.gamebuster19901.superiorquesting.common.IngameDebuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
+import com.gamebuster19901.superiorquesting.common.questing.Page;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.MalformedTypeError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
@@ -84,6 +86,10 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 * 
 				 */
 					
+				case NEW_PAGE:
+					wrap = ensureValidType(b, ctx, PAGE, true);
+					debug(p, "New page received from server: " + (Page)wrap.u);
+					break;
 				case NEW_QUEST:
 					wrap = ensureValidType(b, ctx, QUEST, true);
 					debug(p, "New quest recieved from server:" + (Quest)wrap.u);
@@ -104,7 +110,13 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 * 
 				 * 
 				 */
-					
+				
+				case UPDATE_PAGE:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					Page page = ((Page)wrap.u);
+					page.deserializeNBT(wrap.nbt);
+					debug(p, "Page data update recieved" + page);
+					break;
 				case UPDATE_QUEST:
 					wrap = ensureValidType(b, ctx, QUEST, false);
 					Quest q = ((Quest)wrap.u);
@@ -132,6 +144,11 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				 * 
 				 */
 					
+				case REMOVE_PAGE:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					Main.proxy.getGlobalQuestHandler().removePage(wrap.u.getUUID());
+					debug(p, "Server removed page " + wrap.u);
+					break;
 				case REMOVE_QUEST:
 					wrap = ensureValidType(b, ctx, QUEST, false);
 					Main.proxy.getGlobalQuestHandler().removeQuest(wrap.u.getUUID());
@@ -146,6 +163,45 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					wrap = ensureValidType(b, ctx, TASK, false);
 					Main.proxy.getGlobalQuestHandler().removeReward(wrap.u.getUUID());
 					debug(p, "Server removed reward " + wrap.u);
+					break;
+					
+				/*
+				 * 
+				 * 
+				 * PLAYER PAGE DATA
+				 * 
+				 * 
+				 */
+					
+				case PAGE_NOTIFY:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					((Page)wrap.u).notify();
+					debug(p, "Server notified you of page " + wrap.u);
+					break;
+				case PAGE_UNNOTIFY:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					((Page)wrap.u).markUnnotified(p);
+					debug(p, "Server says to mark the following page as unnotified " + wrap.u);
+					break;
+				case PAGE_LOCK:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					((Page)wrap.u).lock(p);
+					debug(p, "Server locked page " + wrap.u);
+					break;
+				case PAGE_UNLOCK:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					((Page)wrap.u).unlock(p);
+					debug(p, "Server unlocked page " + wrap.u);
+					break;
+				case PAGE_HIDE:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					((Page)wrap.u).unlock(p);
+					debug(p, "Server hid page " + wrap.u);
+					break;
+				case PAGE_UNHIDE:
+					wrap = ensureValidType(b, ctx, PAGE, false);
+					((Page)wrap.u).unhide(p);
+					debug(p, "Server unhid page " + wrap.u);
 					break;
 					
 				/*
@@ -284,7 +340,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					message.toBytes(b);
 					GuiTrueGameOver.deathCause = new TextComponentString(ByteBufUtils.readUTF8String(b));
 					p.openGui(Main.getInstance(), GuiHandler.FINAL_DEATH, p.world, (int)p.posX, (int)p.posY, (int)p.posZ);
-					debug("opened gui");
+					debug(p, "opened gui");
 					return null;
 				default:
 					ctx.getClientHandler().handleDisconnect(new SPacketDisconnect(new TextComponentString("Don't know how to handle packet " + "")));
@@ -292,7 +348,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 			}
 		}
 		catch(PacketException e) {
-			
+			ctx.getClientHandler().handleDisconnect((new SPacketDisconnect(new TextComponentString(e.toString()))));
 		}
 		return null;
 	}
@@ -302,6 +358,7 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 	}
 	
 	protected static enum Type{
+		PAGE,
 		QUEST,
 		TASK,
 		REWARD;
@@ -333,6 +390,9 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 					this.nbt = nbt;
 					if(isNew) {
 						switch(type) {
+							case PAGE:
+								u = new Page(nbt);
+								break;
 							case QUEST:
 								u = new Quest(nbt);
 								break;
@@ -395,6 +455,9 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 						UUID id = UUID.fromString(nbt.getString("UUID"));
 						Unique u;
 						switch(type) {
+							case PAGE:
+								u = Main.proxy.getGlobalQuestHandler().getPage(id);
+								break;
 							case QUEST:
 								u = Main.proxy.getGlobalQuestHandler().getQuest(id);
 								break;

@@ -51,6 +51,14 @@ public abstract class Reward implements Rewardable, Assertable{
 	}
 	*/
 	
+	public final NBTTagCompound getDefaultPlayerNBT() {
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setLong("VERSION", getVersion());
+		nbt.setString("UUID", getUUID().toString());
+		nbt.setBoolean("COLLECTED", false);
+		return nbt;
+	}
+	
 	private final NBTTagCompound getRewardTag(EntityPlayer p) {
 		return getPlayerQuestHandler().getRewardNBT(id, p);
 	}

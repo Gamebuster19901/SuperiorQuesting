@@ -6,9 +6,13 @@ import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public interface Notifyable extends UpdatableSerializable, Unique{
 	public String NOTIFIED = "NOTIFIED";
+	
+	public NBTTagCompound getDefaultPlayerNBT();
+	
 	/**
 	 * Checks if the player has been notified that this has been completed.
 	 * @param p the player to check
@@ -51,5 +55,6 @@ public interface Notifyable extends UpdatableSerializable, Unique{
 	 * Marks this as unnotified for the player
 	 * @param p the uuid of the player to mark this as unnotified for
 	 */
+	@Deprecated
 	public void markUnnotified(UUID p);
 }

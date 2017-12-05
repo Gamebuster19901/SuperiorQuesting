@@ -551,6 +551,19 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		}
 		
 	}
+	
+	@Override
+	public final NBTTagCompound getDefaultPlayerNBT() {
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setLong("VERSION", getVersion());
+		nbt.setString("UUID", getUUID().toString());
+		nbt.setBoolean("FINISHED", false);
+		nbt.setBoolean("NOTIFIED", false);
+		nbt.setBoolean("HIDDEN", isHiddenByDefault());
+		nbt.setBoolean("LOCKED", isLockedByDefault());
+		nbt.setBoolean("COLLECTED", false);
+		return nbt;
+	}
 
 	@Override
 	public NBTTagCompound serializeNBT() {
@@ -675,4 +688,6 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	public String toString() {
 		return getTitle() + " [" + id + "]";
 	}
+
+
 }

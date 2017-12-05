@@ -5,6 +5,7 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
@@ -94,7 +95,7 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 		}
 		if(args[0].equals("add") && Debuggable.debug) {
 			if(args[1].equals("quest")) {
-				Quest q = new Quest("Test", "A test quest.", 1, 0, 0, (byte)1);
+				Quest q = new Quest("Test", "A test quest.", UUID.randomUUID(), 0, 0, (byte)1);
 				if(args.length > 2) {
 					for(int i = 2; i < args.length; i++) {
 						if(args[i].equals("task")) {

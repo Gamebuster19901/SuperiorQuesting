@@ -6,5 +6,4 @@ import net.minecraftforge.common.util.INBTSerializable;
 public interface UpdatableSerializable extends INBTSerializable<NBTTagCompound>{
 	public void convert(long prevVersion, long nextVersion, NBTTagCompound in);
 	public long getVersion();
-	
 }

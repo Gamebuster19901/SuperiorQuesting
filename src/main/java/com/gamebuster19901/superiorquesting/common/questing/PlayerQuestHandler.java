@@ -1,15 +1,17 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.PAGE_KEY;
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.PAGES;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUESTS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUEST_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARDS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARD_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASKS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASK_KEY;
-import static com.gamebuster19901.superiorquesting.common.questing.reward.Rewardable.COLLECTED;
-import static com.gamebuster19901.superiorquesting.common.questing.task.Assignment.COMPLETED;
-import static com.gamebuster19901.superiorquesting.common.questing.task.Assignment.NOTIFIED;
-import static com.gamebuster19901.superiorquesting.common.questing.task.Assignment.UNLOCKED;
+import static com.gamebuster19901.superiorquesting.common.questing.integrate.Assignment.COMPLETED;
+import static com.gamebuster19901.superiorquesting.common.questing.integrate.Lockable.UNLOCKED;
+import static com.gamebuster19901.superiorquesting.common.questing.integrate.Notifyable.NOTIFIED;
+import static com.gamebuster19901.superiorquesting.common.questing.integrate.Rewardable.COLLECTED;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -23,6 +25,40 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 
 public class PlayerQuestHandler extends MultiplayerHandler{
+	
+	NBTTagCompound getPageNBT(UUID id, EntityPlayer p) {
+		Assert(hasPageNBT(id, p), "page " + id + " not found for player " + p.getName());
+		return getPersistantTag(p).getCompoundTag(PAGE_KEY).getCompoundTag(id.toString());
+	}
+	
+	NBTTagCompound getPageNBT(UUID id, UUID p) {
+		Assert(hasPageNBT(id, p), "page " + id + " not found for player " + p);
+		return getPersistantTag(p).getCompoundTag(PAGE_KEY).getCompoundTag(id.toString());
+	}
+	
+	NBTTagCompound getPageNBT(EntityPlayer p) {
+		Assert(hasPageNBT(p), "No page nbt found for player " + p.getName());
+		return getPersistantTag(p).getCompoundTag(PAGE_KEY);
+	}
+	
+	public boolean hasPageNBT(EntityPlayer p){
+		return getPersistantTag(p).hasKey(PAGE_KEY);
+	}
+	
+	public boolean hasPageNBT(UUID p) {
+		return getPersistantTag(p).hasKey(PAGE_KEY);
+	}
+	
+	public boolean hasPageNBT(UUID page, EntityPlayer p) {
+		Assert(hasPageNBT(p), "page " + page + " not found for player " + p.getName());
+		return getPersistantTag(p).getCompoundTag(PAGE_KEY).hasKey(page.toString());
+	}
+	
+	public boolean hasPageNBT(UUID page, UUID p) {
+		Assert(hasPageNBT(p), "page " + page + " not found for player " + p);
+		return getPersistantTag(p).getCompoundTag(PAGE_KEY).hasKey(page.toString());
+	}
+	
 	NBTTagCompound getQuestNBT(UUID id, EntityPlayer p) {
 		Assert(hasQuestNBT(id, p), "quest " + id + " not found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).getCompoundTag(id.toString());
@@ -122,23 +158,18 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		return getPersistantTag(p).getCompoundTag(TASK_KEY).hasKey(task.toString());
 	}
 	
+	void resetPage(Page p, EntityPlayer plyr) {
+		getPersistantTag(plyr).getCompoundTag(PAGE_KEY).setTag(p.getUUID().toString(), p.getDefaultPlayerNBT());
+	}
+	
 	void resetQuest(Quest q, EntityPlayer p) {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setLong("VERSION", q.getVersion());
-		nbt.setString("UUID", q.getUUID().toString());
-		nbt.setBoolean("FINISHED", false);
-		nbt.setBoolean("NOTIFIED", false);
-		nbt.setBoolean("HIDDEN", q.isHiddenByDefault());
-		nbt.setBoolean("LOCKED", q.isLockedByDefault());
-		nbt.setBoolean("COLLECTED", false);
-		//No need to reset prerequisites since resetQuests will do that anyway
 		for(UUID task : q.getTasks()) {
 			resetTask(TASKS.get(task), p);
 		}
 		for(UUID reward : q.getRewards()) {
 			resetReward(REWARDS.get(reward), p);
 		}
-		getPersistantTag(p).getCompoundTag(QUEST_KEY).setTag(q.getUUID().toString(), nbt);
+		getPersistantTag(p).getCompoundTag(QUEST_KEY).setTag(q.getUUID().toString(), q.getDefaultPlayerNBT());
 	}
 	
 	void resetTask(Task t, EntityPlayer p) {
@@ -155,10 +186,18 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 	
 	void resetReward(Reward r, EntityPlayer p) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setLong("VERSION", r.getVersion());
-		nbt.setString("UUID", r.getUUID().toString());
-		nbt.setBoolean("COLLECTED", false);
+		r.getDefaultPlayerNBT();
 		getPersistantTag(p).getCompoundTag(REWARD_KEY).setTag(r.getUUID().toString(), nbt);
+	}
+	
+	void add(Page p) {
+		MinecraftServer s = Main.proxy.getServer();
+		Assert(s != null);
+		Assert(p != null);
+		for(String username : s.getOnlinePlayerNames()) {
+			EntityPlayer plyr = s.getPlayerList().getPlayerByUsername(username);
+			resetPage(p, plyr);
+		}
 	}
 	
 	void add(Quest q) {
@@ -188,17 +227,38 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 	}
 	
 	/**
-	 * If the player's quest NBT is not up to date, update the player's quest nbt
+	 * If the player's NBT is not up to date update it
+	 * 
+	 * E.X. if it doesn't contain quests that the server has, then add them,
+	 * if it contains quests that the server doesn't have, then remove them.
+	 * 
 	 * @param p The player to check
-	 * @return true if the player's life count changed
 	 */
 	public void assertValidNBT(EntityPlayer p) {
-		if(hasQuestNBT(p) && hasTaskNBT(p) && hasRewardNBT(p)){
+		if(hasPageNBT(p) && hasQuestNBT(p) && hasTaskNBT(p) && hasRewardNBT(p)){
 			removeRemovedNBT(p);
+			for(UUID key : PAGES.keySet()) {
+				Page page = PAGES.get(key);
+				if(!hasPageNBT(key, p)) {
+					resetPage(page, p);
+				}
+			}
 			for(UUID key : QUESTS.keySet()) {
 				Quest q = QUESTS.get(key);
 				if (!hasQuestNBT(key, p)) {
 					resetQuest(q, p);
+				}
+			}
+			for(UUID key : TASKS.keySet()) {
+				Task t = TASKS.get(key);
+				if(!hasTaskNBT(key, p)) {
+					resetTask(t, p);
+				}
+			}
+			for(UUID key : REWARDS.keySet()) {
+				Reward r = REWARDS.get(key);
+				if(!hasRewardNBT(key, p)) {
+					resetReward(r, p);
 				}
 			}
 		}
@@ -208,33 +268,41 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 	}
 	
 	/**
-	 * resets a players quest NBT, 
+	 * Clears and sets a players NBT to default, as if they just joined for the first time
 	 * @param p
 	 */
 	void resetAllNBT(EntityPlayer p) {
+		getPersistantTag(p).setTag(PAGE_KEY, new NBTTagCompound());
 		getPersistantTag(p).setTag(QUEST_KEY, new NBTTagCompound());
 		getPersistantTag(p).setTag(TASK_KEY, new NBTTagCompound());
 		getPersistantTag(p).setTag(REWARD_KEY, new NBTTagCompound());
-		for(UUID key : QUESTS.keySet()) { //key is the quest title
+		for(UUID key : PAGES.keySet()) {
+			Page page = PAGES.get(key);
+			resetPage(page, p);
+		}
+		for(UUID key : QUESTS.keySet()) {
 			Quest q = QUESTS.get(key);
-			NBTTagCompound nbt = new NBTTagCompound();
-			nbt.setBoolean(UNLOCKED, false);
-			nbt.setBoolean(COMPLETED, false);
-			nbt.setBoolean(NOTIFIED, false);
-			nbt.setBoolean(COLLECTED, false);
-			getPersistantTag(p).setTag(key.toString(), nbt);
+			resetQuest(q, p);
 		}
 	}
 	
 	void removeRemovedNBT(EntityPlayer p) {
+		NBTTagCompound pages = getPageNBT(p);
 		NBTTagCompound quests = getQuestNBT(p);
 		NBTTagCompound tasks = getTaskNBT(p);
 		NBTTagCompound rewards = getRewardNBT(p);
 		
+		ArrayList<String> pagesToRemove = new ArrayList<String>();
 		ArrayList<String> questsToRemove = new ArrayList<String>();
 		ArrayList<String> tasksToRemove = new ArrayList<String>();
 		ArrayList<String> rewardsToRemove = new ArrayList<String>();
 		
+		
+		for(String page : pages.getKeySet()){
+			if(!PAGES.containsKey(UUID.fromString(page))) {
+				pagesToRemove.add(page);
+			}
+		}
 		for(String q : quests.getKeySet()) {
 			if(!QUESTS.containsKey(UUID.fromString(q))) {
 				questsToRemove.add(q);
@@ -249,6 +317,10 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 			if(!REWARDS.containsKey(UUID.fromString(r))) {
 				rewardsToRemove.add(r);
 			}
+		}
+		
+		for(String page : pagesToRemove) {
+			pages.removeTag(page);
 		}
 		
 		for(String q : questsToRemove) {

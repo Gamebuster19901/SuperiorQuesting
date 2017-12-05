@@ -1,5 +1,6 @@
 package com.gamebuster19901.superiorquesting.server.network;
 
+import static com.gamebuster19901.superiorquesting.server.network.ServerPacketReceiver.Type.PAGE;
 import static com.gamebuster19901.superiorquesting.server.network.ServerPacketReceiver.Type.QUEST;
 import static com.gamebuster19901.superiorquesting.server.network.ServerPacketReceiver.Type.REWARD;
 import static com.gamebuster19901.superiorquesting.server.network.ServerPacketReceiver.Type.TASK;
@@ -15,6 +16,7 @@ import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.Unique;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket;
 import com.gamebuster19901.superiorquesting.common.network.packet.GenericQuestingPacket.PacketType;
+import com.gamebuster19901.superiorquesting.common.questing.Page;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.exception.MalformedTypeError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.NonExistantKeyException;
@@ -58,6 +60,9 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					 * 
 					 * 
 					 */
+					case NEW_PAGE:
+						ensureValidType(b, ctx, PAGE, true, false);
+						break;
 					case NEW_QUEST:
 						ensureValidType(b, ctx, QUEST, true, false);
 						break;
@@ -77,6 +82,11 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					 * 
 					 * 
 					 */
+					case UPDATE_PAGE:
+						wrap = ensureValidType(b, ctx, PAGE, false, false);
+						((Page) wrap.u).deserializeNBT(wrap.nbt);
+						sendToAll(message);
+						break;
 	
 					case UPDATE_QUEST:
 						wrap = ensureValidType(b, ctx, QUEST, false, false);
@@ -104,6 +114,12 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					 * 
 					 */
 						
+					case REMOVE_PAGE:
+						wrap = ensureValidType(b, ctx, PAGE, false, false);
+						Main.proxy.getGlobalQuestHandler().removePage(wrap.u.getUUID());
+						sendToAll(message);
+						break;
+						
 					case REMOVE_QUEST:
 						wrap = ensureValidType(b, ctx, QUEST, false, false);
 						Main.proxy.getGlobalQuestHandler().removeQuest(wrap.u.getUUID());
@@ -121,6 +137,84 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 						Main.proxy.getGlobalQuestHandler().removeReward(wrap.u.getUUID());
 						sendToAll(message);
 						break;
+						
+					/*
+					 * 
+					 * 
+					 * PLAYER PAGE DATA
+					 * 
+					 * 
+					 */
+						
+					case PAGE_HIDE:
+						wrap = ensureValidType(b, ctx, PAGE, false, true);
+						nbt = wrap.nbt;
+						for(EntityPlayerMP affectedOnlinePlayer : wrap.onlinePlayers){
+							((Page)wrap.u).hide(affectedOnlinePlayer);
+							Main.proxy.NETWORK.sendTo(message, affectedOnlinePlayer);
+						}
+						for(UUID affectedOfflinePlayer : wrap.offlinePlayers){
+							((Page)wrap.u).hide(affectedOfflinePlayer);
+						}
+						break;
+						
+					case PAGE_UNHIDE:
+						wrap = ensureValidType(b, ctx, PAGE, false, true);
+						nbt = wrap.nbt;
+						for(EntityPlayerMP affectedOnlinePlayer : wrap.onlinePlayers){
+							((Page)wrap.u).unhide(affectedOnlinePlayer);
+							Main.proxy.NETWORK.sendTo(message, affectedOnlinePlayer);
+						}
+						for(UUID affectedOfflinePlayer : wrap.offlinePlayers){
+							((Page)wrap.u).unhide(affectedOfflinePlayer);
+						}
+						break;
+						
+					case PAGE_LOCK:
+						wrap = ensureValidType(b, ctx, PAGE, false, true);
+						nbt = wrap.nbt;
+						for(EntityPlayerMP affectedOnlinePlayer : wrap.onlinePlayers){
+							((Page)wrap.u).lock(affectedOnlinePlayer);
+							Main.proxy.NETWORK.sendTo(message, affectedOnlinePlayer);
+						}
+						for(UUID affectedOfflinePlayer : wrap.offlinePlayers){
+							((Page)wrap.u).lock(affectedOfflinePlayer);
+						}
+						break;
+						
+					case PAGE_UNLOCK:
+						wrap = ensureValidType(b, ctx, PAGE, false, true);
+						nbt = wrap.nbt;
+						for(EntityPlayerMP affectedOnlinePlayer : wrap.onlinePlayers){
+							((Page)wrap.u).unlock(affectedOnlinePlayer);
+							Main.proxy.NETWORK.sendTo(message, affectedOnlinePlayer);
+						}
+						for(UUID affectedOfflinePlayer : wrap.offlinePlayers){
+							((Page)wrap.u).unlock(affectedOfflinePlayer);
+						}
+						break;
+						
+					case PAGE_NOTIFY:
+						wrap = ensureValidType(b, ctx, PAGE, false, true);
+						nbt = wrap.nbt;
+						for(EntityPlayerMP affectedOnlinePlayer : wrap.onlinePlayers){
+							((Page)wrap.u).notify(affectedOnlinePlayer);
+							Main.proxy.NETWORK.sendTo(message, affectedOnlinePlayer);
+						}
+						break;
+						
+					case PAGE_UNNOTIFY:
+						wrap = ensureValidType(b, ctx, PAGE, false, true);
+						nbt = wrap.nbt;
+						for(EntityPlayerMP affectedOnlinePlayer : wrap.onlinePlayers){
+							((Page)wrap.u).markUnnotified(affectedOnlinePlayer);
+							Main.proxy.NETWORK.sendTo(message, affectedOnlinePlayer);
+						}
+						for(UUID affectedOfflinePlayer : wrap.offlinePlayers){
+							((Page)wrap.u).markUnnotified(affectedOfflinePlayer);
+						}
+						break;
+						
 						
 					/*
 					 * 
@@ -408,6 +502,7 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 	}
 	
 	protected static enum Type{
+		PAGE,
 		QUEST,
 		TASK,
 		REWARD;
@@ -442,6 +537,8 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 					this.nbt = nbt;
 					if(isNew) {
 						switch(type) {
+						case PAGE:
+							Page page = new Page(nbt);
 						case QUEST:
 							Quest q = new Quest(nbt);
 							break;
@@ -504,6 +601,9 @@ public final class ServerPacketReceiver<Message extends GenericQuestingPacket> i
 						UUID id = UUID.fromString(nbt.getString("UUID"));
 						Unique u;
 						switch(type) {
+							case PAGE:
+								u = Main.proxy.getGlobalQuestHandler().getPage(id);
+								break;
 							case QUEST:
 								u = Main.proxy.getGlobalQuestHandler().getQuest(id);
 								break;

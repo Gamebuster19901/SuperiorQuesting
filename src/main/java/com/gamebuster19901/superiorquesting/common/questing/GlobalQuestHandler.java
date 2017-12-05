@@ -4,6 +4,7 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
@@ -19,10 +20,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public final class GlobalQuestHandler extends MultiplayerHandler implements Debuggable{
+	public static final String PAGE_KEY = MODID + ":pages";
 	public static final String QUEST_KEY = MODID + ":quests";
 	public static final String REWARD_KEY = MODID + ":rewards";
 	public static final String TASK_KEY = MODID + ":tasks";
 	
+	static final TreeMap<UUID, Page> PAGES = new TreeMap<UUID, Page>();
 	static final HashMap<UUID, Quest> QUESTS = new HashMap<UUID, Quest>();
 	static final HashMap<UUID, Task> TASKS = new HashMap<UUID, Task>();
 	static final HashMap<UUID, Reward> REWARDS = new HashMap<UUID, Reward>();
@@ -35,6 +38,14 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 			if(q.isFinished(p)) {
 				ret.add(q);
 			}
+		}
+		return ret;
+	}
+	
+	public final ArrayList<Page> getAllPages(){
+		final ArrayList<Page> ret = new ArrayList<Page>();
+		for(UUID p : PAGES.keySet()) {
+			ret.add(getPage(p));
 		}
 		return ret;
 	}
@@ -61,6 +72,20 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 			ret.add(getReward(u));
 		}
 		return ret;
+	}
+	
+	public final void add(boolean markDirty, Page page) {
+		if(PAGES.containsKey(page.getUUID())) {
+			throw new DuplicateKeyException("Page " + page.getUUID().toString());
+		}
+		if(markDirty) {
+			markDirty();
+		}
+		PAGES.put(page.getUUID(), page);
+		getPlayerQuestHandler().add(page);
+		if(markDirty) {
+			markDirty();
+		}
 	}
 	
 	public final void add(boolean markDirty, Quest quest) {
@@ -105,14 +130,35 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		}
 	}
 	
+	public final void removePage(UUID uuid) {
+		if(!PAGES.containsKey(uuid)) {
+			throw new NonExistantKeyException("Page " + uuid);
+		}
+		markDirty();
+		for(Quest q : QUESTS.values()) {
+			removeQuest(q.getUUID());
+		}
+		PAGES.remove(uuid);
+	}
+	
 	public final void removeQuest(UUID uuid) {
 		if(!QUESTS.containsKey(uuid)) {
 			throw new NonExistantKeyException("Quest " + uuid);
 		}
 		markDirty();
 		for(Quest q : QUESTS.values()) {
-			q.removePrerequisite(uuid);
+			q.removePrerequisite(uuid); //removes this quest as a prerequisite of other quests
 		}
+		
+		Quest q = getQuest(uuid);
+		
+		for(UUID t : q.getTasks()) {
+			q.removeTask(t);
+		}
+		for(UUID r : q.getRewards()) {
+			q.removeReward(r);
+		}
+		
 		QUESTS.remove(uuid);
 		markDirty();
 	}
@@ -136,6 +182,14 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		markDirty();
 		REWARDS.remove(uuid);
 		markDirty();
+	}
+	
+	public final Page getPage(UUID uuid) {
+		return PAGES.get(uuid);
+	}
+	
+	public final Page getPageByPageNumber(int pageNumber) {
+		return PAGES.values().toArray(new Page[]{})[pageNumber];
 	}
 	
 	public final Quest getQuest(UUID uuid) {
@@ -206,6 +260,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	}
 	
 	public final void clean() {
+		PAGES.clear();
 		QUESTS.clear();
 		TASKS.clear();
 		REWARDS.clear();

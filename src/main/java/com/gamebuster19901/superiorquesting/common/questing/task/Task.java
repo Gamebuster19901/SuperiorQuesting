@@ -48,6 +48,18 @@ public abstract class Task implements Assignment, Assertable{
 
 	@Override
 	public abstract boolean areConditionsSatisfied(EntityPlayer p);
+	
+	public final NBTTagCompound getDefaultPlayerNBT() {
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setLong("VERSION", getVersion());
+		nbt.setString("UUID", getUUID().toString());
+		nbt.setString("PARENT", getParent().toString());
+		nbt.setBoolean("FINISHED", false);
+		nbt.setBoolean("NOTIFIED", false);
+		nbt.setBoolean("HIDDEN", isHiddenByDefault());
+		nbt.setBoolean("LOCKED", isLockedByDefault());
+		return nbt;
+	}
 
 	/*
 	 *FINISHED 
