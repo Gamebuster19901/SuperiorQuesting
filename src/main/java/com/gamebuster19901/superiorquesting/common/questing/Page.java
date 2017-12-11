@@ -161,6 +161,10 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 	public UUID getUUID() {
 		return id;
 	}
+	
+	public String getTitle() {
+		return title;
+	}
 
 	@Override
 	public boolean hasNotified(EntityPlayer p) {

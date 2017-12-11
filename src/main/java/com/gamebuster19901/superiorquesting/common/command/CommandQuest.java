@@ -13,6 +13,7 @@ import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
+import com.gamebuster19901.superiorquesting.common.questing.Page;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.reward.ItemReward;
 
@@ -94,7 +95,10 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 			}
 		}
 		if(args[0].equals("add") && Debuggable.debug) {
-			if(args[1].equals("quest")) {
+			if(args[1].equals("page")) {
+				Page p = new Page("Test");
+			}
+			if(args[1].equals("quest") || (args[1].equals("page") && args[2].equals("quest"))) {
 				Quest q = new Quest("Test", "A test quest.", UUID.randomUUID(), 0, 0, (byte)1);
 				if(args.length > 2) {
 					for(int i = 2; i < args.length; i++) {
@@ -103,9 +107,8 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 						}
 						else if (args[i].equals("reward")) {
 							if(sender instanceof EntityPlayer) {
-								new ItemReward(q,((EntityPlayer)sender).getHeldItem(EnumHand.MAIN_HAND));
+								new ItemReward(q, new ItemStack(Items.DIAMOND, 2));
 							}
-							new ItemReward(q, new ItemStack(Items.DIAMOND, 2));
 						}
 					}
 				}

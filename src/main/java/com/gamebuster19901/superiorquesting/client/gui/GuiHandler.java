@@ -1,5 +1,7 @@
 package com.gamebuster19901.superiorquesting.client.gui;
 
+import com.gamebuster19901.superiorquesting.client.gui.book.GuiQuestBook;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;

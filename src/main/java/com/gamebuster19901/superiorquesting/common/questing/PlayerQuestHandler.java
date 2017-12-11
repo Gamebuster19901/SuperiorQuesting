@@ -14,6 +14,7 @@ import static com.gamebuster19901.superiorquesting.common.questing.integrate.Not
 import static com.gamebuster19901.superiorquesting.common.questing.integrate.Rewardable.COLLECTED;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
@@ -59,6 +60,26 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 		return getPersistantTag(p).getCompoundTag(PAGE_KEY).hasKey(page.toString());
 	}
 	
+	public TreeSet<Page> getVisiblePages(UUID p) {
+		final TreeSet<Page> visiblePages = new TreeSet<Page>();
+		for(Page page : Main.proxy.getGlobalQuestHandler().getAllPages()) {
+			if(!page.isHidden(p)) {
+				visiblePages.add(page);
+			}
+		}
+		return visiblePages;
+	}
+	
+	public TreeSet<Page> getVisiblePages(EntityPlayer p) {
+		final TreeSet<Page> visiblePages = new TreeSet<Page>();
+		for(Page page : Main.proxy.getGlobalQuestHandler().getAllPages()) {
+			if(!page.isHidden(p)) {
+				visiblePages.add(page);
+			}
+		}
+		return visiblePages;
+	}
+	
 	NBTTagCompound getQuestNBT(UUID id, EntityPlayer p) {
 		Assert(hasQuestNBT(id, p), "quest " + id + " not found for player " + p.getName());
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).getCompoundTag(id.toString());
@@ -90,6 +111,56 @@ public class PlayerQuestHandler extends MultiplayerHandler{
 	public boolean hasQuestNBT(UUID quest, UUID p) {
 		Assert(hasQuestNBT(p), "quest " + quest + " not found for player " + p);
 		return getPersistantTag(p).getCompoundTag(QUEST_KEY).hasKey(quest.toString());
+	}
+	
+	public TreeSet<Quest> getVisibleQuests(UUID p) {
+		final TreeSet<Quest> visibleQuests = new TreeSet<Quest>();
+		for(Quest quest : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
+			if(!quest.isHidden(p)) {
+				visibleQuests.add(quest);
+			}
+		}
+		return visibleQuests;
+	}
+	
+	public TreeSet<Quest> getVisibleQuests(EntityPlayer p) {
+		final TreeSet<Quest> visibleQuests = new TreeSet<Quest>();
+		for(Quest quest : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
+			if(!quest.isHidden(p)) {
+				visibleQuests.add(quest);
+			}
+		}
+		return visibleQuests;
+	}
+	
+	public TreeSet<Quest> getVisibleQuests(EntityPlayer p, Page page) {
+		final TreeSet<Quest> visibleQuests = new TreeSet<Quest>();
+		for(Quest quest : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
+			if(!quest.isHidden(p) && quest.getPage().equals(page.getUUID())) {
+				visibleQuests.add(quest);
+			}
+		}
+		return visibleQuests;
+	}
+	
+	public TreeSet<Quest> getVisibleQuestsInPage(UUID p, Page page) {
+		final TreeSet<Quest> visibleQuests = new TreeSet<Quest>();
+		for(Quest quest : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
+			if(!quest.isHidden(p) && quest.getPage().equals(page.getUUID())) {
+				visibleQuests.add(quest);
+			}
+		}
+		return visibleQuests;
+	}
+	
+	public TreeSet<Quest> getVisibleQuestsInPage(EntityPlayer p, Page page) {
+		final TreeSet<Quest> visibleQuests = new TreeSet<Quest>();
+		for(Quest quest : Main.proxy.getGlobalQuestHandler().getAllQuests()) {
+			if(!quest.isHidden(p) && quest.getPage().equals(page.getUUID())) {
+				visibleQuests.add(quest);
+			}
+		}
+		return visibleQuests;
 	}
 	
 	public NBTTagCompound getRewardNBT(UUID id, EntityPlayer p) {

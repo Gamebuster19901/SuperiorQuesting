@@ -22,4 +22,14 @@ item.questing.heartcanisterhalf.name=Half Life
 item.questing.heartcanisterquarter.name=Quarter Life
 item.questing.heartcanisterempty.name=Empty Heart Canister
 
+gui.book.illegalstate=Illegal state: %s
+gui.book.invalidpage=Invalid page
+gui.book.invalidquest=Invalid quest
+gui.book.nopages=No Pages!
+gui.book.noquests=No Quests Available!
+gui.book.pageshouldnotbeset=PAGE should not be set!
+gui.book.questshouldnotbeset=QUEST should not be set!
+gui.book.unlocksmorequests=Unlocks %s more quest(s) here.
+gui.book.unlocksmorequestsinotherlocations=Unlocks %s more quest(s) elsewhere.
+
 itemGroup.questing=Superior Questing
