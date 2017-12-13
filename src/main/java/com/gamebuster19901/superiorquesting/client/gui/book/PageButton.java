@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class PageButton extends BookButtonLong{
-	public static final int width = 102;
-	public static final int height = 9;
+	public static final int width = 152;
+	public static final int height = 16;
 	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation(MODID + ":textures/gui/book_two_sides.png");
 	
 	public boolean pressed = false;
@@ -38,18 +38,16 @@ public class PageButton extends BookButtonLong{
         {
         	//mouseX = (int)(mouseX * 1.5);
         	//mouseY = (int)(mouseY * 1.5);
-			GlStateManager.pushMatrix();
-			GlStateManager.scale(1.5, 1.5, 1);
             FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.x * 1.5 && mouseY >= this.y * 1.5 && mouseX < this.x * 1.5 + this.width * 1.5 && mouseY < this.y * 1.5 + this.height * 1.5;
+            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getHoverState(this.hovered);
             if(!pressed) {
-            	this.drawTexturedModalRect(this.x, this.y, 49, 210 + (i - 1) * 13, this.width, this.height);
+            	this.drawTexturedModalRect(this.x, this.y, 49, 208 + (i - 1) * 16, this.width, this.height);
             }
             else {
-            	this.drawTexturedModalRect(this.x, this.y, 49, 210 + 2 * 13, this.width, this.height);
+            	this.drawTexturedModalRect(this.x, this.y, 49, 208 + 2 * 16, this.width, this.height);
             }
             this.mouseDragged(mc, mouseX, mouseY);
             int j = 14737632;
@@ -69,15 +67,13 @@ public class PageButton extends BookButtonLong{
             }
 
             this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, j);
-            GlStateManager.scale(1, 1, 1);
-            GlStateManager.popMatrix();
         }
     }
 	
 	@Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
     {
-        if (this.enabled && this.visible &&mouseX >= this.x * 1.5 && mouseY >= this.y * 1.5 && mouseX < this.x * 1.5 + this.width * 1.5 && mouseY < this.y * 1.5 + this.height * 1.5) {
+        if (super.mousePressed(mc, mouseX, mouseY)) {
         	pressed = !pressed;
         	return true;
         }

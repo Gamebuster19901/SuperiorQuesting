@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.client.util.Point;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.IngameDebuggable;
@@ -16,7 +17,9 @@ import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -57,14 +60,18 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	@Override
 	public void initGui() {
 		super.initGui();
-		open(page, quest);
 		int i = 0;
 		int pagelist = i + 11;
-		this.addButton(new BookButtonLong(i++, width / 2 - 186, (height / 2 - 119), ((char) (0x25b2)) + ""));
+		int horizontalAdjustment = 172;
+		int verticalAdjustment = 102;
+
+		Point mid = new Point(width / 2, height / 2);
+		this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
 		while(i < pagelist) {
-			this.addButton(new PageButton(i, width / 2 - 186, (height / 2 - 119) + (i++ * (9 + 3)), (Page)null));
+			this.addButton(new PageButton(i, (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (i++ * (16 + 2)), (Page)null));
 		}
-		this.addButton(new BookButtonLong(i, width / 2 - 186, (height / 2 - 119) + (i++ * (9 + 3)), ((char) (0x25bc)) + ""));
+		this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (i++ * (16 + 2)), ((char) (0x25bc)) + ""));
+		open(page, quest);
 		
 	}
 	
@@ -87,6 +94,9 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		GlStateManager.color(1f, 1f, 1f);
 		this.drawWorldBackground(0);
 		final ArrayList<String> errors = new ArrayList<String>();
+		Point mid = new Point(width / 2, height / 2);
+		Point mouseLoc = new Point(mouseX, mouseY);
+		debug((mid.getX() - mouseLoc.getX() + "") + ", " + (mid.getY() - mouseLoc.getY() + ""));
 		switch(pageType) {
 			case -1:
 				mc.getTextureManager().bindTexture(TWO_PAGES_TEXTURE);
@@ -97,7 +107,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 					int texW = 256;
 					int texH = 196;
 					
-					this.drawTexturedModalRect(width / 3 - texW / 2, height / 3 - texH / 2, 0, -4, texW, texH + 4);
+					this.drawTexturedModalRect(width / 3 - texW / 2, height / 3 - texH / 2, 0, 0, texW, texH);
 					
 					texW = 102;
 					texH = 9;
