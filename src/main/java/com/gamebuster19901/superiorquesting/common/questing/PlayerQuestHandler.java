@@ -1,17 +1,13 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.PAGE_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.PAGES;
+import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.PAGE_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUESTS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.QUEST_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARDS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.REWARD_KEY;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASKS;
 import static com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler.TASK_KEY;
-import static com.gamebuster19901.superiorquesting.common.questing.integrate.Assignment.COMPLETED;
-import static com.gamebuster19901.superiorquesting.common.questing.integrate.Lockable.UNLOCKED;
-import static com.gamebuster19901.superiorquesting.common.questing.integrate.Notifyable.NOTIFIED;
-import static com.gamebuster19901.superiorquesting.common.questing.integrate.Rewardable.COLLECTED;
 
 import java.util.ArrayList;
 import java.util.TreeSet;

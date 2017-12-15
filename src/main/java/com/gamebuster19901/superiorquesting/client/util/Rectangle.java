@@ -1,7 +1,5 @@
 package com.gamebuster19901.superiorquesting.client.util;
 
-import java.util.Arrays;
-
 public class Rectangle implements Shape{
 	private Point origin;
 	private int width;

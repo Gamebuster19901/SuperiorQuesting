@@ -1,7 +1,5 @@
 package com.gamebuster19901.superiorquesting.client.util;
 
-import java.util.Arrays;
-
 public interface Shape {
 	public Rectangle getBounds();
 	
