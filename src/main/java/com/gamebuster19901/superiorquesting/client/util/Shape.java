@@ -74,4 +74,18 @@ public interface Shape {
 		
 		return true;
 	}
+	
+	public static void printShape(Shape s) {
+		boolean[][] arr = s.toArray();
+		System.out.println(s.getClass());
+		
+		String ln = "";
+		
+        for(int i = 0; i < arr.length; i++){
+            for(int j = 0; j < arr[0].length; j++){
+                System.out.print(arr[i][j] ? "T" : "F");
+            }
+            System.out.print('\n');
+        }
+	}
 }

@@ -19,7 +19,11 @@ public class Circle implements Shape{
 
 	@Override
 	public Rectangle getBounds() {
-		return new Square(origin, diameter);
+		int actualDiameter = diameter;
+		if(diameter % 2 == 0) {
+			actualDiameter++;
+		}
+		return new Square(origin, actualDiameter);
 	}
 
 	@Override
@@ -39,7 +43,12 @@ public class Circle implements Shape{
 		int xSquared = (x - p.getX())*(x - p.getX());
 		int ySquared = (y - p.getY())*(y - p.getY());
 		
-		return diameter / 2 > (int)Math.sqrt(xSquared + ySquared);
+		if(diameter % 2 == 1) {
+			return (double)diameter / 2d > Math.sqrt(xSquared + ySquared);
+		}
+		else {
+			return (double)diameter / 2d >= Math.sqrt(xSquared + ySquared);
+		}
 	}
 
 	@Override

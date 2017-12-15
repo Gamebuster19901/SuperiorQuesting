@@ -1,18 +1,22 @@
 package com.gamebuster19901.superiorquesting.client.util;
 
-public abstract class Triangular{
-	
+import java.awt.Polygon;
+
+public abstract class Triangular implements Shape{
+	protected Point o;
 	protected Point a;
 	protected Point b;
 	protected Point c;
 	
-	Triangular (Point a, Point b, Point c){
+	Triangular (Point o, Point a, Point b, Point c){
+		this.o = o;
 		this.a = a;
 		this.b = b;
 		this.c = c;
 	}
 	
-	protected void shift(int shiftX, int shiftY) {
+	public final void shift(int shiftX, int shiftY) {
+		o.shift(shiftX, shiftY);
 		a.shift(shiftX, shiftY);
 		b.shift(shiftX, shiftY);
 		c.shift(shiftX, shiftY);
@@ -26,11 +30,12 @@ public abstract class Triangular{
 		return getArea(a.getX(), b.getX(), c.getX(), a.getY(), b.getY(), c.getY());
 	}
 	
-	public final int getArea(int ax, int bx, int cx, int ay, int by, int cy) {
-		return Math.abs(ax * (by - cy) + bx * (cy - ay) + cx * (ay - by) / 2);
+	public final int getArea(int x1, int x2, int x3, int y1, int y2, int y3) {
+		return Math.abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2) / 2);
 	}
 
 	public final boolean contains(Point p) {
-		return(getArea(p,a,b) + getArea(p,b,c) + getArea(p,a,c) == this.getArea());
+		Polygon poly = new Polygon(new int[] {a.getX(), b.getX(), c.getX()}, new int[] {a.getY(), b.getY(), c.getY()}, 3);
+		return poly.contains(p.getX(), p.getY());
 	}
 }

@@ -17,6 +17,8 @@ public class Rectangle implements Shape{
 	
 	public Rectangle(Point topLeft, int width, int height) {
 		origin = topLeft;
+		this.width = width;
+		this.height = height;
 	}
 	
 	public final int getWidth() {
@@ -46,7 +48,7 @@ public class Rectangle implements Shape{
 
 	@Override
 	public final boolean contains(Point p) {
-		return p.getX() < origin.getX() || p.getX() > this.getBottomRight().getX() || p.getY() < origin.getY() || p.getY() > this.getBottomRight().getY();
+		return p.getX() >= origin.getX() || p.getX() <= this.getBottomRight().getX() || p.getY() >= origin.getY() || p.getY() <= this.getBottomRight().getY();
 	}
 
 	@Override
@@ -61,6 +63,14 @@ public class Rectangle implements Shape{
 
 	@Override
 	public boolean[][] toArray() {
-		return new boolean[width][height];
+		boolean[][] b = new boolean[height][width];
+		
+		for(int i = 0; i < b.length; i++) {
+			for(int j = 0; j < b[0].length; j++) {
+				b[i][j] = true;
+			}
+		}
+		
+		return b;
 	}
 }
