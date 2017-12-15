@@ -10,7 +10,12 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.client.util.Circle;
 import com.gamebuster19901.superiorquesting.client.util.Point;
+import com.gamebuster19901.superiorquesting.client.util.Rectangle;
+import com.gamebuster19901.superiorquesting.client.util.Shape;
+import com.gamebuster19901.superiorquesting.client.util.Square;
+import com.gamebuster19901.superiorquesting.client.util.TriangleUp;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.IngameDebuggable;
@@ -131,7 +136,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		final ArrayList<String> errors = new ArrayList<String>();
 		Point mid = new Point(width / 2, height / 2);
 		Point mouseLoc = new Point(mouseX, mouseY);
-		debug((mid.getX() - mouseLoc.getX() + "") + ", " + (mid.getY() - mouseLoc.getY() + ""));
+		//debug((mid.getX() - mouseLoc.getX() + "") + ", " + (mid.getY() - mouseLoc.getY() + ""));
 		switch(pageType) {
 			case -1:
 				mc.getTextureManager().bindTexture(TWO_PAGES_TEXTURE);
@@ -233,6 +238,9 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			else if (keyCode == 80) {
 				pageType = 1;
 			}
+			else if (keyCode == 81) {
+				testShapes();
+			}
 		}
 		debug(Minecraft.getMinecraft().player, keyCode + " " + typedChar + this.isCtrlKeyDown());
     }
@@ -250,6 +258,18 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			String m = o.toString();
 			render.drawString(m, x - render.getStringWidth(m) / 2, (y - 16 / 2) + i * 16, rgb);
 			i++;
+		}
+	}
+	
+	public static void testShapes() {
+		Shape[] shapes = new Shape[] {
+			new Rectangle(2, 5),
+			new Square(4),
+			new Circle(16),
+			new TriangleUp(16)
+		};
+		for(Shape s : shapes) {
+			Shape.printShape(s);
 		}
 	}
 }
