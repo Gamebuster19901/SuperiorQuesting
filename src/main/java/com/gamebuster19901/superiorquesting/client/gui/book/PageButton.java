@@ -14,8 +14,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class PageButton extends BookButtonLong{
-	public static final int width = 152;
-	public static final int height = 16;
 	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation(MODID + ":textures/gui/book_two_sides.png");
 	
 	public boolean pressed = false;
@@ -36,12 +34,10 @@ public class PageButton extends BookButtonLong{
     {
         if (this.visible)
         {
-        	//mouseX = (int)(mouseX * 1.5);
-        	//mouseY = (int)(mouseY * 1.5);
             FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            this.hovered = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getHoverState(this.hovered);
             if(!pressed) {
             	this.drawTexturedModalRect(this.x, this.y, 49, 208 + (i - 1) * 16, this.width, this.height);

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.client.util.Point;
+import com.gamebuster19901.superiorquesting.client.util.Shape;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
@@ -27,6 +29,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	private UUID page;
 	private int x;
 	private int y;
+	private Class<? extends Shape> shape;
 	private byte important = 1;
 	private boolean lockedByDefault = false;
 	private boolean hiddenByDefault = false; //a quest that is hidden is not visible unless all prerequisite quests are completed.
@@ -45,11 +48,11 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 * 
 	 * @throws IndexOutOfBoundsException if x or y < 0
 	 */
-	public Quest(String title, String description, UUID page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
-		this(UUID.randomUUID(), title, description, page, x, y, important, rewards, prerequisites, tasks);
+	public Quest(String title, String description, UUID page, int x, int y, Class<? extends Shape> shape, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+		this(UUID.randomUUID(), title, description, page, x, y, shape, important, rewards, prerequisites, tasks);
 	}
 	
-	private Quest(UUID id, String title, String description, UUID page, int x, int y, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
+	private Quest(UUID id, String title, String description, UUID page, int x, int y, Class<? extends Shape> shape, byte important, Collection<UUID> rewards, Collection<UUID> prerequisites, Collection<UUID> tasks) {
 		try {
 			if(id == null) {
 				throw new NullPointerException("id");
@@ -65,6 +68,12 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 			}
 			if(y < 0) {
 				throw new IndexOutOfBoundsException(y + " < 0. (y)");
+			}
+			if(shape == null) {
+				throw new NullPointerException("shape");
+			}
+			if(shape.getClass().isAssignableFrom(Point.class)) {
+				throw new IllegalArgumentException("shape cannot be a point");
 			}
 			if(important < 1) {
 				throw new IndexOutOfBoundsException(important + " < 1 (importance)");
@@ -98,8 +107,8 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		getGlobalQuestHandler().add(true, this);
 	}
 	
-	public Quest(String title, String description, UUID page, int x, int y, byte important) {
-		this(UUID.randomUUID(), title, description, page, x, y, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
+	public Quest(String title, String description, UUID page, int x, int y, Class<? extends Shape> shape, byte important) {
+		this(UUID.randomUUID(), title, description, page, x, y, shape, important, new ArrayList<UUID>(), new ArrayList<UUID>(), new ArrayList<UUID>());
 	}
 	
 	public Quest(NBTTagCompound data) {
@@ -510,6 +519,10 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	 */
 	void removeReward(UUID r) {
 		rewards.remove(r);
+	}
+	
+	public int getImportance() {
+		return important;
 	}
 
 	@Override

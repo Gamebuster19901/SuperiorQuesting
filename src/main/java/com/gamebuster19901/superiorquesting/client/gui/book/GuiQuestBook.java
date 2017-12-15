@@ -1,6 +1,8 @@
 package com.gamebuster19901.superiorquesting.client.gui.book;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
+import static com.gamebuster19901.superiorquesting.client.gui.book.NavigationButton.Direction.LEFT;
+import static com.gamebuster19901.superiorquesting.client.gui.book.NavigationButton.Direction.RIGHT;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -50,6 +52,12 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 
 	
 	private EntityPlayer player;
+	private NavigationButton[] navButtons = new NavigationButton[] {
+			addButton(new NavigationButton(buttonList.size(), LEFT)),
+			addButton(new NavigationButton(buttonList.size(), RIGHT))
+	};
+	private GuiButton[] editButtons = new GuiButton[] {};
+	private ArrayList<BookButtonLong> bookbuttons;
 
 	
 	public GuiQuestBook(EntityPlayer player) {
@@ -60,17 +68,6 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	@Override
 	public void initGui() {
 		super.initGui();
-		int i = 0;
-		int pagelist = i + 11;
-		int horizontalAdjustment = 172;
-		int verticalAdjustment = 102;
-
-		Point mid = new Point(width / 2, height / 2);
-		this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
-		while(i < pagelist) {
-			this.addButton(new PageButton(i, (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (i++ * (16 + 2)), (Page)null));
-		}
-		this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (i++ * (16 + 2)), ((char) (0x25bc)) + ""));
 		open(page, quest);
 		
 	}
@@ -80,13 +77,51 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		return false;
 	}
 	
+	//Good luck
 	public void open(UUID p, UUID q) {
 		debug(p);
+		int i = buttonList.size(); //button id
+		Point mid = new Point(width / 2, height / 2);
+		
 		if(p != null) {
 			pageType = 1;
 		}
 		page = p;
 		quest = q;
+		
+		if(pageType == 0) {
+			navButtons[0].visible = false;
+			navButtons[1].visible = true;
+		}
+		
+		if (pageType == -1) {
+			int horizontalAdjustment = 172;
+			int verticalAdjustment = 102;
+			
+			int canScrollUp = 0;
+			int canScrollDown = 0;
+			
+			navButtons[0].x = (int)mid.getX() -horizontalAdjustment + 67;
+			navButtons[0].y = 285;
+			navButtons[0].visible = true;
+			navButtons[1].x = (int)mid.getX() + horizontalAdjustment - 85;
+			navButtons[1].y = 285;
+			navButtons[1].visible = true;
+			
+			if(canScrollUp == 1) {
+				this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
+			}
+			int pagelist = i + 12 - canScrollUp - canScrollDown;
+			{
+				int j = 0 + canScrollUp;
+				for(; i < pagelist; i++, j++) {
+					this.addButton(new PageButton(i - pagelist, (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (j * (16 + 2)), (Page)null));
+				}
+				if(canScrollDown == 1) {
+					this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (j * (16 + 2)), ((char) (0x25bc)) + ""));
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -154,6 +189,34 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		}
 
 		super.drawScreen(mouseX, mouseY, partialTicks);
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		debug(button);
+		switch(pageType) {
+			case 1:
+				break;
+			case 0:
+				if(button instanceof NavigationButton) {
+					NavigationButton navButton = (NavigationButton) button;
+					Assert(navButton.getDirection() == RIGHT, "Impossible navigation button direction: " + navButton.getDirection());
+					pageType = -1;
+					open(null, null);
+				}
+				break;
+			case -1:
+				if(button instanceof NavigationButton) {
+					NavigationButton navButton = (NavigationButton) button;
+					if(navButton.getDirection() == LEFT) {
+						pageType = 0;
+						//open(null, null);
+					}
+				}
+				break;
+			default:
+				Assert(pageType > 1 && pageType > -1, "Illegal quest book page " + pageType);
+		}
 	}
 	
 	@Override

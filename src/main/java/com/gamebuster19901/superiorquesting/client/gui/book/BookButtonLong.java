@@ -15,8 +15,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class BookButtonLong extends GuiButton{
-	public static final int width = 152;
-	public static final int height = 16;
 	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation(MODID + ":textures/gui/book_two_sides.png");
 	
 	public BookButtonLong(int buttonId, int x, int y) {
@@ -25,6 +23,8 @@ public class BookButtonLong extends GuiButton{
 	
 	public BookButtonLong(int buttonId, int x, int y, String text) {
 		super(buttonId, x, y, text);
+		super.width = 152;
+		super.height = 16;
 	}
 	
     /**
