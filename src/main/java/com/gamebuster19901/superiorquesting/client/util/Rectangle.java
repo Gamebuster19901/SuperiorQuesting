@@ -5,6 +5,10 @@ public class Rectangle implements Shape{
 	private int width;
 	private int height;
 	
+	public Rectangle() {
+		this(16,8);
+	}
+	
 	public Rectangle(int w, int h) {
 		this(0,0,w,h);
 	}

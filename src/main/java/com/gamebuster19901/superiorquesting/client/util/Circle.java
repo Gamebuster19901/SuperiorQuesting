@@ -4,6 +4,10 @@ public class Circle implements Shape{
 	private Point origin;
 	private int diameter;
 	
+	public Circle() {
+		this(16);
+	}
+	
 	public Circle(int d) {
 		this(0,0,d);
 	}

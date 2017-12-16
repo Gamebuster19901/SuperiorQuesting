@@ -1,8 +1,11 @@
 package com.gamebuster19901.superiorquesting.client.util;
 
 public class TriangleUp extends Triangular{
-	private Point origin;
 	private int size;
+	
+	public TriangleUp() {
+		this(16);
+	}
 	
 	public TriangleUp(int size) {
 		this(new Point(0,0),size);
@@ -21,11 +24,6 @@ public class TriangleUp extends Triangular{
 	@Override
 	public Rectangle getBounds() {
 		return new Square(origin, size + 1);
-	}
-
-	@Override
-	public Point getOrigin() {
-		return origin;
 	}
 	
 	public void moveTo(Point p) {

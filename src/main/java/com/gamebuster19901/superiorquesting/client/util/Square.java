@@ -2,6 +2,10 @@ package com.gamebuster19901.superiorquesting.client.util;
 
 public class Square extends Rectangle{
 	
+	public Square() {
+		this(16);
+	}
+	
 	public Square(int size) {
 		this(0,0,size);
 	}

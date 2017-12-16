@@ -3,23 +3,28 @@ package com.gamebuster19901.superiorquesting.client.util;
 import java.awt.Polygon;
 
 public abstract class Triangular implements Shape{
-	protected Point o;
+	protected Point origin;
 	protected Point a;
 	protected Point b;
 	protected Point c;
 	
 	Triangular (Point o, Point a, Point b, Point c){
-		this.o = o;
+		this.origin = o;
 		this.a = a;
 		this.b = b;
 		this.c = c;
 	}
 	
 	public final void shift(int shiftX, int shiftY) {
-		o.shift(shiftX, shiftY);
+		origin.shift(shiftX, shiftY);
 		a.shift(shiftX, shiftY);
 		b.shift(shiftX, shiftY);
 		c.shift(shiftX, shiftY);
+	}
+	
+	@Override
+	public final Point getOrigin() {
+		return origin;
 	}
 	
 	public final int getArea() {
