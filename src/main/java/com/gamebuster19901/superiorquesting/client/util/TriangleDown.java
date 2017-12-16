@@ -1,22 +1,22 @@
 package com.gamebuster19901.superiorquesting.client.util;
 
-public class TriangleRight extends Triangular{
+public class TriangleDown extends Triangular{
 	private int size;
 	
-	public TriangleRight() {
+	public TriangleDown() {
 		this(16);
 	}
 	
-	public TriangleRight(int size) {
+	public TriangleDown(int size) {
 		this(new Point(0,0),size);
 	}
 	
-	public TriangleRight(int x, int y, int size) {
+	public TriangleDown(int x, int y, int size) {
 		this(new Point(x,y),size);
 	}
 	
-	public TriangleRight(Point p, int size) {
-		super(p, new Point(0, 0), new Point(size, 0), new Point(size / 2, size));
+	public TriangleDown(Point p, int size) {
+		super(p, new Point(0, size), new Point(size, size / 2), new Point(0,0));
 		origin = p;
 		this.size = size;
 	}
