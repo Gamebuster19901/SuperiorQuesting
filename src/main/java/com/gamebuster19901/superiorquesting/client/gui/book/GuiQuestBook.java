@@ -15,6 +15,9 @@ import com.gamebuster19901.superiorquesting.client.util.Point;
 import com.gamebuster19901.superiorquesting.client.util.Rectangle;
 import com.gamebuster19901.superiorquesting.client.util.Shape;
 import com.gamebuster19901.superiorquesting.client.util.Square;
+import com.gamebuster19901.superiorquesting.client.util.TriangleDown;
+import com.gamebuster19901.superiorquesting.client.util.TriangleLeft;
+import com.gamebuster19901.superiorquesting.client.util.TriangleRight;
 import com.gamebuster19901.superiorquesting.client.util.TriangleUp;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
@@ -262,10 +265,13 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	
 	public static void testShapes() {
 		Shape[] shapes = new Shape[] {
-			new Rectangle(2, 5),
-			new Square(4),
-			new Circle(16),
-			new TriangleUp(16)
+			new Rectangle(),
+			new Square(),
+			new Circle(),
+			new TriangleUp(),
+			new TriangleRight(),
+			new TriangleLeft(),
+			new TriangleDown()
 		};
 		for(Shape s : shapes) {
 			Shape.printShape(s);
