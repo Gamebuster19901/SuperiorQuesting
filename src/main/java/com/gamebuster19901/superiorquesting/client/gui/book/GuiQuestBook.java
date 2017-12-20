@@ -13,6 +13,7 @@ import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.util.Circle;
 import com.gamebuster19901.superiorquesting.client.util.Point;
 import com.gamebuster19901.superiorquesting.client.util.Rectangle;
+import com.gamebuster19901.superiorquesting.client.util.RegularGon;
 import com.gamebuster19901.superiorquesting.client.util.Shape;
 import com.gamebuster19901.superiorquesting.client.util.Square;
 import com.gamebuster19901.superiorquesting.client.util.TriangleDown;
@@ -271,10 +272,22 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			new TriangleUp(),
 			new TriangleRight(),
 			new TriangleLeft(),
-			new TriangleDown()
+			new TriangleDown(),
+			new RegularGon(5,0, new Square())
 		};
 		for(Shape s : shapes) {
 			Shape.printShape(s);
 		}
+		for(Point p : ((RegularGon)shapes[7]).getPoints()) {
+			System.out.println(p.getX() + ", " + p.getY());
+		}
+		
+		System.out.println(new Square().getCenter().getX());
+		System.out.println(new Square().getCenter().getY());
+		
+	}
+	
+	private void drawPixel(Point p, int color) {
+		drawVerticalLine(p.getX(), p.getY(), p.getY(), color);
 	}
 }
