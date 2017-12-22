@@ -1,8 +1,15 @@
 package com.gamebuster19901.superiorquesting.common.shape;
 
+import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.common.Debuggable;
+import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+import com.gamebuster19901.superiorquesting.proxy.ServerProxy;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface Shape extends UpdatableSerializable{
 	public Rectangle getBounds();
@@ -78,24 +85,30 @@ public interface Shape extends UpdatableSerializable{
 	}
 	
 	public static void printShape(Shape s) {
-		boolean[][] arr = s.toArray();
-		System.out.println(s.getClass());
-		
-		String ln = "";
-		
-        for(int i = 0; i < arr.length; i++){
-            for(int j = 0; j < arr[0].length; j++){
-                System.out.print(arr[i][j] ? "TT" : "FF");
-            }
-            System.out.print('\n');
-        }
+		if(Main.proxy instanceof ServerProxy) {
+			s.getClass().getName();
+		}
+		else {
+			boolean[][] arr = s.toArray();
+			System.out.println(s.getClass());
+			
+			String ln = "";
+			
+		    for(int i = 0; i < arr.length; i++){
+		        for(int j = 0; j < arr[0].length; j++){
+		            System.out.print(arr[i][j] ? "TT" : "FF");
+		        }
+		        System.out.print('\n');
+		    }
+		}
 	}
 	
 	public static Class<? extends Shape> getShapeClassFromNBT(NBTTagCompound data){
 		try {
 			Class<? extends Shape> clazz;
 			if(data.getString("CLASS").equals("")) {
-				throw new NullPointerException();
+				Debuggable.debug(NBTDebugger.debug(data, null), null);
+				throw new NullPointerException("tag \"CLASS\" does not exist");
 			}
 			clazz = (Class<? extends Shape>) Class.forName(data.getString("CLASS"));
 			return clazz;
