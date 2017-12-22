@@ -41,6 +41,7 @@ public class ShapeType {
 				throw new IllegalArgumentException("YOU'RE AN IDIOT, DON'T DO THAT");
 			}
 		}
+		System.out.println(specialParams.length);
 		for(Class c : specialParams) {
 			if(c.isPrimitive()) {
 				continue;
