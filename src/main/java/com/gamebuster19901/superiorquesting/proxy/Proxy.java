@@ -17,6 +17,15 @@ import com.gamebuster19901.superiorquesting.common.questing.PlayerQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.reward.ExperienceReward;
 import com.gamebuster19901.superiorquesting.common.questing.reward.ItemReward;
 import com.gamebuster19901.superiorquesting.common.questing.reward.RewardType;
+import com.gamebuster19901.superiorquesting.common.shape.Circle;
+import com.gamebuster19901.superiorquesting.common.shape.RegularGon;
+import com.gamebuster19901.superiorquesting.common.shape.Shape;
+import com.gamebuster19901.superiorquesting.common.shape.ShapeType;
+import com.gamebuster19901.superiorquesting.common.shape.Square;
+import com.gamebuster19901.superiorquesting.common.shape.TriangleDown;
+import com.gamebuster19901.superiorquesting.common.shape.TriangleLeft;
+import com.gamebuster19901.superiorquesting.common.shape.TriangleRight;
+import com.gamebuster19901.superiorquesting.common.shape.TriangleUp;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -48,8 +57,6 @@ public abstract class Proxy implements Debuggable{
 		PLAYER_QUEST_HANDLER = new PlayerQuestHandler();
 		MinecraftForge.EVENT_BUS.register(MULTIPLAYER_HANDLER);
 		MinecraftForge.EVENT_BUS.register(this);
-		
-		
 	}
 	
 	public void init(FMLInitializationEvent e){
@@ -60,6 +67,13 @@ public abstract class Proxy implements Debuggable{
 	public void postInit(FMLPostInitializationEvent e){
 		RewardType.registerRewardType(ItemReward.class, "Item Reward", "Rewards the player with some items");
 		RewardType.registerRewardType(ExperienceReward.class, "xP reward", "Rewards the player with some experience");
+		ShapeType.registerShapeType(Circle.class, "Circle", "A basic circle");
+		ShapeType.registerShapeType(TriangleUp.class, "Triangle (Up)", "An equilateral triangle pointing up");
+		ShapeType.registerShapeType(TriangleDown.class, "Triangle (Down)", "An equilateral triangle pointing down");
+		ShapeType.registerShapeType(TriangleLeft.class, "Triangle(Left)", "An equilateral triangle pointing left");
+		ShapeType.registerShapeType(TriangleRight.class, "Triangle (Right)", "An equilateral triangle pointing right");
+		ShapeType.registerShapeType(Square.class, "Square", "A special type of rectangle where all side lengths are equal");
+		ShapeType.registerShapeType(RegularGon.class, "Polygon", "A regular polygon with 5 or more sides", int.class, double.class);
 		checkValidState();
 	}
 	
