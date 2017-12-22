@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.common.questing.exception.DuplicateKeyException;
 
+import scala.actors.threadpool.Arrays;
+
 public class ShapeType {
 	public Class<? extends Shape> shape;
 	public String name;
@@ -39,7 +41,6 @@ public class ShapeType {
 				throw new IllegalArgumentException("YOU'RE AN IDIOT, DON'T DO THAT");
 			}
 		}
-		System.out.println(specialParams.length);
 		for(Class c : specialParams) {
 			if(c.isPrimitive()) {
 				continue;
@@ -47,7 +48,12 @@ public class ShapeType {
 			throw new IllegalArgumentException(c.getSimpleName() + " is not primitive!");
 		}
 		shapeTypes.add(new ShapeType(shape, name, description, specialParams));
-		Main.LOGGER.info("Registered new shape type: " + name);
+		if(specialParams.length == 0) {
+			Main.LOGGER.info("Registered new shape type: " + name);
+		}
+		else {
+			Main.LOGGER.info("Registered new shape type: " + name + " with special parameters " + Arrays.toString(specialParams));
+		}
 	}
 	
 	/**
