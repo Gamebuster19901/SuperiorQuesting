@@ -13,8 +13,8 @@ public class Square extends Rectangle{
 		this(16);
 	}
 	
-	public Square(NBTTagCompound compoundTag) {
-		// TODO Auto-generated constructor stub
+	public Square(NBTTagCompound nbt) {
+		deserializeNBT(nbt);
 	}
 	
 	public Square(int size) {
