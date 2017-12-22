@@ -10,12 +10,40 @@ import net.minecraft.nbt.NBTTagString;
 
 public interface NBTDebugger{
 	
+	public default String debug(NBTBase nbt) {
+		return getFullNBTString(nbt, 1);
+	}
 	
 	public default String getFullNBTString(NBTBase nbt, int level) {
 		return getFullNBTString(nbt, level, null);
 	}
 	
 	public default String getFullNBTString(NBTBase nbt, int level, String key) {
+		String message = "\n";
+		if(level < 1) {
+			throw new IndexOutOfBoundsException(level + " < " + 1);
+		}
+		message = message + HelperMethods.computeLines(nbt, level, key);
+		/*if(nbt instanceof NBTTagCompound) {
+			level++;
+			NBTTagCompound compound = (NBTTagCompound)nbt;
+			for(String s : compound.getKeySet()) {
+				message = message + getFullNBTString(compound.getTag(s), level, s);
+			}
+			level--;
+		}*/
+		return message;
+	}	
+	
+	public static String debug(NBTBase nbt, Object o) {
+		return getFullNBTString(nbt, 1, (Object)null);
+	}
+	
+	public static String getFullNBTString(NBTBase nbt, int level, Object o) {
+		return getFullNBTString(nbt, level, null, null);
+	}
+	
+	public static String getFullNBTString(NBTBase nbt, int level, String key, Object o) {
 		String message = "\n";
 		if(level < 1) {
 			throw new IndexOutOfBoundsException(level + " < " + 1);
