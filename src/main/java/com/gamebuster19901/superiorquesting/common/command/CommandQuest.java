@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
+import com.gamebuster19901.superiorquesting.client.util.Square;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
@@ -98,7 +99,7 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 				Page p = new Page("Test");
 			}
 			if(args[1].equals("quest") || (args[1].equals("page") && args[2].equals("quest"))) {
-				Quest q = new Quest("Test", "A test quest.", UUID.randomUUID(), 0, 0, (byte)1);
+				Quest q = new Quest("Test", "A test quest.", UUID.randomUUID(), 0, 0, Square.class, (byte)1);
 				if(args.length > 2) {
 					for(int i = 2; i < args.length; i++) {
 						if(args[i].equals("task")) {
