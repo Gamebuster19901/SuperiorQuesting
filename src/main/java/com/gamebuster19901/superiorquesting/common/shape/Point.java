@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.shape;
+package com.gamebuster19901.superiorquesting.common.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
@@ -6,54 +6,94 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TriangleDown extends Triangular{
+public class Point implements Shape{
 	private static final long VERSION = 1L;
-	private int size;
+	private int x;
+	private int y;
 	
-	public TriangleDown() {
-		this(16);
+	public Point() {
+		this(0,0);
 	}
 	
-	public TriangleDown(NBTTagCompound nbt) {
-		super(nbt);
+	public Point(NBTTagCompound nbt) {
+		deserializeNBT(nbt);
 	}
 	
-	public TriangleDown(int size) {
-		this(new Point(0,0),size);
+	public Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	@Override
+	public Point getOrigin() {
+		return this;
+	}
+
+	public int getX(){
+		return x;
 	}
 	
-	public TriangleDown(int x, int y, int size) {
-		this(new Point(x,y),size);
+	public int getY() {
+		return y;
 	}
 	
-	public TriangleDown(Point p, int size) {
-		super(p, new Point(0, size), new Point(size, size / 2), new Point(0,0));
-		origin = p;
-		this.size = size;
+	public int distanceTo(Point p) {
+		final int x = getX() - p.getX();
+		final int y = getY() - p.getY();
+		return (int) Math.sqrt((x * x) + (y * y));
+	}
+	
+	@Override
+	public String toString() {
+		return "point (" + x + ',' + y + ')';
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		return new Square(origin, size + 1);
+		// TODO Auto-generated method stub
+		return new Rectangle(this,1,1);
 	}
-	
+
+	@Override
+	public boolean contains(Point p) {
+		return x == p.getX() && y == p.getY();
+	}
+
+	@Override
+	public boolean intersects(Shape otherShape) {
+		return otherShape.contains(this);
+	}
+
+	@Override
+	public void shift(int shiftX, int shiftY) {
+		x = x + shiftX;
+		y = y + shiftY;
+	}
+
+	@Override
 	public void moveTo(Point p) {
-		this.shift(p.getX() - origin.getX(), p.getY() - origin.getY());
+		x = p.getX();
+		y = p.getY();
 	}
-	
+
+	@Override
 	public void moveTo(int x, int y) {
-		this.moveTo(new Point(x, y));
+		this.x = x;
+		this.y = y;
+	}
+
+	@Override
+	public boolean[][] toArray() {
+		return new boolean[1][1];
 	}
 
 	@Override
 	public void convert(long prevVersion, long nextVersion, NBTTagCompound nbtIn) {
 		try {
 			if(nextVersion > VERSION) {
-				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
+				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);	
 			}
-			
 			Assert(nextVersion != prevVersion, "Cannot convert to a version if it is the same version, this should never happen! (" + nextVersion + ")");
-			
 			if(nextVersion > prevVersion + 1L) {
 				convert(prevVersion, nextVersion - 1L, nbtIn);
 			}
@@ -66,12 +106,12 @@ public class TriangleDown extends Triangular{
 				//Future: convert from version 1 to version 2
 			}
 			
-			throw new AssertionError("Tried to convert directly from version " + prevVersion + " to version " + nextVersion);
-			
+			throw new AssertionError("Tried to convert directl from version " + prevVersion + " to version " + nextVersion);
 		}
-		catch(Exception | AssertionError e) {
+		catch(Exception| AssertionError e) {
 			throw new VersioningError("There was an issue converting from version " + prevVersion + " to version " + nextVersion, e);
 		}
+		
 	}
 
 	@Override
@@ -81,8 +121,11 @@ public class TriangleDown extends Triangular{
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		NBTTagCompound nbt = super.serializeNBT();
-		nbt.setInteger("SIZE", size);
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setLong("VERSION", getVersion());
+		nbt.setString("CLASS", Point.class.getCanonicalName());
+		nbt.setInteger("X", x);
+		nbt.setInteger("Y", y);
 		return nbt;
 	}
 
@@ -91,7 +134,7 @@ public class TriangleDown extends Triangular{
 		long ver = data.getLong("VERSION");
 		try {
 			try {
-				Assert(ver != 0, "Missing version data in quest " + data.getString("UUID"));
+				Assert(ver != 0, "Missing version data in point");
 			}
 			catch(AssertionError e) {
 				debug(getFullNBTString(data, 1));
@@ -100,13 +143,10 @@ public class TriangleDown extends Triangular{
 			if(ver != VERSION) {
 				convert(ver, VERSION, data);
 			}
-			
-			origin = new Point(data.getCompoundTag("ORIGIN"));
-			int size = data.getInteger("SIZE");
-			Assert(size < 256, "Size > 255");
-			a = new Point(0, size);
-			b = new Point(size, size / 2);
-			c = new Point(0,0);
+			else {
+				x = data.getInteger("X");
+				y = data.getInteger("Y");
+			}
 		}
 		catch(Exception | AssertionError e) {
 			throw new SerializationException(e);

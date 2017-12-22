@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
-import com.gamebuster19901.superiorquesting.client.shape.Square;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
@@ -17,6 +16,7 @@ import com.gamebuster19901.superiorquesting.common.questing.GlobalQuestHandler;
 import com.gamebuster19901.superiorquesting.common.questing.Page;
 import com.gamebuster19901.superiorquesting.common.questing.Quest;
 import com.gamebuster19901.superiorquesting.common.questing.reward.ItemReward;
+import com.gamebuster19901.superiorquesting.common.shape.Square;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

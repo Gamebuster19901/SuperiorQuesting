@@ -3,7 +3,7 @@ package com.gamebuster19901.superiorquesting.client.gui.book;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
-import com.gamebuster19901.superiorquesting.client.shape.Shape;
+import com.gamebuster19901.superiorquesting.common.shape.Shape;
 
 import net.minecraft.client.gui.GuiButton;
 

@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.shape;
+package com.gamebuster19901.superiorquesting.common.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;

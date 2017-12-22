@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.shape;
+package com.gamebuster19901.superiorquesting.common.shape;
 
 public enum GonType {
 	PENTA(5),

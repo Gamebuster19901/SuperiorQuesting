@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.shape;
+package com.gamebuster19901.superiorquesting.common.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
@@ -6,94 +6,54 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class Point implements Shape{
+public class TriangleLeft extends Triangular{
 	private static final long VERSION = 1L;
-	private int x;
-	private int y;
+	private int size;
 	
-	public Point() {
-		this(0,0);
-	}
-	
-	public Point(NBTTagCompound nbt) {
-		deserializeNBT(nbt);
+	public TriangleLeft() {
+		this(16);
 	}
 	
-	public Point(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public Point getOrigin() {
-		return this;
-	}
-
-	public int getX(){
-		return x;
+	public TriangleLeft(NBTTagCompound nbt) {
+		super(nbt);
 	}
 	
-	public int getY() {
-		return y;
+	public TriangleLeft(int size) {
+		this(new Point(0,0),size);
 	}
 	
-	public int distanceTo(Point p) {
-		final int x = getX() - p.getX();
-		final int y = getY() - p.getY();
-		return (int) Math.sqrt((x * x) + (y * y));
+	public TriangleLeft(int x, int y, int size) {
+		this(new Point(x,y),size);
 	}
 	
-	@Override
-	public String toString() {
-		return "point (" + x + ',' + y + ')';
+	public TriangleLeft(Point p, int size) {
+		super(p, new Point(0, size), new Point(size / 2, -1), new Point(size, size));
+		origin = p;
+		this.size = size;
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
-		return new Rectangle(this,1,1);
+		return new Square(origin, size + 1);
 	}
-
-	@Override
-	public boolean contains(Point p) {
-		return x == p.getX() && y == p.getY();
-	}
-
-	@Override
-	public boolean intersects(Shape otherShape) {
-		return otherShape.contains(this);
-	}
-
-	@Override
-	public void shift(int shiftX, int shiftY) {
-		x = x + shiftX;
-		y = y + shiftY;
-	}
-
-	@Override
+	
 	public void moveTo(Point p) {
-		x = p.getX();
-		y = p.getY();
+		this.shift(p.getX() - origin.getX(), p.getY() - origin.getY());
 	}
-
-	@Override
+	
 	public void moveTo(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public boolean[][] toArray() {
-		return new boolean[1][1];
+		this.moveTo(new Point(x, y));
 	}
 
 	@Override
 	public void convert(long prevVersion, long nextVersion, NBTTagCompound nbtIn) {
 		try {
 			if(nextVersion > VERSION) {
-				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);	
+				throw new FutureVersionError(nextVersion + " is a future version, currently on version " + VERSION);
 			}
+			
 			Assert(nextVersion != prevVersion, "Cannot convert to a version if it is the same version, this should never happen! (" + nextVersion + ")");
+			
 			if(nextVersion > prevVersion + 1L) {
 				convert(prevVersion, nextVersion - 1L, nbtIn);
 			}
@@ -106,26 +66,23 @@ public class Point implements Shape{
 				//Future: convert from version 1 to version 2
 			}
 			
-			throw new AssertionError("Tried to convert directl from version " + prevVersion + " to version " + nextVersion);
+			throw new AssertionError("Tried to convert directly from version " + prevVersion + " to version " + nextVersion);
+			
 		}
-		catch(Exception| AssertionError e) {
+		catch(Exception | AssertionError e) {
 			throw new VersioningError("There was an issue converting from version " + prevVersion + " to version " + nextVersion, e);
 		}
-		
 	}
 
 	@Override
 	public long getVersion() {
 		return VERSION;
 	}
-
+	
 	@Override
 	public NBTTagCompound serializeNBT() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setLong("VERSION", getVersion());
-		nbt.setString("CLASS", Point.class.getCanonicalName());
-		nbt.setInteger("X", x);
-		nbt.setInteger("Y", y);
+		NBTTagCompound nbt = super.serializeNBT();
+		nbt.setInteger("SIZE", size);
 		return nbt;
 	}
 
@@ -134,7 +91,7 @@ public class Point implements Shape{
 		long ver = data.getLong("VERSION");
 		try {
 			try {
-				Assert(ver != 0, "Missing version data in point");
+				Assert(ver != 0, "Missing version data in quest " + data.getString("UUID"));
 			}
 			catch(AssertionError e) {
 				debug(getFullNBTString(data, 1));
@@ -143,10 +100,13 @@ public class Point implements Shape{
 			if(ver != VERSION) {
 				convert(ver, VERSION, data);
 			}
-			else {
-				x = data.getInteger("X");
-				y = data.getInteger("Y");
-			}
+			
+			origin = new Point(data.getCompoundTag("ORIGIN"));
+			int size = data.getInteger("SIZE");
+			Assert(size < 256, "Size > 255");
+			a = new Point(0, size); 
+			b = new Point(size / 2, -1);
+			c = new Point(size, size);
 		}
 		catch(Exception | AssertionError e) {
 			throw new SerializationException(e);

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
-import com.gamebuster19901.superiorquesting.client.shape.Point;
-import com.gamebuster19901.superiorquesting.client.shape.Shape;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.NBTDebugger;
@@ -14,6 +12,8 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Serializat
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 import com.gamebuster19901.superiorquesting.common.questing.integrate.Assignment;
 import com.gamebuster19901.superiorquesting.common.questing.integrate.Rewardable;
+import com.gamebuster19901.superiorquesting.common.shape.Point;
+import com.gamebuster19901.superiorquesting.common.shape.Shape;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
