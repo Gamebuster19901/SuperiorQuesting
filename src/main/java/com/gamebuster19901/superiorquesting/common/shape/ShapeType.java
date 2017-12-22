@@ -20,7 +20,7 @@ public class ShapeType {
 	private static final ArrayList<ShapeType> shapeTypes = new ArrayList<ShapeType>();
 	
 	public static final void registerShapeType(Class<? extends Shape> shape, String name, String description) {
-		registerShapeType(shape, name, description, (Class)null);
+		registerShapeType(shape, name, description, (Class[])null);
 	}
 	
 	/**
