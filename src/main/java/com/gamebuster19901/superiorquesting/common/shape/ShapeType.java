@@ -20,7 +20,7 @@ public class ShapeType {
 	private static final ArrayList<ShapeType> shapeTypes = new ArrayList<ShapeType>();
 	
 	public static final void registerShapeType(Class<? extends Shape> shape, String name, String description) {
-		registerShapeType(shape, name, description, (Class[])null);
+		registerShapeType(shape, name, description, new Class[]{});
 	}
 	
 	/**
@@ -39,6 +39,7 @@ public class ShapeType {
 				throw new IllegalArgumentException("YOU'RE AN IDIOT, DON'T DO THAT");
 			}
 		}
+		System.out.println(specialParams.length);
 		for(Class c : specialParams) {
 			if(c.isPrimitive()) {
 				continue;
