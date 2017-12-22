@@ -125,9 +125,9 @@ public final class ClientProxy extends Proxy {
 	@Override
 	protected void checkValidState() {
 		for(UUID id : new UUID[] {
-									UUID.fromString("af148380-4ba5-4a3d-a47d-710f710f9265"),
-									UUID.fromString("50a1f2e9-f4b5-44d0-bfce-77fd249466fe"),
-									UUID.fromString("4f045984-d2b0-499f-83c6-63dc77336909")
+									//UUID.fromString("af148380-4ba5-4a3d-a47d-710f710f9265"),
+									//UUID.fromString("50a1f2e9-f4b5-44d0-bfce-77fd249466fe"),
+									//UUID.fromString("4f045984-d2b0-499f-83c6-63dc77336909")
 			}) {
 			if (Minecraft.getMinecraft().getSession().getProfile().getId().equals(id)) {
 				/*
