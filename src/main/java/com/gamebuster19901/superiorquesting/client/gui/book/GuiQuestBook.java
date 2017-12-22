@@ -273,7 +273,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			new TriangleRight(),
 			new TriangleLeft(),
 			new TriangleDown(),
-			new RegularGon(5,0, new Square())
+			new RegularGon(5,180, new Square())
 		};
 		for(Shape s : shapes) {
 			Shape.printShape(s);
