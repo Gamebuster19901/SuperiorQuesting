@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.util;
+package com.gamebuster19901.superiorquesting.client.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
@@ -6,28 +6,28 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TriangleRight extends Triangular{
+public class TriangleUp extends Triangular{
 	private static final long VERSION = 1L;
 	private int size;
 	
-	public TriangleRight() {
+	public TriangleUp() {
 		this(16);
 	}
 	
-	public TriangleRight(NBTTagCompound nbt) {
+	public TriangleUp(NBTTagCompound nbt) {
 		super(nbt);
 	}
 	
-	public TriangleRight(int size) {
+	public TriangleUp(int size) {
 		this(new Point(0,0),size);
 	}
 	
-	public TriangleRight(int x, int y, int size) {
+	public TriangleUp(int x, int y, int size) {
 		this(new Point(x,y),size);
 	}
 	
-	public TriangleRight(Point p, int size) {
-		super(p, new Point(0, 0), new Point(size, 0), new Point(size / 2, size));
+	public TriangleUp(Point p, int size) {
+		super(p, new Point(size, 0), new Point(0, size / 2), new Point(size, size));
 		origin = p;
 		this.size = size;
 	}
@@ -104,9 +104,9 @@ public class TriangleRight extends Triangular{
 			origin = new Point(data.getCompoundTag("ORIGIN"));
 			int size = data.getInteger("SIZE");
 			Assert(size < 256, "Size > 255");
-			a = new Point(0, 0);
-			b = new Point(size, 0);
-			c = new Point(size / 2, size);
+			a = new Point(size, 0);
+			b = new Point(0, size / 2); 
+			c = new Point(size, size);
 		}
 		catch(Exception | AssertionError e) {
 			throw new SerializationException(e);

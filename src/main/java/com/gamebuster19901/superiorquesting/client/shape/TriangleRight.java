@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.util;
+package com.gamebuster19901.superiorquesting.client.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
@@ -6,41 +6,45 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class Square extends Rectangle{
+public class TriangleRight extends Triangular{
 	private static final long VERSION = 1L;
 	private int size;
-	public Square() {
+	
+	public TriangleRight() {
 		this(16);
 	}
 	
-	public Square(NBTTagCompound compoundTag) {
-		// TODO Auto-generated constructor stub
+	public TriangleRight(NBTTagCompound nbt) {
+		super(nbt);
 	}
 	
-	public Square(int size) {
-		this(0,0,size);
+	public TriangleRight(int size) {
+		this(new Point(0,0),size);
 	}
 	
-	public Square(int x, int y, int size) {
-		this(new Point(x, y), size);
+	public TriangleRight(int x, int y, int size) {
+		this(new Point(x,y),size);
 	}
 	
-	public Square(Point p, int size) {
-		super(p, size, size);
+	public TriangleRight(Point p, int size) {
+		super(p, new Point(0, 0), new Point(size, 0), new Point(size / 2, size));
+		origin = p;
 		this.size = size;
 	}
 
-	public static boolean isSquare(Shape s) {
-		if(s instanceof Rectangle) {
-			if(s instanceof Square) {
-				return true;
-			}
-			Rectangle r = (Rectangle) s;
-			return r.getWidth() == r.getHeight();
-		}
-		return false;
+	@Override
+	public Rectangle getBounds() {
+		return new Square(origin, size + 1);
 	}
 	
+	public void moveTo(Point p) {
+		this.shift(p.getX() - origin.getX(), p.getY() - origin.getY());
+	}
+	
+	public void moveTo(int x, int y) {
+		this.moveTo(new Point(x, y));
+	}
+
 	@Override
 	public void convert(long prevVersion, long nextVersion, NBTTagCompound nbtIn) {
 		try {
@@ -74,13 +78,10 @@ public class Square extends Rectangle{
 	public long getVersion() {
 		return VERSION;
 	}
-
+	
 	@Override
 	public NBTTagCompound serializeNBT() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setLong("VERSION", getVersion());
-		nbt.setString("CLASS", Rectangle.class.getCanonicalName());
-		nbt.setTag("ORIGIN", origin.serializeNBT());
+		NBTTagCompound nbt = super.serializeNBT();
 		nbt.setInteger("SIZE", size);
 		return nbt;
 	}
@@ -99,11 +100,13 @@ public class Square extends Rectangle{
 			if(ver != VERSION) {
 				convert(ver, VERSION, data);
 			}
-			else {
-				origin = new Point(data.getCompoundTag("ORIGIN"));
-				width = data.getInteger("SIZE");
-				height = data.getInteger("SIZE");
-			}
+			
+			origin = new Point(data.getCompoundTag("ORIGIN"));
+			int size = data.getInteger("SIZE");
+			Assert(size < 256, "Size > 255");
+			a = new Point(0, 0);
+			b = new Point(size, 0);
+			c = new Point(size / 2, size);
 		}
 		catch(Exception | AssertionError e) {
 			throw new SerializationException(e);

@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.util;
+package com.gamebuster19901.superiorquesting.client.shape;
 
 import java.awt.Polygon;
 

@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.util;
+package com.gamebuster19901.superiorquesting.client.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
@@ -6,85 +6,69 @@ import com.gamebuster19901.superiorquesting.common.questing.exception.Versioning
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class Point implements Shape{
-	private static final long VERSION = 1L;
-	private int x;
-	private int y;
+public class Circle implements Shape{
+	private static final long VERSION = 1l;
+	private Point origin;
+	private int diameter;
 	
-	public Point() {
-		this(0,0);
+	public Circle() {
+		this(16);
 	}
 	
-	public Point(NBTTagCompound nbt) {
+	public Circle(NBTTagCompound nbt) {
 		deserializeNBT(nbt);
 	}
 	
-	public Point(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public Point getOrigin() {
-		return this;
-	}
-
-	public int getX(){
-		return x;
+	public Circle(int d) {
+		this(0,0,d);
 	}
 	
-	public int getY() {
-		return y;
+	public Circle(int x, int y, int d) {
+		this(new Point(x,y),d);
 	}
 	
-	public int distanceTo(Point p) {
-		final int x = getX() - p.getX();
-		final int y = getY() - p.getY();
-		return (int) Math.sqrt((x * x) + (y * y));
-	}
-	
-	@Override
-	public String toString() {
-		return "point (" + x + ',' + y + ')';
+	public Circle(Point p, int d) {
+		origin = p;
+		diameter = d;
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
-		return new Rectangle(this,1,1);
+		int actualDiameter = diameter;
+		if(diameter % 2 == 0) {
+			actualDiameter++;
+		}
+		return new Square(origin, actualDiameter);
+	}
+
+	@Override
+	public Point getOrigin() {
+		return origin;
+	}
+	
+	public Point getCenter() {
+		return getBounds().getCenter();
 	}
 
 	@Override
 	public boolean contains(Point p) {
-		return x == p.getX() && y == p.getY();
-	}
-
-	@Override
-	public boolean intersects(Shape otherShape) {
-		return otherShape.contains(this);
+		int x = getCenter().getX();
+		int y = getCenter().getY();
+		
+		int xSquared = (x - p.getX())*(x - p.getX());
+		int ySquared = (y - p.getY())*(y - p.getY());
+		
+		if(diameter % 2 == 1) {
+			return (double)diameter / 2d > Math.sqrt(xSquared + ySquared);
+		}
+		else {
+			return (double)diameter / 2d >= Math.sqrt(xSquared + ySquared);
+		}
 	}
 
 	@Override
 	public void shift(int shiftX, int shiftY) {
-		x = x + shiftX;
-		y = y + shiftY;
-	}
-
-	@Override
-	public void moveTo(Point p) {
-		x = p.getX();
-		y = p.getY();
-	}
-
-	@Override
-	public void moveTo(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public boolean[][] toArray() {
-		return new boolean[1][1];
+		origin.shift(shiftX, shiftY);
 	}
 
 	@Override
@@ -123,18 +107,20 @@ public class Point implements Shape{
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setLong("VERSION", getVersion());
-		nbt.setString("CLASS", Point.class.getCanonicalName());
-		nbt.setInteger("X", x);
-		nbt.setInteger("Y", y);
+		nbt.setString("CLASS", Circle.class.getCanonicalName());
+		nbt.setTag("ORIGIN", origin.serializeNBT());
+		nbt.setInteger("DIAMETER", diameter);
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound data) {
 		long ver = data.getLong("VERSION");
+		Class<? extends Shape> clazz = Shape.getShapeClassFromNBT(data);
 		try {
 			try {
-				Assert(ver != 0, "Missing version data in point");
+				Assert(ver != 0, "Missing version data in " + Circle.class.getSimpleName() + " instance");
+				Assert(clazz.equals(Circle.class), clazz.getName() + " is not " + Circle.class.getName() + '!');
 			}
 			catch(AssertionError e) {
 				debug(getFullNBTString(data, 1));
@@ -144,8 +130,8 @@ public class Point implements Shape{
 				convert(ver, VERSION, data);
 			}
 			else {
-				x = data.getInteger("X");
-				y = data.getInteger("Y");
+				origin = new Point(data.getCompoundTag("ORIGIN"));
+				diameter = data.getInteger("DIAMETER");
 			}
 		}
 		catch(Exception | AssertionError e) {
