@@ -2,13 +2,19 @@ package com.gamebuster19901.superiorquesting.client.util;
 
 import java.awt.Polygon;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public abstract class Triangular implements Shape{
 	protected Point origin;
 	protected Point a;
 	protected Point b;
 	protected Point c;
 	
-	Triangular (Point o, Point a, Point b, Point c){
+	protected Triangular(NBTTagCompound nbt){
+		deserializeNBT(nbt);
+	}
+	
+	protected Triangular (Point o, Point a, Point b, Point c){
 		this.origin = o;
 		this.a = a;
 		this.b = b;
@@ -42,5 +48,17 @@ public abstract class Triangular implements Shape{
 	public final boolean contains(Point p) {
 		Polygon poly = new Polygon(new int[] {a.getX(), b.getX(), c.getX()}, new int[] {a.getY(), b.getY(), c.getY()}, 3);
 		return poly.contains(p.getX(), p.getY());
+	}
+	
+	@Override
+	public NBTTagCompound serializeNBT() {
+		
+		NBTTagCompound data = new NBTTagCompound();
+		
+		data.setLong("VERSION", getVersion());
+		data.setString("CLASS", getClass().getName());
+		data.setTag("ORIGIN", origin.serializeNBT());
+		
+		return data;
 	}
 }

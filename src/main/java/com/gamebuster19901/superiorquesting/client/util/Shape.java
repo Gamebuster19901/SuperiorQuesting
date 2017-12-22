@@ -1,6 +1,10 @@
 package com.gamebuster19901.superiorquesting.client.util;
 
-public interface Shape {
+import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
+
+import net.minecraft.nbt.NBTTagCompound;
+
+public interface Shape extends UpdatableSerializable{
 	public Rectangle getBounds();
 	
 	public Point getOrigin();
@@ -85,5 +89,21 @@ public interface Shape {
             }
             System.out.print('\n');
         }
+	}
+	
+	public static Class<? extends Shape> getShapeClassFromNBT(NBTTagCompound data){
+		try {
+			Class<? extends Shape> clazz;
+			if(data.getString("CLASS").equals("")) {
+				throw new NullPointerException();
+			}
+			clazz = (Class<? extends Shape>) Class.forName(data.getString("CLASS"));
+			return clazz;
+		}
+		catch(ClassNotFoundException | NullPointerException e) {
+			NoClassDefFoundError e1 = new NoClassDefFoundError(e.getMessage());
+			e1.initCause(e);
+			throw e1;
+		}
 	}
 }
