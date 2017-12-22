@@ -31,8 +31,8 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 	private int y;
 	private Class<? extends Shape> shape;
 	private byte important = 1;
-	private boolean lockedByDefault = false;
-	private boolean hiddenByDefault = false; //a quest that is hidden is not visible unless all prerequisite quests are completed.
+	private boolean lockedByDefault = false; //a quest that is locked by default is locked until another quest unlocks it.
+	private boolean hiddenByDefault = false; //a quest that is hidden is not visible unless all prerequisite quests are completed, or another quest unhides it
 	private ArrayList<UUID> rewards = new ArrayList<UUID>();
 	private ArrayList<UUID> prerequisites = new ArrayList<UUID>();
 	private ArrayList<UUID> tasks = new ArrayList<UUID>();
