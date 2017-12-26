@@ -47,6 +47,7 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		for(UUID p : PAGES.keySet()) {
 			ret.add(getPage(p));
 		}
+		ret.sort(null);
 		return ret;
 	}
 	

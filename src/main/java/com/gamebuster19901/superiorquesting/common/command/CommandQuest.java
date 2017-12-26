@@ -133,6 +133,9 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 					sender.sendMessage(new TextComponentString(line));
 				}
 			}
+			for(Page p : Main.proxy.getGlobalQuestHandler().getAllPages()) {
+				sender.sendMessage(new TextComponentString(p.order + " " + p.getUUID()));
+			}
 			return;
 		}
 		throw new WrongUsageException(MODID + ".commands.quests.usage");

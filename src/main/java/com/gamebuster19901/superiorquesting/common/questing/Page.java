@@ -1,5 +1,6 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 	private final TreeSet<UUID> quests = new TreeSet<UUID>();
 	private String title;
 	private String description;
-	private int order;
+	public int order;
 	private boolean hiddenByDefault;
 	private boolean lockedByDefault;
 	
@@ -177,17 +178,7 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 
 	@Override
 	public final int compareTo(Object o) {
-		if(o instanceof Page) {
-			Page p = (Page)o;
-			if(this.order < p.order) {
-				return -1;
-			}
-			else if (this.order > p.order) {
-				return 1;
-			}
-			return 0;
-		}
-		throw new IllegalArgumentException("Cannot compare with something that is not a page " + o.getClass() + " is not a subclass of " + Page.class);
+		return new Integer(order).compareTo(((Page)o).order);
 	}
 
 	@Override
