@@ -31,8 +31,6 @@ public class BookButtonLong extends GuiButton{
     {
         if (this.visible)
         {
-        	//mouseX = (int)(mouseX * 1.5);
-        	//mouseY = (int)(mouseY * 1.5);
             FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
