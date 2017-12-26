@@ -96,10 +96,15 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 		}
 		if(args[0].equals("add") && Debuggable.debug) {
 			if(args[1].equals("page")) {
-				Page p = new Page("Test");
+				new Page("Test");
+				return;
 			}
-			if(args[1].equals("quest") || (args[1].equals("page") && args[2].equals("quest"))) {
-				Quest q = new Quest("Test", "A test quest.", UUID.randomUUID(), 0, 0, Square.class, (byte)1);
+			if(args[1].equals("lorem")) {
+				new Page("Lorem ipsum", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+				return;
+			}
+			if(args[1].equals("quest")) {
+				Quest q = new Quest("Test", "A test quest.", new Page("Test page").getUUID(), 0, 0, Square.class, (byte)1);
 				if(args.length > 2) {
 					for(int i = 2; i < args.length; i++) {
 						if(args[i].equals("task")) {
