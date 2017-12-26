@@ -80,7 +80,7 @@ public class QuestWorldData extends WorldSavedData implements UpdatableSerializa
 		System.out.println(getFullNBTString(nbt, 1, "base"));
 		long ver = nbt.getLong("VERSION");
 		if(ver == VERSION) {
-			NBTTagCompound pages = nbt.getCompoundTag(QUEST_KEY);
+			NBTTagCompound pages = nbt.getCompoundTag(PAGE_KEY);
 			for(String key : pages.getKeySet()) {
 				Assert(server != null);
 				new Page(pages.getCompoundTag(key));
