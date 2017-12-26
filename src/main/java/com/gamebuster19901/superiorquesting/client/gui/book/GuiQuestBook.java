@@ -1,8 +1,8 @@
 package com.gamebuster19901.superiorquesting.client.gui.book;
 
 import static com.gamebuster19901.superiorquesting.Main.MODID;
-import static com.gamebuster19901.superiorquesting.client.gui.book.NavigationButton.Direction.LEFT;
-import static com.gamebuster19901.superiorquesting.client.gui.book.NavigationButton.Direction.RIGHT;
+import static com.gamebuster19901.superiorquesting.client.gui.book.button.NavigationButton.Direction.LEFT;
+import static com.gamebuster19901.superiorquesting.client.gui.book.button.NavigationButton.Direction.RIGHT;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -10,9 +10,14 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.client.gui.book.button.BookButtonLong;
+import com.gamebuster19901.superiorquesting.client.gui.book.button.ImageButton;
+import com.gamebuster19901.superiorquesting.client.gui.book.button.NavigationButton;
+import com.gamebuster19901.superiorquesting.client.gui.book.button.PageButton;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.IngameDebuggable;
+import com.gamebuster19901.superiorquesting.common.item.ItemQuestBook;
 import com.gamebuster19901.superiorquesting.common.questing.Page;
 import com.gamebuster19901.superiorquesting.common.shape.Circle;
 import com.gamebuster19901.superiorquesting.common.shape.Point;
@@ -67,7 +72,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			addButton(new NavigationButton(buttonList.size(), LEFT)),
 			addButton(new NavigationButton(buttonList.size(), RIGHT))
 	};
-	private GuiButton[] editButtons = new GuiButton[] {};
+	private GuiButton[] editButtons = new GuiButton[3];
 	private BookButtonLong[] longNavigationButtons = new BookButtonLong[2];
 	private PageButton[] pageButtons = new PageButton[12];
 	private Point mid;
@@ -76,6 +81,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	public GuiQuestBook(EntityPlayer player) {
 		super();
 		this.player = player;
+		this.editMode = player.getActiveItemStack().getItem().equals(ItemQuestBook.ITEM) && player.getActiveItemStack().getItemDamage() == 1;
 	}
 	
 	@Override
@@ -98,8 +104,10 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			pageButtons[j] = (this.addButton(new PageButton(i , (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (j * (16 + 2)))));
 		}
 		longNavigationButtons[0] = this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
-		longNavigationButtons[1] = this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (i++ * (16 + 2)), ((char) (0x25bc)) + ""));
-		
+		longNavigationButtons[1] = this.addButton(new BookButtonLong(i++, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (i++ * (16 + 2)), ((char) (0x25bc)) + ""));
+		editButtons[0] = this.addButton(new ImageButton(i++, 0, 0, "1", new ResourceLocation(Main.MODID + ":textures/gui/add.png")));
+		editButtons[1] = this.addButton(new ImageButton(i++, 0, 0, "2", new ResourceLocation(Main.MODID + ":textures/gui/edit.png")));
+		editButtons[2] = this.addButton(new ImageButton(i++, 0, 0, "3", new ResourceLocation(Main.MODID + ":textures/gui/delete.png")));
 		open(page, quest, true);
 		
 	}
