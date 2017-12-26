@@ -1,6 +1,8 @@
-package com.gamebuster19901.superiorquesting.client.gui.book;
+package com.gamebuster19901.superiorquesting.client.gui.book.button;
 
 import java.util.UUID;
+
+import com.gamebuster19901.superiorquesting.client.gui.book.GuiQuestBook;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

@@ -1,4 +1,4 @@
-package com.gamebuster19901.superiorquesting.client.gui.book;
+package com.gamebuster19901.superiorquesting.client.gui.book.button;
 
 import java.util.UUID;
 
