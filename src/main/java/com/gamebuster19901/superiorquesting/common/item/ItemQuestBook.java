@@ -29,6 +29,7 @@ public final class ItemQuestBook extends Item{
 		this.setCreativeTab(CreativeTabQuesting.QUESTING_TAB);
 		this.setUnlocalizedName(MODID + ".questbook");
 		this.setRegistryName(new ResourceLocation(MODID + ":questbook"));
+		this.maxStackSize = 1;
 	}
 	
     /**
