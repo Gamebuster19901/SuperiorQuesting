@@ -6,10 +6,7 @@ import com.gamebuster19901.superiorquesting.common.NBTDebugger;
 import com.gamebuster19901.superiorquesting.common.UpdatableSerializable;
 import com.gamebuster19901.superiorquesting.proxy.ServerProxy;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface Shape extends UpdatableSerializable{
 	public Rectangle getBounds();

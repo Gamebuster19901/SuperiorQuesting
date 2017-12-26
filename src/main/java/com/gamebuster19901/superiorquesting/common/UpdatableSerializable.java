@@ -1,6 +1,5 @@
 package com.gamebuster19901.superiorquesting.common;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 

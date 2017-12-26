@@ -1,7 +1,6 @@
 package com.gamebuster19901.superiorquesting.common.shape;
 
 import com.gamebuster19901.superiorquesting.common.questing.exception.FutureVersionError;
-import com.gamebuster19901.superiorquesting.common.questing.exception.IllegalShapeException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.SerializationException;
 import com.gamebuster19901.superiorquesting.common.questing.exception.VersioningError;
 

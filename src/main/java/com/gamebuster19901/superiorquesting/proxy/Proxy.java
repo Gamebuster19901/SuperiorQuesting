@@ -19,7 +19,6 @@ import com.gamebuster19901.superiorquesting.common.questing.reward.ItemReward;
 import com.gamebuster19901.superiorquesting.common.questing.reward.RewardType;
 import com.gamebuster19901.superiorquesting.common.shape.Circle;
 import com.gamebuster19901.superiorquesting.common.shape.RegularGon;
-import com.gamebuster19901.superiorquesting.common.shape.Shape;
 import com.gamebuster19901.superiorquesting.common.shape.ShapeType;
 import com.gamebuster19901.superiorquesting.common.shape.Square;
 import com.gamebuster19901.superiorquesting.common.shape.TriangleDown;

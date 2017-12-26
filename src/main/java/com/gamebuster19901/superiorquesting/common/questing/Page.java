@@ -1,6 +1,5 @@
 package com.gamebuster19901.superiorquesting.common.questing;
 
-import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraftforge.common.util.Constants.NBT;
 
 public class Page implements Lockable, Hideable, Notifyable, Comparable, Assertable{
 	private static final long VERSION = 2L;

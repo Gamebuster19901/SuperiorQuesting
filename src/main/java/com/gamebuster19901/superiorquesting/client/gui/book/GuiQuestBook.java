@@ -4,7 +4,6 @@ import static com.gamebuster19901.superiorquesting.Main.MODID;
 import static com.gamebuster19901.superiorquesting.client.gui.book.button.NavigationButton.Direction.LEFT;
 import static com.gamebuster19901.superiorquesting.client.gui.book.button.NavigationButton.Direction.RIGHT;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -32,14 +31,11 @@ import com.gamebuster19901.superiorquesting.common.shape.TriangleUp;
 import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 
 public final class GuiQuestBook extends GuiScreen implements Assertable, IngameDebuggable{
