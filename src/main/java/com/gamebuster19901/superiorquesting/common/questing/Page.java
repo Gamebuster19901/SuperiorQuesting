@@ -103,6 +103,7 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 		}
 		nbt.setTag("QUESTS", quests);
 		nbt.setString("TITLE", title);
+		nbt.setString("DESCRIPTION", description);
 		nbt.setInteger("ORDER", order);
 		return nbt;
 	}
