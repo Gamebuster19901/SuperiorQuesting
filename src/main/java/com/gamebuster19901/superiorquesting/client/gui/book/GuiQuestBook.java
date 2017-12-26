@@ -30,9 +30,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 
 public final class GuiQuestBook extends GuiScreen implements Assertable, IngameDebuggable{
@@ -47,16 +49,17 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	
 	/*
  		*current values:
- 			* 1 Any com.gamebuster19901.common.questing.Page
  			* 0 Cover
- 			* -1 Main Menu
+ 			* -1 Page Selection/Main menu
+ 			* -2 Quest Selection
+ 			* -3 Quest Page
  	*/
 	
 	private static byte pageType = 0;
 	private static UUID page;
 	private static UUID quest;
 	private static boolean editMode = false;
-	private static long scroll = 0;
+	private static int scroll = 0;
 
 	
 	private EntityPlayer player;
@@ -65,7 +68,9 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			addButton(new NavigationButton(buttonList.size(), RIGHT))
 	};
 	private GuiButton[] editButtons = new GuiButton[] {};
-	private ArrayList<BookButtonLong> bookbuttons;
+	private BookButtonLong[] longNavigationButtons = new BookButtonLong[2];
+	private PageButton[] pageButtons = new PageButton[12];
+	private Point mid;
 
 	
 	public GuiQuestBook(EntityPlayer player) {
@@ -74,11 +79,54 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	}
 	
 	@Override
-	public void initGui() {
+	public void initGui() { //Good luck
 		super.initGui();
-		open(page, quest);
+		this.addButton(navButtons[0]);
+		this.addButton(navButtons[1]);
+		
+		int i = buttonList.size(); //button id
+		
+		mid = new Point(width / 2, height / 2);
+		
+		int canScrollUp = 0;
+		int canScrollDown = 0;
+		
+		int horizontalAdjustment = 172;
+		int verticalAdjustment = 102;
+		
+		for(int j = 0; j < 12; i++, j++) {
+			pageButtons[j] = (this.addButton(new PageButton(i , (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (j * (16 + 2)))));
+		}
+		longNavigationButtons[0] = this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
+		longNavigationButtons[1] = this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (i++ * (16 + 2)), ((char) (0x25bc)) + ""));
+		
+		open(page, quest, true);
 		
 	}
+	
+	/* button list visibility logic (old version)
+ 		Point mid = new Point(width / 2, height / 2);
+		
+		int canScrollUp = 0;
+		int canScrollDown = 0;
+		
+		int horizontalAdjustment = 172;
+		int verticalAdjustment = 102;
+		
+ 		if(canScrollUp == 1) {
+			longNavigationButtons[0] = this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
+		}
+		int pagelist = i + 12 - canScrollUp - canScrollDown;
+		{
+			int j = 0 + canScrollUp;
+			for(; i < pagelist; i++, j++) {
+				this.addButton(new PageButton(i - pagelist, (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (j * (16 + 2)), (Page)null));
+			}
+			if(canScrollDown == 1) {
+				longNavigationButtons[1] = this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (j * (16 + 2)), ((char) (0x25bc)) + ""));
+			}
+		}
+	 */
 	
 	@Override
 	public boolean doesGuiPauseGame() {
@@ -86,49 +134,42 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	}
 	
 	//Good luck
-	public void open(UUID p, UUID q) {
+	public void open(UUID p, UUID q, boolean init) {
+		setLongButtonVisibility(false);
 		debug(p);
-		int i = buttonList.size(); //button id
-		Point mid = new Point(width / 2, height / 2);
 		
-		if(p != null) {
-			pageType = 1;
-		}
 		page = p;
 		quest = q;
+		
+		if(pageType == 1) {
+			int horizontalAdjustment = 225;
+			navButtons[0].visible = true;
+			navButtons[1].visible = false;
+			navButtons[0].x = (int)mid.getX() -horizontalAdjustment + 67;
+			navButtons[0].y = 285;
+			navButtons[0].visible = true;
+		}
 		
 		if(pageType == 0) {
 			navButtons[0].visible = false;
 			navButtons[1].visible = true;
+			navButtons[1].x = mid.getX() - 9;
+			navButtons[1].y = height - 50;
 		}
 		
 		if (pageType == -1) {
 			int horizontalAdjustment = 172;
 			int verticalAdjustment = 102;
 			
-			int canScrollUp = 0;
-			int canScrollDown = 0;
-			
 			navButtons[0].x = (int)mid.getX() -horizontalAdjustment + 67;
 			navButtons[0].y = 285;
 			navButtons[0].visible = true;
 			navButtons[1].x = (int)mid.getX() + horizontalAdjustment - 85;
 			navButtons[1].y = 285;
-			navButtons[1].visible = true;
 			
-			if(canScrollUp == 1) {
-				this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
-			}
-			int pagelist = i + 12 - canScrollUp - canScrollDown;
-			{
-				int j = 0 + canScrollUp;
-				for(; i < pagelist; i++, j++) {
-					this.addButton(new PageButton(i - pagelist, (int)mid.getX() - horizontalAdjustment, (int)mid.getY() - verticalAdjustment + (j * (16 + 2)), (Page)null));
-				}
-				if(canScrollDown == 1) {
-					this.addButton(new BookButtonLong(i, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (j * (16 + 2)), ((char) (0x25bc)) + ""));
-				}
-			}
+			setLongButtonVisibility(true);
+			
+
 		}
 	}
 	
@@ -137,7 +178,6 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		GlStateManager.color(1f, 1f, 1f);
 		this.drawWorldBackground(0);
 		final ArrayList<String> errors = new ArrayList<String>();
-		Point mid = new Point(width / 2, height / 2);
 		Point mouseLoc = new Point(mouseX, mouseY);
 		//debug((mid.getX() - mouseLoc.getX() + "") + ", " + (mid.getY() - mouseLoc.getY() + ""));
 		switch(pageType) {
@@ -157,6 +197,23 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 					
 					GlStateManager.scale(1, 1, 1);
 					GlStateManager.popMatrix();
+					
+					this.navButtons[1].visible = page != null;
+					
+					for(PageButton b : this.pageButtons) {
+						if(b.getPage() == page) {
+							b.pressed = true;
+							if(page != null) {
+								Page p = Main.proxy.getGlobalQuestHandler().getPage(page);
+								if(Main.proxy.getGlobalQuestHandler().getPage(page).getDescription() != null) {
+									fontRenderer.drawSplitString(Main.proxy.getGlobalQuestHandler().getPage(page).getDescription(), mid.getX() + 27, mid.getY() - 101, 139, 0x000000);
+								}
+							}
+						}
+						else {
+							b.pressed = false;
+						}
+					}
 				
 				}
 				break;
@@ -188,8 +245,6 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 					if(Main.proxy.getGlobalQuestHandler().getQuest(quest) == null) {
 						errors.add(ILLEGAL_STATE.getFormattedText() + INVALID_QUEST.getFormattedText() + " (" + quest + ")");
 					}
-					
-					this.renderMultipleLines(this.fontRenderer, width / 2 , height / 2, Color.red.getRGB(), errors.toArray());
 				}
 				break;
 			default:
@@ -204,13 +259,19 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		debug(button);
 		switch(pageType) {
 			case 1:
+				if(button instanceof NavigationButton) {
+					NavigationButton navButton = (NavigationButton) button;
+					Assert(navButton.getDirection() == LEFT, "Impossible navigation button direction: " + navButton.getDirection());
+					pageType = -1;
+					open(page, null, false);
+				}
 				break;
 			case 0:
 				if(button instanceof NavigationButton) {
 					NavigationButton navButton = (NavigationButton) button;
 					Assert(navButton.getDirection() == RIGHT, "Impossible navigation button direction: " + navButton.getDirection());
 					pageType = -1;
-					open(null, null);
+					open(null, null, false);
 				}
 				break;
 			case -1:
@@ -218,7 +279,28 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 					NavigationButton navButton = (NavigationButton) button;
 					if(navButton.getDirection() == LEFT) {
 						pageType = 0;
-						//open(null, null);
+						open(null, null, false);
+					}
+				}
+				else if (button instanceof PageButton) {
+					PageButton pageButton = (PageButton)button;
+					if(this.page != pageButton.getPage()) {
+						this.page = pageButton.getPage();
+					}
+					else {
+						this.page = null;
+					}
+				}
+				else if (button instanceof BookButtonLong) {
+					BookButtonLong bookButton = (BookButtonLong)button;
+					if(button == longNavigationButtons[0]) {
+						
+					}
+					else if (button == longNavigationButtons[1]) {
+						
+					}
+					else {
+						Assert(false, "Unknown button " + button);
 					}
 				}
 				break;
@@ -247,21 +329,30 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		}
 		debug(Minecraft.getMinecraft().player, keyCode + " " + typedChar + this.isCtrlKeyDown());
     }
+	
+	public void setLongButtonVisibility(boolean state) {
+		int pageCount = Main.proxy.getGlobalQuestHandler().getAllPages().size();
+		int canScrollUp = scroll > 0 ? 1 : 0;
+		int canScrollDown = scroll + 11 >= pageCount ? 1 : 0;
+		for(PageButton b : pageButtons) {
+			b.visible = false;
+		}
+		longNavigationButtons[0].visible = canScrollUp == 1 ? true : false;
+		longNavigationButtons[1].visible = canScrollDown == 1 ? true : false;
+		if(state) {
+			for(int i = scroll + canScrollUp; i < scroll + 11 && i < pageCount; i++) {
+				Page p = Main.proxy.getGlobalQuestHandler().getAllPages().get(i);
+				pageButtons[i].setPage(p.getUUID());
+				debug(pageButtons[i].visible = p.getUUID() != null);
+			}
+		}
+	}
 
 	public void onGuiClosed(){
 		if(pageType != 0) {
 			player.playSound(((ClientProxy)Main.proxy).BOOK_CLOSE, 1, 1);
 		}
 		super.onGuiClosed();
-	}
-	
-	private void renderMultipleLines(FontRenderer render, int x, int y, int rgb, Object... objects) {
-		int i = 0;
-		for(Object o : objects) {
-			String m = o.toString();
-			render.drawString(m, x - render.getStringWidth(m) / 2, (y - 16 / 2) + i * 16, rgb);
-			i++;
-		}
 	}
 	
 	public static void testShapes() {

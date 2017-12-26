@@ -26,7 +26,6 @@ public class ShapeType {
 	}
 	
 	/**
-	 * 
 	 * @param shape the shape class to register
 	 * @param image the image to use when selecting a shape type in the quest editor
 	 * @param name the name of the shape

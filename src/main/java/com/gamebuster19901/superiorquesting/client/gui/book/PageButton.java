@@ -16,14 +16,12 @@ public class PageButton extends BookButtonLong{
 	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation(MODID + ":textures/gui/book_two_sides.png");
 	
 	public boolean pressed = false;
+	private UUID page;
 	
-	public PageButton(int buttonId, int x, int y, Page p) {
-		super(buttonId, x, y, /*p.getTitle()*/ "");
+	public PageButton(int buttonId, int x, int y) {
+		super(buttonId, x, y, "");
 	}
 	
-	public PageButton(int buttonId, int x, int y, UUID p) {
-		this(buttonId, x, y, Main.proxy.getGlobalQuestHandler().getPage(p));
-	}
 	
     /**
      * Draws this button to the screen.
@@ -60,7 +58,9 @@ public class PageButton extends BookButtonLong{
             {
                 j = 16777120;
             }
-
+            if(page != null) {
+            	this.displayString = Main.proxy.getGlobalQuestHandler().getPage(page).getTitle();
+            }
             this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, j);
         }
     }
@@ -75,5 +75,12 @@ public class PageButton extends BookButtonLong{
         return false;
     }
 	
-
+	public void setPage(UUID id) {
+		page = id;
+	}
+	
+	public UUID getPage() {
+		return page;
+	}
+	
 }
