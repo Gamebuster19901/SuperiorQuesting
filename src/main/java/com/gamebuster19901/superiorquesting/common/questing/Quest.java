@@ -81,6 +81,9 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 			if(page == null) {
 				throw new NullPointerException(page + "page");
 			}
+			if(getGlobalQuestHandler().getPage(page) == null) {
+				throw new IllegalArgumentException("UUID does not correspond to a page: (" + page + ")");
+			}
 			if(rewards == null) {
 				throw new NullPointerException("rewards");
 			}
@@ -105,6 +108,7 @@ public class Quest implements Rewardable, Assignment, Debuggable, Assertable, NB
 		this.prerequisites = new ArrayList<UUID>(prerequisites);
 		this.tasks = new ArrayList<UUID>(tasks);
 		getGlobalQuestHandler().add(true, this);
+		getGlobalQuestHandler().getPage(page).add(this);
 	}
 	
 	public Quest(String title, String description, UUID page, int x, int y, Class<? extends Shape> shape, byte important) {

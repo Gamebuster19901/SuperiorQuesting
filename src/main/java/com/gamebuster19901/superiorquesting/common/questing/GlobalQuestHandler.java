@@ -97,6 +97,9 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		}
 		QUESTS.put(quest.getUUID(), quest);
 		getPlayerQuestHandler().add(quest);
+		System.out.println(quest.getPage());
+		System.out.println(this.getPage(quest.getPage()));
+		this.getPage(quest.getPage()).add(quest);
 		if(markDirty) {
 			markDirty();
 		}
