@@ -16,29 +16,39 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public class Page implements Lockable, Hideable, Notifyable, Comparable, Assertable{
-	private static final long VERSION = 1L;
+	private static final long VERSION = 2L;
 	private UUID id;
 	private final TreeSet<UUID> quests = new TreeSet<UUID>();
 	private String title;
+	private String description;
 	private int order;
 	private boolean hiddenByDefault;
 	private boolean lockedByDefault;
 	
 	public Page(String title) {
-		this(title, Main.proxy.getGlobalQuestHandler().PAGES.size());
+		this(title, Main.proxy.getGlobalQuestHandler().PAGES.size() + 1);
+	}
+	
+	public Page(String title, String description) {
+		this(title, description, Main.proxy.getGlobalQuestHandler().PAGES.size() + 1);
 	}
 	
 	public Page(String title, int order) {
-		this(title, order, false, false);
+		this(title, "No description." , order, false, false);
 	}
 	
-	public Page(String title, int order, boolean hiddenByDefault, boolean lockedByDefault) {
-		this(UUID.randomUUID(), title, order, hiddenByDefault, lockedByDefault);
+	public Page(String title, String description, int order) {
+		this(title, description, order, false, false);
 	}
 	
-	private Page(UUID id, String title, int order, boolean hiddenByDefault, boolean lockedByDefault) {
+	public Page(String title, String description, int order, boolean hiddenByDefault, boolean lockedByDefault) {
+		this(UUID.randomUUID(), title, description, order, hiddenByDefault, lockedByDefault);
+	}
+	
+	private Page(UUID id, String title, String description, int order, boolean hiddenByDefault, boolean lockedByDefault) {
 		try {
 			if(id == null) {
 				throw new NullPointerException("id");
@@ -46,22 +56,40 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 			if(title == null) {
 				throw new NullPointerException("title");
 			}
+			if(description == null) {
+				throw new NullPointerException("description");
+			}
 			if(order < 1) {
 				throw new IndexOutOfBoundsException(order + " < 1 (order)");
 			}
 		}
 		catch(NullPointerException | IndexOutOfBoundsException e) {
-			throw new IllegalArgumentException("Programming error, report to Gamebuster1990");
+			throw new IllegalArgumentException("Programming error, report to Gamebuster1990", e);
 		}
 		this.id = id;
+		this.description = description;
 		this.title = title;
 		this.order = order;
 		this.hiddenByDefault = hiddenByDefault;
 		this.lockedByDefault = lockedByDefault;
+		
+		getGlobalQuestHandler().add(true, this);
 	}
 	
 	public Page(NBTTagCompound nbt) {
 		deserializeNBT(nbt);
+		getGlobalQuestHandler().add(false, this);
+	}
+	
+	boolean add(UUID quest) {
+		if(getGlobalQuestHandler().getQuest(quest) != null) {
+			return quests.add(quest);
+		}
+		throw new NullPointerException();
+	}
+	
+	boolean add(Quest quest) {
+		return(add(quest.getUUID()));
 	}
 	
 	@Override
@@ -90,6 +118,7 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 				this.quests.add(UUID.fromString(q.getString()));
 			}
 			title = nbt.getString("TITLE");
+			description = nbt.getString("DESCRIPTION");
 			order = nbt.getInteger("ORDER");
 		}
 		else {
@@ -121,12 +150,15 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 				convert(prevVersion, nextVersion - 1L, nbtIn);
 			}
 			
-			if(prevVersion == 0L && nextVersion == 1L) {
+			if(prevVersion == 0L && nextVersion == 1L) { //Original version
 				throw new AssertionError("Tried to convert from nonexistant version 0 to version 1");
 			}
 			
-			if(prevVersion == 1L && nextVersion == 2L) {
-				//Future: convert from version 1 to version 2
+			if(prevVersion == 1L && nextVersion == 2L) { //added description
+				nbtIn.setLong("VERSION", nextVersion);
+				nbtIn.setString("DESCRIPTION", "No description.");
+				deserializeNBT(nbtIn);
+				return;
 			}
 			
 			throw new AssertionError("Tried to convert directly from version " + prevVersion + " to version " + nextVersion);
@@ -164,6 +196,10 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 	
 	public String getTitle() {
 		return title;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 
 	@Override
@@ -284,6 +320,10 @@ public class Page implements Lockable, Hideable, Notifyable, Comparable, Asserta
 	
 	private final PlayerQuestHandler getPlayerQuestHandler() {
 		return Main.proxy.getPlayerQuestHandler();
+	}
+	
+	private final GlobalQuestHandler getGlobalQuestHandler() {
+		return Main.proxy.getGlobalQuestHandler();
 	}
 
 }
