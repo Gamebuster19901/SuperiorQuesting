@@ -264,9 +264,11 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 	}
 	
 	public final void clean() {
+		markDirty();
 		PAGES.clear();
 		QUESTS.clear();
 		TASKS.clear();
 		REWARDS.clear();
+		markDirty();
 	}
 }
