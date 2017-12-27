@@ -25,6 +25,7 @@ public class ImageButton extends GuiButton{
 			GlStateManager.pushMatrix();
 			GlStateManager.scale(1f / 16f, 1f / 16f, 1);
 			this.drawTexturedModalRect(this.x, this.y, 0, 0, 256, 256);
+			GlStateManager.scale(1, 1, 1);
 			GlStateManager.popMatrix();
 			this.drawString(mc.fontRenderer, displayString, x, y, 0xffffff);
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
