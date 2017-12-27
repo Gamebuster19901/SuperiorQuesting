@@ -1,7 +1,5 @@
 package com.gamebuster19901.superiorquesting.client.gui.book.button;
 
-import com.gamebuster19901.superiorquesting.client.gui.book.GuiQuestBook;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,7 +22,10 @@ public class ImageButton extends GuiButton{
 		if(this.visible) {
 			mc.getTextureManager().bindTexture(image);
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-			this.drawTexturedModalRect(this.x, this.y, 0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(1f / 16f, 1f / 16f, 1);
+			this.drawTexturedModalRect(this.x, this.y, 0, 0, 256, 256);
+			GlStateManager.popMatrix();
 			this.drawString(mc.fontRenderer, displayString, x, y, 0xffffff);
 			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 		}
