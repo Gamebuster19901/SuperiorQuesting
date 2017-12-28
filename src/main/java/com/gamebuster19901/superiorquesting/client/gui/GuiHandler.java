@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public final class GuiHandler implements IGuiHandler {
 	public static final int QUEST_BOOK = 0;
 	public static final int FINAL_DEATH = 1;
+	public static final int EDIT_BOOK = 2;
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		return null;
@@ -17,10 +18,13 @@ public final class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if(ID == QUEST_BOOK) {
-			return new GuiQuestBook(player);
+			return new GuiQuestBook(player, false);
 		}
 		if(ID == FINAL_DEATH) {
 			return new GuiTrueGameOver(GuiTrueGameOver.deathCause);
+		}
+		if(ID == EDIT_BOOK) {
+			return new GuiQuestBook(player, true);
 		}
 		return null;
 	}

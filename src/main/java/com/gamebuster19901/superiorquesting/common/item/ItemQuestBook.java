@@ -43,7 +43,7 @@ public final class ItemQuestBook extends Item{
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, p.getHeldItem(handIn));
 		}
 		else if(p.canUseCommand(2, "give")){
-			p.openGui(Main.getInstance(), GuiHandler.QUEST_BOOK, worldIn, (int)p.posX, (int)p.posY, (int)p.posZ);
+			p.openGui(Main.getInstance(), GuiHandler.EDIT_BOOK, worldIn, (int)p.posX, (int)p.posY, (int)p.posZ);
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, p.getHeldItem(handIn));
 		}
 		else if(!worldIn.isRemote){

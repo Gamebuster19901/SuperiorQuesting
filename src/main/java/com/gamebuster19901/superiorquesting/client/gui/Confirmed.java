@@ -40,7 +40,7 @@ public final class Confirmed implements Debuggable{
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableAlpha();
-        mc.getTextureManager().bindTexture(new ResourceLocation(Main.MODID + ":textures/item/misc/confirmed.png"));
+        mc.getTextureManager().bindTexture(new ResourceLocation(Main.MODID + ":textures/gui/confirmed.png"));
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);

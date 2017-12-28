@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.book.button.BookButtonLong;
-import com.gamebuster19901.superiorquesting.client.gui.book.button.ImageButton;
+import com.gamebuster19901.superiorquesting.client.gui.book.button.EditButton;
 import com.gamebuster19901.superiorquesting.client.gui.book.button.NavigationButton;
 import com.gamebuster19901.superiorquesting.client.gui.book.button.PageButton;
 import com.gamebuster19901.superiorquesting.common.Assertable;
@@ -59,25 +59,26 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	private static byte pageType = 0;
 	private static UUID page;
 	private static UUID quest;
-	private static boolean editMode = false;
 	private static int scroll = 0;
-
+	private static ResourceLocation texture;
+	
 	
 	private EntityPlayer player;
+	private boolean editMode;
 	private NavigationButton[] navButtons = new NavigationButton[] {
 			addButton(new NavigationButton(buttonList.size(), LEFT)),
 			addButton(new NavigationButton(buttonList.size(), RIGHT))
 	};
-	private GuiButton[] editButtons = new GuiButton[3];
+	private EditButton[] editButtons = new EditButton[3];
 	private BookButtonLong[] longNavigationButtons = new BookButtonLong[2];
 	private PageButton[] pageButtons = new PageButton[12];
 	private Point mid;
 
 	
-	public GuiQuestBook(EntityPlayer player) {
+	public GuiQuestBook(EntityPlayer player, boolean editMode) {
 		super();
 		this.player = player;
-		this.editMode = player.getActiveItemStack().getItem().equals(ItemQuestBook.ITEM) && player.getActiveItemStack().getItemDamage() == 1;
+		this.editMode = editMode;
 	}
 	
 	@Override
@@ -101,9 +102,9 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		}
 		longNavigationButtons[0] = this.addButton(new BookButtonLong(i++, ((int)mid.getX()) - horizontalAdjustment, ((int)mid.getY()) - verticalAdjustment, ((char) (0x25b2)) + ""));
 		longNavigationButtons[1] = this.addButton(new BookButtonLong(i++, width / 2 - horizontalAdjustment, (height / 2 - verticalAdjustment) + (i++ * (16 + 2)), ((char) (0x25bc)) + ""));
-		editButtons[0] = this.addButton(new ImageButton(i++, 0, 0, "1", new ResourceLocation(Main.MODID + ":textures/gui/add.png")));
-		editButtons[1] = this.addButton(new ImageButton(i++, 0, 0, "2", new ResourceLocation(Main.MODID + ":textures/gui/edit.png")));
-		editButtons[2] = this.addButton(new ImageButton(i++, 0, 0, "3", new ResourceLocation(Main.MODID + ":textures/gui/delete.png")));
+		editButtons[0] = this.addButton(new EditButton(i++, 0, 0, 0, 240)); //add
+		editButtons[1] = this.addButton(new EditButton(i++, 0, 0, 16, 240)); //edit
+		editButtons[2] = this.addButton(new EditButton(i++, 0, 0, 32, 240)); //remove
 		open(page, quest, true);
 		
 	}
@@ -146,6 +147,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		quest = q;
 		
 		if(pageType == 1) {
+			texture = FULLSCREEN_TEXTURE;
 			int horizontalAdjustment = 225;
 			navButtons[0].visible = true;
 			navButtons[1].visible = false;
@@ -155,6 +157,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		}
 		
 		if(pageType == 0) {
+			texture = COVER_TEXTURE;
 			navButtons[0].visible = false;
 			navButtons[1].visible = true;
 			navButtons[1].x = mid.getX() - 9;
@@ -162,6 +165,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		}
 		
 		if (pageType == -1) {
+			texture = TWO_PAGES_TEXTURE;
 			int horizontalAdjustment = 172;
 			int verticalAdjustment = 102;
 			
@@ -171,6 +175,11 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 			navButtons[1].x = (int)mid.getX() + horizontalAdjustment - 85;
 			navButtons[1].y = 285;
 			
+			for(int i = 0; i < 3; i++) {
+				editButtons[i].x = (int)mid.getX() + (80 * i) - 184;
+				editButtons[i].y = (int)mid.getY() - 139;
+			}
+			
 			setLongButtonVisibility(true);
 			
 
@@ -179,6 +188,8 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		debug(pageType);
+		debug(editMode);
 		GlStateManager.color(1f, 1f, 1f);
 		this.drawWorldBackground(0);
 		final ArrayList<String> errors = new ArrayList<String>();
@@ -186,7 +197,7 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		//debug((mid.getX() - mouseLoc.getX() + "") + ", " + (mid.getY() - mouseLoc.getY() + ""));
 		switch(pageType) {
 			case -1:
-				mc.getTextureManager().bindTexture(TWO_PAGES_TEXTURE);
+				mc.getTextureManager().bindTexture(texture);
 				{
 					GlStateManager.pushMatrix();
 					GlStateManager.scale(1.5, 1.5, 1);
@@ -218,25 +229,32 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 							b.pressed = false;
 						}
 					}
+					for(EditButton b : editButtons) {
+						b.visible = editMode;
+					}
 				
 				}
 				break;
 			case 0:
-				mc.getTextureManager().bindTexture(COVER_TEXTURE);
+				mc.getTextureManager().bindTexture(texture);
 				{
 					int texW = 146;
 					int texH = 180;
 					
 					GlStateManager.pushMatrix();
 					GlStateManager.scale(1.5, 1.5, 1);
-					this.drawTexturedModalRect(width / 3 - texW / 2, height / 3 - texH / 2, 0, -4, texW, texH + 4);
+					this.drawTexturedModalRect(width / 3 - texW / 2, height / 3 - texH / 2, 0, 0, texW, texH);
 					GlStateManager.scale(1, 1, 1);
 					GlStateManager.popMatrix();
+					
+					for(EditButton b : editButtons) {
+						b.visible = false;
+					}
 				
 				}
 				break;
 			case 1:
-				mc.getTextureManager().bindTexture(FULLSCREEN_TEXTURE);
+				mc.getTextureManager().bindTexture(texture);
 				{
 					int texW = 256;
 					int texH = 196;
@@ -380,6 +398,10 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 		System.out.println(new Square().getCenter().getX());
 		System.out.println(new Square().getCenter().getY());
 		
+	}
+	
+	public static ResourceLocation getImage() {
+		return texture;
 	}
 	
 	private void drawPixel(Point p, int color) {
