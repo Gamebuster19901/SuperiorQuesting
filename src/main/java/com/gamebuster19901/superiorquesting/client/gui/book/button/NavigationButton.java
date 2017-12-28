@@ -2,12 +2,17 @@ package com.gamebuster19901.superiorquesting.client.gui.book.button;
 
 import java.util.UUID;
 
+import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.book.GuiQuestBook;
+import com.gamebuster19901.superiorquesting.proxy.ClientProxy;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.SoundEvents;
 
 public class NavigationButton extends GuiButton{
 	private UUID page;
@@ -45,6 +50,12 @@ public class NavigationButton extends GuiButton{
             this.mouseDragged(mc, mouseX, mouseY);
             int k = 14737632;
         }
+    }
+	
+	@Override
+    public void playPressSound(SoundHandler soundHandlerIn)
+    {
+        soundHandlerIn.playSound(PositionedSoundRecord.getRecord( ( (ClientProxy)Main.proxy).BOOK_TURN, 1.0F, 2.0f) );
     }
 	
 	public Direction getDirection() {
