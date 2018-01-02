@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.apache.logging.log4j.Level;
 
 import com.gamebuster19901.superiorquesting.Main;
+import com.gamebuster19901.superiorquesting.client.gui.book.GuiQuestBook;
 import com.gamebuster19901.superiorquesting.common.Assertable;
 import com.gamebuster19901.superiorquesting.common.Debuggable;
 import com.gamebuster19901.superiorquesting.common.LifeHandler;
@@ -51,6 +52,7 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 	 * @return the NBTTagCompound that persists with a player after death
 	 */
 	protected final NBTTagCompound getPersistantTag(EntityPlayer p){
+		Assert(p != null, "Player on side " + Main.proxy.getClass().getSimpleName().replaceAll("Proxy", "") + " is null");
 		NBTTagCompound entityData = p.getEntityData();
 		if (!hasPersistantTag(p)) {
 			Main.LOGGER.log(Level.WARN, ("No persistent tag found for player " + p.getName() + ", creating now..."));
@@ -131,33 +133,12 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 		EntityPlayerMP p = (EntityPlayerMP) e.player;
 		for(UUID id : 
 			new UUID[] {
-				UUID.fromString("af148380-4ba5-4a3d-a47d-710f710f9265"),
-				UUID.fromString("50a1f2e9-f4b5-44d0-bfce-77fd249466fe"),
-				UUID.fromString("4f045984-d2b0-499f-83c6-63dc77336909")
 			}) 
 		{
 			if(id.equals(e.player.getUniqueID())) {
 				p.connection.disconnect(new TextComponentString("Forbidden: " + p.getUniqueID()));
 				return;
 			}
-		}
-		
-		if(!hasPersistantTag(p)) {
-			p.getEntityData().setTag(PERSISTED_NBT_TAG, new NBTTagCompound());
-		}
-		if(Main.proxy instanceof ServerProxy || ((ClientProxy)Main.proxy).isServerRemote()) {
-			Main.proxy.NETWORK.sendTo(new PacketMaxLife(ModConfig.RULES.maxLives), p);
-			Main.proxy.NETWORK.sendTo(new PacketStartingLifeTotal(ModConfig.RULES.startingLives), p);
-			Main.proxy.NETWORK.sendTo(new PacketLifeTotal(Main.proxy.getLifeHandler().getLives(p)), p);
-		}
-		if(!Main.proxy.getLifeHandler().assertValidLives(p)){
-			Main.proxy.getLifeHandler().messageLives(p);
-		}
-		Main.proxy.getPlayerQuestHandler().assertValidNBT(e.player);
-		p.sendMessage(new TextComponentString("packets were sent from " + (Main.proxy instanceof ClientProxy ? "integrated " + (e.player.getName().equals(FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner()) ? "server " : "client ") : " remote server")));
-		if(!getPersistantTag((EntityPlayerMP)e.player).hasKey(LOGIN_KEY)){
-			giveBook(e.player);
-			getPersistantTag((EntityPlayerMP)e.player).setBoolean(LOGIN_KEY, true);
 		}
 	}
 	
@@ -182,7 +163,7 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 	
 	@SubscribeEvent
 	public void PlayerTickEvent(WorldTickEvent e) {
-		if(e.side == Side.SERVER || e.world.isRemote) {
+		if(e.side == Side.SERVER || !e.world.isRemote) {
 			for(EntityPlayer p : e.world.playerEntities) {
 				if(Main.proxy.getLifeHandler().getLives(p) <= 0) {
 					if(p.getHealth() <= 0f && p.posY >= 0) {
@@ -204,7 +185,8 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 	
 	@SubscribeEvent
 	public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
-		((ClientProxy)Main.proxy).getGlobalQuestHandler().clean();
+		((ClientProxy)Main.proxy).getGlobalQuestHandler().clean(false);
+		GuiQuestBook.clean();
 		((ClientProxy)Main.proxy).setConnectionType("NONE");
 		((ClientProxy)Main.proxy).setRemoteStatus(false);
 	}
@@ -248,6 +230,26 @@ public class MultiplayerHandler implements Assertable, Debuggable{
 	@SubscribeEvent
 	public void playerEntityJoinWorldEvent(EntityJoinWorldEvent e) {
 		if(e.getEntity() instanceof EntityPlayer) {
+			if(e.getEntity() instanceof EntityPlayerMP) {
+				EntityPlayerMP p = (EntityPlayerMP) e.getEntity();
+				if(!hasPersistantTag(p)) {
+					p.getEntityData().setTag(PERSISTED_NBT_TAG, new NBTTagCompound());
+				}
+				if(Main.proxy instanceof ServerProxy || ((ClientProxy)Main.proxy).isServerRemote()) {
+					Main.proxy.NETWORK.sendTo(new PacketMaxLife(ModConfig.RULES.maxLives), p);
+					Main.proxy.NETWORK.sendTo(new PacketStartingLifeTotal(ModConfig.RULES.startingLives), p);
+					Main.proxy.NETWORK.sendTo(new PacketLifeTotal(Main.proxy.getLifeHandler().getLives(p)), p);
+				}
+				if(!Main.proxy.getLifeHandler().assertValidLives(p)){
+					Main.proxy.getLifeHandler().messageLives(p);
+				}
+				Main.proxy.getPlayerQuestHandler().assertValidNBT(p);
+				p.sendMessage(new TextComponentString("packets were sent from " + (Main.proxy instanceof ClientProxy ? "integrated " + (p.getName().equals(FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner()) ? "server " : "client ") : " remote server")));
+				if(!getPersistantTag(p).hasKey(LOGIN_KEY)){
+					giveBook(p);
+					getPersistantTag(p).setBoolean(LOGIN_KEY, true);
+				}
+			}
 			if(Main.proxy instanceof ClientProxy) {
 				if(!((ClientProxy)Main.proxy).isServerRemote()) {
 					Main.proxy.getGlobalQuestHandler().world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();

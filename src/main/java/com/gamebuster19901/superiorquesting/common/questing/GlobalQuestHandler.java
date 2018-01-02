@@ -263,12 +263,20 @@ public final class GlobalQuestHandler extends MultiplayerHandler implements Debu
 		return Main.proxy.getPlayerQuestHandler();
 	}
 	
-	public final void clean() {
-		markDirty();
-		PAGES.clear();
-		QUESTS.clear();
-		TASKS.clear();
-		REWARDS.clear();
-		markDirty();
+	public final void clean(boolean worldRunning) {
+		if(worldRunning) {
+			markDirty();
+			PAGES.clear();
+			QUESTS.clear();
+			TASKS.clear();
+			REWARDS.clear();
+			markDirty();
+		}
+		else {
+			PAGES.clear();
+			QUESTS.clear();
+			TASKS.clear();
+			REWARDS.clear();
+		}
 	}
 }

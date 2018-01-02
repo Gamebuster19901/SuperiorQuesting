@@ -407,4 +407,12 @@ public final class GuiQuestBook extends GuiScreen implements Assertable, IngameD
 	private void drawPixel(Point p, int color) {
 		drawVerticalLine(p.getX(), p.getY(), p.getY(), color);
 	}
+	
+	public static void clean() {
+		pageType = 0;
+		page = null;
+		quest = null;
+		scroll = 0;
+		texture = null;
+	}
 }

@@ -120,7 +120,7 @@ public class CommandQuest extends CommandBase implements ICommand, Debuggable, N
 			}
 		}
 		if(args[0].equals("clear") && Debuggable.debug) {
-			Main.proxy.getGlobalQuestHandler().clean();
+			Main.proxy.getGlobalQuestHandler().clean(true);
 			return;
 		}
 		if(args[0].equals("list") && Debuggable.debug) {
