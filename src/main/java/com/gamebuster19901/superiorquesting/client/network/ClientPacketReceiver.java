@@ -9,6 +9,7 @@ import static com.gamebuster19901.superiorquesting.client.network.ClientPacketRe
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 import com.gamebuster19901.superiorquesting.Main;
 import com.gamebuster19901.superiorquesting.client.gui.GuiHandler;
@@ -62,8 +63,37 @@ public class ClientPacketReceiver<Message extends GenericQuestingPacket> impleme
 				case LIFE_TOTAL:
 					message.toBytes(b);
 					double life = b.getDouble(0);
-					proxy.getLifeHandler().setLives(p, life, false);
-					debug(p, "New life total received from server: " + life);
+					if(p == null) { //sometimes the player hasn't been constructed yet, if so, wait up to 5 seconds for it to be constructed
+						new Runnable() {
+							@Override
+							public void run(){
+								EntityPlayerSP p2 = p;
+								int i = 0;
+								Timer:
+								{
+									for(i = 0; i < 5000; i++) {
+										if(Minecraft.getMinecraft().player != null) {
+											p2 = Minecraft.getMinecraft().player;
+											break Timer;
+										}
+										try {
+											Thread.sleep(1L);
+										} catch (InterruptedException e) {
+											ClientPacketReceiver.this.Assert(false, "Thread interrupted");
+										}
+									}
+									throw new Error(new TimeoutException("Player was not constructed in time"));
+								}
+								proxy.getLifeHandler().setLives(p2, life, false);
+								debug(p2, "New life total received from server: " + life);
+								debug(p2, "Took " + i + " milliseconds to construct the player after receiveing the packet");
+							}
+						}.run();
+					}
+					else {
+						proxy.getLifeHandler().setLives(p, life, false);
+						debug(p, "New life total received from server: " + life);
+					}
 					return null;
 				case LIFE_MAXIMUM:
 					message.toBytes(b);
